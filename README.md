@@ -1,3 +1,3 @@
 # MMethod
 Semester project
-![alt tag](https://vk.com/photo56114986_189885971)
+![alt tag](https://github.com/Boryska/MMethod/blob/master/boss.jpg)
