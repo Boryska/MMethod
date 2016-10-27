@@ -45,7 +45,7 @@
                            <children>
                               <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="1">
                                  <children>
-                                    <TableView prefHeight="46.0" prefWidth="330.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0" />
+                                    <TableView fx:id="tableC" prefHeight="46.0" prefWidth="330.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0" />
                                  </children>
                               </AnchorPane>
                               <GridPane GridPane.columnIndex="1" GridPane.rowIndex="1">
@@ -57,12 +57,12 @@
                                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                 </rowConstraints>
                                  <children>
-                                    <ComboBox prefWidth="100.0" GridPane.rowIndex="1">
+                                    <ComboBox fx:id="comboBoxExtr" prefWidth="100.0" GridPane.rowIndex="1">
                                        <GridPane.margin>
                                           <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                                        </GridPane.margin>
                                     </ComboBox>
-                                    <Label text="Экстремум:">
+                                    <Label fx:id="labelExtr" text="Экстремум:">
                                        <GridPane.margin>
                                           <Insets bottom="20.0" left="20.0" right="20.0" top="25.0" />
                                        </GridPane.margin>
@@ -80,27 +80,27 @@
                                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                 </rowConstraints>
                                  <children>
-                                    <Label text="Количество переменных">
+                                    <Label fx:id="labelVariables" text="Количество переменных">
                                        <GridPane.margin>
                                           <Insets bottom="10.0" left="30.0" right="10.0" top="10.0" />
                                        </GridPane.margin>
                                     </Label>
-                                    <Label text="Количество ограничений" GridPane.rowIndex="1">
+                                    <Label fx:id="labelResrtrictions" text="Количество ограничений" GridPane.rowIndex="1">
                                        <GridPane.margin>
                                           <Insets bottom="10.0" left="30.0" right="10.0" top="10.0" />
                                        </GridPane.margin>
                                     </Label>
-                                    <TextField GridPane.columnIndex="1">
+                                    <TextField fx:id="textFieldVariables" GridPane.columnIndex="1">
                                        <GridPane.margin>
                                           <Insets left="20.0" right="120.0" top="5.0" />
                                        </GridPane.margin>
                                     </TextField>
-                                    <TextField GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                    <TextField fx:id="textFieldRestrictions" GridPane.columnIndex="1" GridPane.rowIndex="1">
                                        <GridPane.margin>
                                           <Insets left="20.0" right="120.0" top="5.0" />
                                        </GridPane.margin>
                                     </TextField>
-                                    <Button minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="40.0" prefWidth="100.0" text="Построить" GridPane.columnIndex="2">
+                                    <Button fx:id="buttonBuild" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false"  prefHeight="40.0" prefWidth="100.0" text="Построить" GridPane.columnIndex="2">
                                        <GridPane.margin>
                                           <Insets bottom="-20.0" left="10.0" right="10.0" top="10.0" />
                                        </GridPane.margin>
@@ -109,12 +109,12 @@
                               </GridPane>
                               <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="2">
                                  <children>
-                                    <TableView prefHeight="65.0" prefWidth="418.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0" />
+                                    <TableView fx:id="tableA" prefHeight="65.0" prefWidth="418.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0" />
                                  </children>
                               </AnchorPane>
                               <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
                                  <children>
-                                    <TableView layoutX="10.0" layoutY="10.0" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0" />
+                                    <TableView fx:id="tableB" layoutX="10.0" layoutY="10.0" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0" />
                                  </children>
                               </AnchorPane>
                               <GridPane GridPane.columnIndex="1">
@@ -126,7 +126,7 @@
                                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                 </rowConstraints>
                                  <children>
-                                    <Button minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="40.0" prefWidth="100.0" text="Решить">
+                                    <Button fx:id="buttonSolve" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="40.0" prefWidth="100.0" text="Решить">
                                        <GridPane.margin>
                                           <Insets bottom="-20.0" left="10.0" right="10.0" top="10.0" />
                                        </GridPane.margin>
