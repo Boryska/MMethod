@@ -29,7 +29,7 @@ public class Table {
             }
             else{
                 column = new TableColumn<>(
-                        "Вектор b"
+                        "B"
                 );
                 column.setStyle("-fx-alignment: CENTER;");
                 Controller.setArrayTableBColumn(column);
