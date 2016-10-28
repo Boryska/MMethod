@@ -1,7 +1,7 @@
 package сontroller;
-//import exceptions.EmptyException;
-//import exceptions.IncorrectData;
-//import exceptions.OwnMessageException;
+import exceptions.EmptyException;
+import exceptions.IncorrectData;
+import exceptions.MyMessageException;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -11,6 +11,7 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.TextFieldTableCell;
 import main.Table;
 import java.util.ArrayList;
+import org.apache.commons.lang.math.NumberUtils;
 
 public class Controller {
     @FXML
@@ -68,9 +69,9 @@ public class Controller {
         Button clickedButton = (Button) source;
         switch (clickedButton.getId()) {
             case "buttonBuild":
-               // try {
+                try {
                     if (textFieldRestrictions.getText().isEmpty() ||
-                            textFieldVariables.getText().isEmpty() /*|| comboBoxExtr.getSelectionModel().isEmpty()*/) {
+                            textFieldVariables.getText().isEmpty()) {
                         arrayErrors = new ArrayList<>();
                         if (textFieldRestrictions.getText().isEmpty()) {
                             arrayErrors.add(labelRestrictions.getText());
@@ -80,23 +81,19 @@ public class Controller {
                         }
                         if (comboBoxExtr.getSelectionModel().isEmpty()) {
                             arrayErrors.add(labelExtr.getText());
-                        }}
-                        //throw new EmptyException(arrayErrors);
-//                    } else if (!NumberUtils.isNumber(fieldRestrictions.getText()) ||
-//                            !NumberUtils.isNumber(fieldAccuracy.getText()) ||
-//                            !NumberUtils.isNumber(textFieldVariables.getText())) {
-//                        arrayErrors = new ArrayList<>();
-//                        if (!NumberUtils.isNumber(fieldRestrictions.getText())) {
-//                            arrayErrors.add(labelAmountsRestrictions.getText());
-//                        }
-//                        if (!NumberUtils.isNumber(fieldAccuracy.getText())) {
-//                            arrayErrors.add(labelAccuracy.getText());
-//                        }
-//                        if (!NumberUtils.isNumber(fieldVariables.getText())) {
-//                            arrayErrors.add(labelAmountsVariables.getText());
-//                        }
-//                        throw new IncorrectData(arrayErrors);
-//                    }
+                        }
+                        throw new EmptyException(arrayErrors);
+                    } else if (!NumberUtils.isNumber(textFieldRestrictions.getText()) ||
+                            !NumberUtils.isNumber(textFieldVariables.getText())) {
+                        arrayErrors = new ArrayList<>();
+                        if (!NumberUtils.isNumber(textFieldRestrictions.getText())) {
+                            arrayErrors.add(labelRestrictions.getText());
+                        }
+                        if (!NumberUtils.isNumber(textFieldVariables.getText())) {
+                            arrayErrors.add(labelVariables.getText());
+                        }
+                        throw new IncorrectData(arrayErrors);
+                    }
                     arrayTableAColumn = new ArrayList<>();
                     arrayTableBColumn = new ArrayList<>();
                     arrayTableCColumn = new ArrayList<>();
@@ -114,18 +111,19 @@ public class Controller {
                     Table.createTable(tableB, 1, Integer.parseInt(textFieldRestrictions.getText()), "B");
                     Table.createTable(tableC, Integer.parseInt(textFieldVariables.getText()), 1, "C");
                     initialize();
-//                } catch (EmptyException ex) {
-//                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
-//                    alert.setTitle("Ошибка");
-//                    alert.setHeaderText(ex.getMessageFields());
-//                    alert.showAndWait();
-//                } catch (IncorrectData ex) {
-//                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
-//                    alert.setTitle("Ошибка");
-//                    alert.setHeaderText(ex.getMessageFields());
-//                    alert.showAndWait();
-//                }
+                } catch (EmptyException ex) {
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setTitle("Ошибка");
+                    alert.setHeaderText(ex.getMessageFields());
+                    alert.showAndWait();
+                } catch (IncorrectData ex) {
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setTitle("Ошибка");
+                    alert.setHeaderText(ex.getMessageFields());
+                    alert.showAndWait();
+                }
                 break;
+        case "buttonSolve" : break;
         }
     }
 
