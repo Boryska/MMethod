@@ -1,10 +1,4 @@
 package math;
-
-/**
- * Created by Борис on 27.10.2016.
- */
-//import com.sun.org.apache.xpath.internal.SourceTree;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -12,40 +6,55 @@ import java.util.ArrayList;
 
 public class MMethod
 {
-    public static void main(String[] args) throws IOException
-    {
-        BufferedReader read = new BufferedReader(new InputStreamReader(System.in));
-        int m,n,r = -1,k;
-        System.out.println("Количетсво ограничений:");
-        m = Integer.parseInt(read.readLine());
-        System.out.println("Количество переменных");
-        n = Integer.parseInt(read.readLine());
+    private BigFraction teta0, b[], c[], A[][];
+    private int m, n;
+    private int r = -1,k;
+    private boolean extr;
+    private int Fs0[] = new int[m];
+    private int Fs[] = new int[m];
+    private static double eps = 1000000000;
+    private double CjI[] = new double[n+m+1];
+    private double CjII[] = new double[n+m+1];
+    private double CsI[] = new double[m];
+    private double CsII[] = new double[m];
 
-        double CjI[] = new double[n+m+1];
-        double CjII[] = new double[n+m+1];
-        double CsI[] = new double[m];
-        double CsII[] = new double[m];
-        double B[] = new double[m];
-        int Fs0[] = new int[m];
-        int Fs[] = new int[m];
-        double alfa[] = new double[n+m+1];
-        double betta[] = new double[n+m+1];
-        double A[][] = {{1910, 7, 13, 8, 22, 9, 31, 27, 43, 30, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                {1910, 0, 13, 7, 22, 8, 31, 9, 27, 43, 30, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0},
-                {1910, 0, 0, 1, 30, 13, 7, 22, 8, 31, 9, 27, 0, 0, 0, 0, 0, 0, 0, 43, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0},
-                {1910, 0, 27, 0, 0, 43, 1, 30, 7, 22, 8, 31, 9, 0, 0, 0, 0, 0, 0, 13, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0},
-                {1910, 0, 0, 0, 0, 43, 27, 1, 30, 7, 22, 8, 31, 9, 0, 0, 0, 0, 0, 13, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0},
-                {1910, 0, 0, 0, 0, 0, 1, 8, 22, 43, 27, 31, 9, 30, 13, 0, 0, 0, 0, 7, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0},
-                {1910, 0, 0, 0, 0, 0, 0, 8, 22, 1, 43, 27, 9, 31, 7, 13, 0, 0, 0, 30, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0},
-                {1910, 0, 1, 0, 0, 0, 0, 0, 0, 0, 8, 22, 43, 27, 9, 31, 7, 13, 0, 30, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0},
-                {1910, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 8, 22, 43, 27, 9, 31, 7, 13, 30, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0},
-                {1910, 1, 22, 8, 43, 27, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9, 31, 13, 7, 30, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-                {-19100, -8, -76, -24, -117, -143, -98, -95, -159, -177, -148, -154, -123, -140, -56, -62, -69, -33, -20, -198, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                {0, -623, -1556, -3111, -5288, -8087, -11508, -15551, -20216, -25503, -31412, -37943, -45096, -52871, -61268, -70287, -79928, -90191, -101076, -112583, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}};//new double [m+2][m+n+1];
-        boolean min = false;
-        double L[] = {0, 623, 1556, 3111, 5288, 8087, 11508, 15551, 20216, 25503, 31412, 37943, 45096, 52871, 61268, 70287, 79928, 90191, 101076, 112583};
-        //new double[n+1];
+    double alfa[] = new double[n+m+1];
+    double betta[] = new double[n+m+1];
+    public MMethod(BigFraction[] c, BigFraction A[][], BigFraction b[], boolean extr){
+        this.c=c;
+        this.b=b;
+        this.A=A;
+        this.extr=extr;
+        this.m = A.length;
+        this.n = A[0].length;
+    }
+    public void run(){
+        // ТУТ САМ КОД АЛГОРИТМА
 
+/*        //BufferedReader read = new BufferedReader(new InputStreamReader(System.in));
+        //   int m,n,r = -1,k;
+//        System.out.println("Количетсво ограничений:");
+//        m = Integer.parseInt(read.readLine());
+//        System.out.println("Количество переменных");
+//        n = Integer.parseInt(read.readLine());
+//        double A[][] = {
+//                {190, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+//                {1900, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18,19, 0, 1, 0, 0,0, 0, 0, 0, 0, 0, 0, 0},
+//                {1910, 7, 13, 8, 22, 9, 31, 27, 43, 30, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+//                {1910, 0, 13, 7, 22, 8, 31, 9, 27, 43, 30, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0,1, 0, 0, 0, 0, 0, 0, 0, 0},
+//                {1910, 0, 0, 1, 30, 13, 7, 22, 8, 31, 9, 27, 0, 0, 0, 0, 0, 0, 0, 43, 0, 0, 0, 0,1, 0, 0, 0, 0, 0, 0, 0},
+//                {1910, 0, 27, 0, 0, 43, 1, 30, 7, 22, 8, 31, 9, 0, 0, 0, 0, 0, 0, 13, 0, 0, 0, 0, 0,1, 0, 0, 0, 0, 0, 0},
+//                {1910, 0, 0, 0, 0, 43, 27, 1, 30, 7, 22, 8, 31, 9, 0, 0, 0, 0, 0, 13, 0, 0, 0, 0, 0, 0,1, 0, 0, 0, 0, 0},
+//                {1910, 0, 0, 0, 0, 0, 1, 8, 22, 43, 27, 31, 9, 30, 13, 0, 0, 0, 0, 7, 0, 0, 0, 0, 0, 0, 0,1, 0, 0, 0, 0},
+//                {1910, 0, 0, 0, 0, 0, 0, 8, 22, 1, 43, 27, 9, 31, 7, 13, 0, 0, 0, 30, 0, 0, 0, 0, 0, 0, 0, 0,1, 0, 0, 0},
+//                {1910, 0, 1, 0, 0, 0, 0, 0, 0, 0, 8, 22, 43, 27, 9, 31, 7, 13, 0, 30, 0, 0, 0, 0, 0, 0, 0, 0, 0,1, 0, 0},
+//                {1910, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 8, 22, 43, 27, 9, 31, 7, 13, 30, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,1, 0},
+//                {1910, 1, 22, 8, 43, 27, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9, 31, 13, 7, 30, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,1},
+//                {-21190, -10, -79, -28, -122, -149, -105, -113, -168, -187, -159, -166, -136, -154, -71, -78, -99, -38, -39, -218, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,0},
+//                {0, -623, -1556, -3111, -5288, -8087, -11508, -15551, -20216, -25503, -31412, -37943, -45096, -52871, -61268, -70287, -79928, -90191, -101076, -112583, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,0}};//new double [m+2][m+n+1];
+//        boolean min = false;
+//        double L[] = {0, 623, 1556, 3111, 5288, 8087, 11508, 15551, 20216, 25503, 31412, 37943, 45096, 52871, 61268, 70287, 79928, 90191, 101076, 112583};
+//        //new double[n+1];
         for (int i = 0; i < m ; i++)
         {
             Fs0[i] = n+i;                         //////// Fs0
@@ -148,7 +157,8 @@ public class MMethod
         {
             for (int j = 1; j <n+1 ; j++)
             {
-                System.out.print(A[i][j]+"*X" + j+ " + ");                                               //////  Вывод основной задачи
+                if(A[i][j] != 0)
+                    System.out.print(A[i][j]+"*X" + j+ " + ");                                               //////  Вывод основной задачи
             }
             System.out.println(" = " + B[i]);
         }                                                                                       ////////fin
@@ -157,7 +167,8 @@ public class MMethod
         {
             for (int j = 1; j <n+m+1 ; j++)
             {
-                System.out.print(A[i][j]+"*X" + j+ " + ");                                               //////  Вывод М задачи
+                if(A[i][j] != 0)
+                    System.out.print(A[i][j]+"*X" + j+ " + ");                                               //////  Вывод М задачи
             }
             System.out.println(" = " + A[i][0]);
         }                                                                                       ////////fin
@@ -175,7 +186,7 @@ public class MMethod
         System.out.println("НАЧАЛО ИТЕРАЦИОННОГО ПРОЦЕССА");
         int count = 1;
         k = minimumK(alfa,betta);
-        while ((alfa[k] * 10000000 + betta[k]) < 0) //////////////////////////////////////////////////////////////////////
+        while ((alfa[k] * 1000000000 + betta[k]) < 0) //////////////////////////////////////////////////////////////////////
         {
 
             System.out.println(count+ " -я итерация");
@@ -245,15 +256,40 @@ public class MMethod
             }
             System.out.println();
             count++;
+            for (int i = 0; i < n+m+1 ; i++)
+            {
+                if (!(A[m][i] - alfa[i] == 0)){
+                    // System.out.println("ALFA FAIL");
+                }
+            }
+            for (int i = 0; i < n+m+1 ; i++)
+            {
+                if (!(A[m+1][i] - betta[i] == 0)){
+                    // System.out.println("Betta FAIL");
+                }
+            }
+            System.out.println("Вектор alfa':");
+            for (double x:alfa )
+            {
+                System.out.print(x + " | ");
+            }
+            System.out.println();
+            System.out.println("Вектор betta':");
+            for (double x:betta )
+            {
+                System.out.print(x + " | ");
+            }
+            System.out.println("Вектор базиса:");
+            for (int x:Fs )
+            {
+                System.out.print("A"+x + " | ");
+            }
+
+            System.out.println();
+            System.out.println("Оптимальное значение функции при заданных ограничениях равно: " + finaloo(CsII,A));
 
         }
-        for (int x:Fs )
-        {
-            System.out.print("A"+x + " | ");
-        }
 
-        System.out.println();
-        System.out.println("Оптимальное значение функции при заданных ограничениях равно: " + finaloo(CsII,A));
 
 
     }
@@ -267,7 +303,7 @@ public class MMethod
         }
 
 
-        return  Math.rint(10000000.0 *  (res - Cj)) / 10000000.0;
+        return  Math.rint(eps *  (res - Cj)) / eps;
     }
     public static int minimumK (double[]a,double []b){
         double ma = a[1];
@@ -304,14 +340,17 @@ public class MMethod
     public static double[][] findMatrix(double A[][],int stolb,int strok,int m, int n){
         double X[][] = new double [m+2][n+m+1];
 
-        for (int i = 0; i < m+1 ; i++)
+        for (int i = 0; i < m+2 ; i++)
         {
             for (int j = 0; j < n+m+1 ; j++)                                //////////////
             {
                 if(i != strok){ X[i][j] = A[i][j] - (A[i][stolb]* A[strok][j])/   (A[strok][stolb]); }
                 else{           X[i][j] =   A[strok][j]/A[strok][stolb];
                 }
-                X[i][j] = Math.rint(100000.0 * X[i][j]) / 100000.0;                                       //// Округление
+                X[i][j] = Math.rint(eps * X[i][j]) / eps;                                       //// Округление
+                if(X[i][j] < 0.0000001 && X[i][j] > -0.0000001 ){
+                    X[i][j] = 0;
+                }
             }
         }
         return  X;
@@ -323,6 +362,5 @@ public class MMethod
             otvet += c[i]*A[i][0];
         }
         return otvet;
-    }
-}
-
+    }*/
+   }}

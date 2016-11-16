@@ -10,6 +10,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.TextFieldTableCell;
 import main.Table;
+import math.MMethod;
 import java.util.ArrayList;
 import org.apache.commons.lang.math.NumberUtils;
 
@@ -32,6 +33,10 @@ public class Controller {
     private Label labelRestrictions;
     @FXML
     private Label labelExtr;
+    @FXML
+    private Button buttonBuild;
+    @FXML
+    private Button buttonSolve;
 
     @FXML
     private void initialize() {
@@ -123,7 +128,77 @@ public class Controller {
                     alert.showAndWait();
                 }
                 break;
-        case "buttonSolve" : break;
+        case "buttonSolve" :
+            try {
+                if (tableA.getItems().isEmpty() || tableB.getItems().isEmpty() || tableC.getItems().isEmpty()) {
+                    throw new MyMessageException("Постройте для начала таблицы!");
+                } else if (EmptyException.emptyTable(tableA) || EmptyException.emptyTable(tableB) || EmptyException.emptyTable(tableC)) {
+                    arrayErrors = new ArrayList<>();
+                    if (EmptyException.emptyTable(tableA)) {
+                        arrayErrors.add("Матрица А");
+                    }
+                    if (EmptyException.emptyTable(tableB)) {
+                        arrayErrors.add("Вектор ограничений");
+                    }
+                    if (EmptyException.emptyTable(tableC)) {
+                        arrayErrors.add("Целевая функция");
+                    }
+                    throw new EmptyException(arrayErrors);
+                } else if (IncorrectData.incorrectTable(tableA) || IncorrectData.incorrectTable(tableB) || IncorrectData.incorrectTable(tableC)) {
+                    arrayErrors = new ArrayList<>();
+                    if (IncorrectData.incorrectTable(tableA)) {
+                        arrayErrors.add("Матрица А");
+                    }
+                    if (IncorrectData.incorrectTable(tableC)) {
+                        arrayErrors.add("Вектор ограничений");
+                    }
+                    if (IncorrectData.incorrectTable(tableC)) {
+                        arrayErrors.add("Целевая функция");
+                    }
+                    throw new IncorrectData(arrayErrors);
+                }
+                if (comboBoxExtr.getSelectionModel().getSelectedItem() == "max"){
+                    extr = false;}
+                else {extr = true;}
+                MMethod method = new MMethod(Table.getTableC(tableC, tableC.getColumns().size()),
+                        Table.getTableA(tableA, tableA.getColumns().size(), tableA.getItems().size()),
+                        Table.getTableB(tableB, tableB.getItems().size()), extr);
+                method.run();
+//                for(int i=0;i<mMethod.getAnswer().size();i++) {
+//                    textArea.setText(mMethod.getAnswer().get(i).toString());
+//                }
+//                solutionOfTask.setDisable(false);
+//                tabPane.getSelectionModel().select(solutionOfTask);
+            } catch (EmptyException ex) {
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("Ошибка");
+                alert.setContentText(ex.getStackTrace().toString());
+                ex.printStackTrace();
+                alert.setHeaderText(ex.getMessageTables());
+                alert.showAndWait();
+            } catch (IncorrectData ex) {
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("Ошибка");
+                alert.setContentText(ex.getStackTrace().toString());
+                alert.setHeaderText(ex.getMessageTables());
+                ex.printStackTrace();
+                alert.showAndWait();
+            } catch (MyMessageException ex) {
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("Ошибка");
+                alert.setContentText(ex.getStackTrace().toString());
+                alert.setHeaderText(ex.getMessage());
+                ex.printStackTrace();
+                alert.showAndWait();
+            } catch (Exception ex) {
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("Ошибка");
+                ex.printStackTrace();
+                alert.setHeaderText(ex.getMessage());
+                ex.printStackTrace();
+                alert.showAndWait();
+            }
+            break;
         }
     }
 

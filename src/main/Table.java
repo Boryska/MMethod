@@ -1,4 +1,5 @@
 package main;
+import math.BigFraction;
 import сontroller.Controller;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.FXCollections;
@@ -56,31 +57,34 @@ public class Table {
         }
     }
 
-    public static double [][] getTableA(TableView tableA, int cols, int rows){
-        double [][] A = new double[rows][cols];
+    public static BigFraction[][] getTableA(TableView tableA, int cols, int rows){
+        BigFraction[][] A = new BigFraction[rows][cols];
         for (int i=0;i<rows;i++){
             ObservableList table = (ObservableList) tableA.getItems().get(i);
             for (int j=0;j<cols;j++){
-                A[i][j]= Double.parseDouble(table.get(j).toString());
+                A[i][j] = new BigFraction(table.get(j).toString());
+                //A[i][j]= Double.parseDouble(table.get(j).toString());
             }
         }
         return A;
     }
 
-    public static double [] getTableB(TableView tableB, int rows){
-        double []B = new double[rows];
+    public static BigFraction[] getTableB(TableView tableB, int rows){
+        BigFraction[] B = new BigFraction[rows];
         for (int j=0;j<rows;j++){
             ObservableList table = (ObservableList) tableB.getItems().get(j);
-            B[j]= Double.parseDouble(table.get(0).toString());
+            B[j] = new BigFraction(table.get(0).toString());
+            //B[j]= Double.parseDouble(table.get(0).toString());
         }
         return B;
     }
 
-    public static double [] getTableC(TableView tableC, int cols){
-        double []C = new double[cols];
+    public static BigFraction[] getTableC(TableView tableC, int cols){
+        BigFraction[] C = new BigFraction[cols];
         ObservableList table = (ObservableList) tableC.getItems().get(0);
         for (int j=0;j<cols;j++){
-            C[j]= Double.parseDouble(table.get(j).toString());
+            C[j] = new BigFraction(table.get(j).toString());
+            //C[j]= Double.parseDouble(table.get(j).toString());
         }
         return C;
     }
