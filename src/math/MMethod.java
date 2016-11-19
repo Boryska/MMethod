@@ -1,15 +1,14 @@
 package math;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.math.RoundingMode;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
-
+@XmlRootElement(name = "mmethod")
+@XmlType(propOrder = {"c","a","b","extr"})
 public class MMethod
 {
-    private BigFraction  b[], L[], A[][];
+    private BigFraction b[], c[], A[][];
     private int m, n;
     private int r = -1,k;
     private boolean min;
@@ -20,31 +19,66 @@ public class MMethod
     private BigFraction CjII[] = new BigFraction[n+m+1];
     private BigFraction CsI[] = new BigFraction[m];
     private BigFraction CsII[] = new BigFraction[m];
-
     BigFraction alfa[] = new BigFraction[n+m+1];
     BigFraction betta[] = new BigFraction[n+m+1];
-    public MMethod(BigFraction[] L, BigFraction A[][], BigFraction b[], boolean min){
-        this.L=L;
+    public MMethod(){}
+    public MMethod(BigFraction[] c, BigFraction A[][], BigFraction b[], boolean extr){
+        this.c=c;
         this.b=b;
         this.A=A;
-        this.min=min;
+        this.min=extr;
         this.m = A.length;
         this.n = A[0].length;
     }
-    public BigDecimal checkExtr (BigFraction[] x){ //////////////Функция ответа
-    BigFraction val = new BigFraction(0);
-    for(int i=0;i<L.length;i++){
-        if(min) {
-            val=val.add((L[i].multiply(new BigFraction(-1))).multiply(x[i]));
-        }else{
-            val=val.add(L[i].multiply(x[i]));
-        }
+    public boolean getExtr() {
+        return min;
     }
-    return new BigDecimal(val.doubleValue()).setScale(6);
-}
+    public BigFraction[][] getA() {
+        return A;
+    }
+
+    @XmlElement
+    public void setA(BigFraction[][] a) {
+        A = a;
+    }
+
+    @XmlElement
+    public void setExtr(boolean extr) {
+        this.min = extr;
+    }
+
+    public BigFraction[] getC() {
+
+        return c;
+    }
+
+    @XmlElement
+    public void setC(BigFraction[] c) {
+        this.c = c;
+    }
+
+    public BigFraction[] getB() {
+
+        return b;
+    }
+    @XmlElement
+    public void setB(BigFraction[] b) {
+        this.b = b;
+    }
+    public BigDecimal checkExtr (BigFraction[] x){ //////////////Функция ответа
+        BigFraction val = new BigFraction(0);
+        for(int i=0;i<c.length;i++){
+            if(min) {
+                val=val.add((c[i].multiply(new BigFraction(-1))).multiply(x[i]));
+            }else{
+                val=val.add(c[i].multiply(x[i]));
+            }
+        }
+        return new BigDecimal(val.doubleValue()).setScale(6);
+    }
     public BigFraction[] checkMin (BigFraction[] l){ //////////////Функция проверки минимума
-            l = L;
-        for(int i=0;i<L.length;i++){
+        l = c;
+        for(int i=0;i<c.length;i++){
             if(min) {
                 l[i].multiply(new BigFraction(-1));
             }
@@ -52,8 +86,9 @@ public class MMethod
         return l;
     }
 
+
     public void run(){
-        L = checkMin(L);
+        c = checkMin(c);
         for (int i = 0; i < m ; i++)
         {
             Fs0[i] = n+i;                         //////// Fs0
@@ -76,7 +111,7 @@ public class MMethod
         }
         for (int i = 0; i <m; i++) {
             for (int j = n+1; j < n+m+1; j++) {
-                 A[i][j]  = new BigFraction(0);                                                                      ///////////Заполняем все нулями что бы потом перекрыть единицами и получилась ед. матр.
+                A[i][j]  = new BigFraction(0);                                                                      ///////////Заполняем все нулями что бы потом перекрыть единицами и получилась ед. матр.
             }
         }
         for (int i = n+1; i < n+m+1 ; i++)
@@ -95,7 +130,7 @@ public class MMethod
         for (int i = 0; i < n+m+1; i++)
         {
             if(i>n || i==0)  CjII[i] = new BigFraction(0);      ////////////   C''j
-            else {  CjII[i] = L[i];}
+            else {  CjII[i] = c[i];}
         }
 
         for (int i = 0; i < m; i++)
@@ -121,7 +156,7 @@ public class MMethod
         System.out.println("Целевая функция");                                                  /////старт
         for (int i = 1; i <n+1; i++)
         {                                                                                       //////
-            System.out.print(L[i]+"*X" + i + " + ");                                                         //////////Красивый вывод целевой функции
+            System.out.print(c[i]+"*X" + i + " + ");                                                         //////////Красивый вывод целевой функции
         }
 
         System.out.println("НАЧАЛО ИТЕРАЦИОННОГО ПРОЦЕССА");
@@ -136,7 +171,7 @@ public class MMethod
             for (int i = 0; i < m; i++)
             {
 
-                    if ( compareTwoFraction(A[i][k],new BigFraction(0)) ==1)
+                if ( compareTwoFraction(A[i][k],new BigFraction(0)) ==1)
                 {
                     omega.add(i);                               //////////Нахождение положительных элементов
                 }
@@ -249,7 +284,7 @@ public class MMethod
         BigFraction otvet = new BigFraction(0);
         for (int i = 0; i < c.length; i++)
         {
-            otvet = otvet.add(c[i].multiply(A[i][0]));
+            otvet.add(c[i].multiply(A[i][0]));
         }
         return otvet;
     }
@@ -267,5 +302,4 @@ public class MMethod
         }
 
     }
-
-   }
+}
