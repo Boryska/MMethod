@@ -437,6 +437,7 @@ public class BigFraction extends Number implements Comparable<BigFraction>
         return numerator.multiply(f.denominator).compareTo(denominator.multiply(f.numerator));
     }
 
+
     /**
      * Returns the smaller of this and f.
      */
