@@ -2,17 +2,24 @@ package сontroller;
 import exceptions.EmptyException;
 import exceptions.IncorrectData;
 import exceptions.MyMessageException;
+import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.TextFieldTableCell;
 import main.Table;
 import math.MMethod;
+
+import java.io.File;
 import java.util.ArrayList;
 import org.apache.commons.lang.math.NumberUtils;
+import parser.JaxbParser;
+
+import javax.xml.bind.JAXBException;
 
 public class Controller {
     @FXML
@@ -33,10 +40,6 @@ public class Controller {
     private Label labelRestrictions;
     @FXML
     private Label labelExtr;
-    @FXML
-    private Button buttonBuild;
-    @FXML
-    private Button buttonSolve;
     @FXML
     private Tab enterTab;
     @FXML
@@ -65,17 +68,129 @@ public class Controller {
             graphicTab.setDisable(true);
         } else initListeners();
     }
+
     private ArrayList<String> arrayErrors;
     private static Stage mainStage;
     private static ArrayList<TableColumn> arrayTableAColumn, arrayTableBColumn, arrayTableCColumn;
     private ObservableList data;
     private boolean extr, check = false;
+    private FileChooser fileChooser;
+    private File file;
+    private FileChooser.ExtensionFilter extFilter;
 
     private void initLoader() {
         setMainStage(mainStage);
     }
+
     public void setMainStage(Stage mainStage) {
         this.mainStage = mainStage;
+    }
+
+    public void menuActions(ActionEvent actionEvent) throws JAXBException {
+        Object source = actionEvent.getSource();
+        if (!(source instanceof MenuItem)) {
+            return;
+        }
+        MenuItem clickedItem = (MenuItem) source;
+        switch (clickedItem.getId()) {
+            case "openMenuItem":
+                JaxbParser jaxbParser = new JaxbParser();
+                fileChooser = new FileChooser();//Класс работы с диалогом выборки и сохранения
+                fileChooser.setTitle("Открытие документа");//Заголовок диалога
+                extFilter =  new FileChooser.ExtensionFilter("XML files (*.xml)", "*.xml");//Расширение
+                fileChooser.getExtensionFilters().add(extFilter);
+                file = fileChooser.showOpenDialog(mainStage);//Указываем текущую сцену
+                if (file != null) {
+                    arrayTableAColumn = new ArrayList<>();
+                    arrayTableBColumn = new ArrayList<>();
+                    arrayTableCColumn = new ArrayList<>();
+                    MMethod mMethod = (MMethod) jaxbParser.getObject(file,MMethod.class);
+                    check = true;
+                    tableA.getColumns().clear();
+                    tableA.getItems().clear();
+                    tableA.setVisible(true);
+                    tableB.getColumns().clear();
+                    tableB.getItems().clear();
+                    tableB.setVisible(true);
+                    tableC.getColumns().clear();
+                    tableC.getItems().clear();
+                    tableC.setVisible(true);
+                    Table.createTable(tableA, mMethod.getA()[0].length, mMethod.getA().length, "A");
+                    Table.createTable(tableB, 1, mMethod.getB().length, "B");
+                    Table.createTable(tableC, mMethod.getC().length, 1, "C");
+                    Table.setTable(tableA, mMethod.getA());
+                    Table.setTable(tableB, mMethod.getB());
+                    Table.setTable(tableC, mMethod.getC());
+                    if(mMethod.getExtr()){
+                        comboBoxExtr.getSelectionModel().select("min");
+                    }else{
+                        comboBoxExtr.getSelectionModel().select("max");
+                    }
+                    initialize();}
+                break;
+            case "saveMenuItem":
+                try {
+                    if (tableA.getItems().isEmpty() || tableB.getItems().isEmpty() || tableC.getItems().isEmpty()) {
+                        throw new MyMessageException("Постройте для начала таблицы!");
+                    }
+                    else if ( comboBoxExtr.getSelectionModel().isEmpty()||
+                            EmptyException.emptyTable(tableA) || EmptyException.emptyTable(tableB) || EmptyException.emptyTable(tableC)) {
+                        arrayErrors = new ArrayList<>();
+                        if (comboBoxExtr.getSelectionModel().isEmpty()) {
+                            arrayErrors.add(labelExtr.getText());
+                        }
+                        if (EmptyException.emptyTable(tableA)) {
+                            arrayErrors.add("таблица А");
+                        }
+                        if (EmptyException.emptyTable(tableB)) {
+                            arrayErrors.add("таблица В");
+                        }
+                        if (EmptyException.emptyTable(tableC)) {
+                            arrayErrors.add("вектор С");
+                        }
+                        throw new EmptyException(arrayErrors);
+                    }
+                    fileChooser = new FileChooser();//Класс работы с диалогом выборки и сохранения
+                    fileChooser.setTitle("Сохранение документа");//Заголовок диалога
+                    extFilter =  new FileChooser.ExtensionFilter("XML files (*.xml)", "*.xml");//Расширение
+                    fileChooser.getExtensionFilters().add(extFilter);
+                    file = fileChooser.showSaveDialog(mainStage);//Указываем текущую сцену CodeNote.mainStage
+                    if (file != null) { //Save
+                        MMethod myMethod = new MMethod(Table.getTableC(tableC, tableC.getColumns().size()),
+                                Table.getTableA(tableA, tableA.getColumns().size(), tableA.getItems().size()),
+                                Table.getTableB(tableB, tableB.getItems().size()), extr);
+
+                        jaxbParser = new JaxbParser();
+                        jaxbParser.saveObject(file,myMethod);
+                    }
+                }
+                catch (MyMessageException ex) {
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setTitle("Ошибка");
+                    alert.setContentText(ex.getStackTrace().toString());
+                    alert.setHeaderText(ex.getMessage());
+                    alert.showAndWait();
+                }
+                catch (EmptyException ex) {
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setTitle("Ошибка");
+                    alert.setContentText(ex.getStackTrace().toString());
+                    alert.setHeaderText(ex.getMessageTablesAndFields());
+                    alert.showAndWait();
+                }
+                break;
+            case "exitMenuItem":
+                Platform.exit();
+                break;
+            case "aboutMenuItem":
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("О программе");
+                alert.setHeaderText("Программа решения задач линейного программирования М-методом");
+                alert.setContentText("Выполнили студенты группы КН-34б:\n Кондратьев Виталий, Ворона Борис, Кущ Алина");
+
+                alert.showAndWait();
+                break;
+        }
     }
 
     public void buttonAction(ActionEvent actionEvent) {
@@ -215,7 +330,6 @@ public class Controller {
     }
 
     private void initListeners() {
-
         for (int i = 0; i < tableA.getColumns().size(); i++) {
             arrayTableAColumn.get(i).setCellFactory(TextFieldTableCell.forTableColumn());
             arrayTableAColumn.get(i).setOnEditCommit(
