@@ -16,6 +16,8 @@ import math.MMethod;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.LinkedList;
+
 import org.apache.commons.lang.math.NumberUtils;
 import parser.JaxbParser;
 
@@ -52,6 +54,8 @@ public class Controller {
     private Tab graphicTab;
     @FXML
     private TabPane tabPane;
+    @FXML
+    private TextArea textArea;
 
     @FXML
     private void initialize() {
@@ -186,10 +190,8 @@ public class Controller {
                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
                 alert.setTitle("О программе");
                 alert.setHeaderText("Программа решения задач линейного программирования М-методом");
-                alert.setContentText("Выполнили студенты группы КН-34б:\n Кондратьев Виталий, Ворона Борис, Кущ Алина");
-
+                alert.setContentText("Выполнили студенты группы КН-34б:\nКондратьев Виталий, Ворона Борис, Кущ Алина");
                 alert.showAndWait();
-                break;
         }
     }
 
@@ -291,9 +293,11 @@ public class Controller {
                         Table.getTableA(tableA, tableA.getColumns().size(), tableA.getItems().size()),
                         Table.getTableB(tableB, tableB.getItems().size()), extr);
                 method.run();
-//                for(int i=0;i<mMethod.getAnswer().size();i++) {
-//                    textArea.setText(mMethod.getAnswer().get(i).toString());
+                //textArea.setText(method.getAnswer().toString());
+//                for(int i=0;i<method.getAnswer().size();i++) {
+//                    textArea.setText(method.getAnswer().get(i).toString());
 //                }
+//  OUT
                 solutionTab.setDisable(false);
                 tabPane.getSelectionModel().select(solutionTab);
             } catch (EmptyException ex) {
