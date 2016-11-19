@@ -250,7 +250,7 @@ public class MMethod
         BigFraction otvet = new BigFraction(0);
         for (int i = 0; i < c.length; i++)
         {
-            otvet.add(c[i].multiply(A[i][0]));
+            otvet = otvet.add(c[i].multiply(A[i][0]));
         }
         return otvet;
     }
