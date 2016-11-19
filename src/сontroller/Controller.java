@@ -96,7 +96,7 @@ public class Controller {
             case "openMenuItem":
                 JaxbParser jaxbParser = new JaxbParser();
                 fileChooser = new FileChooser();//Класс работы с диалогом выборки и сохранения
-                fileChooser.setTitle("Open Document");//Заголовок диалога
+                fileChooser.setTitle("Открытие документа");//Заголовок диалога
                 extFilter =  new FileChooser.ExtensionFilter("XML files (*.xml)", "*.xml");//Расширение
                 fileChooser.getExtensionFilters().add(extFilter);
                 file = fileChooser.showOpenDialog(mainStage);//Указываем текущую сцену
@@ -151,7 +151,7 @@ public class Controller {
                         throw new EmptyException(arrayErrors);
                     }
                     fileChooser = new FileChooser();//Класс работы с диалогом выборки и сохранения
-                    fileChooser.setTitle("Save Document");//Заголовок диалога
+                    fileChooser.setTitle("Сохранение документа");//Заголовок диалога
                     extFilter =  new FileChooser.ExtensionFilter("XML files (*.xml)", "*.xml");//Расширение
                     fileChooser.getExtensionFilters().add(extFilter);
                     file = fileChooser.showSaveDialog(mainStage);//Указываем текущую сцену CodeNote.mainStage
@@ -181,6 +181,14 @@ public class Controller {
                 break;
             case "exitMenuItem":
                 Platform.exit();
+                break;
+            case "aboutMenuItem":
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("О программе");
+                alert.setHeaderText("Программа решения задач линейного программирования М-методом");
+                alert.setContentText("Выполнили студенты группы КН-34б:\n Кондратьев Виталий, Ворона Борис, Кущ Алина");
+
+                alert.showAndWait();
                 break;
         }
     }
