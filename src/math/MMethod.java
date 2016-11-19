@@ -204,18 +204,17 @@ public class MMethod
         BigFraction ma = a[1];
         for (int i = 1; i < a.length ; i++)
         {
-            if(compareTwoFraction(ma,a[i])==1 && compareTwoFraction(new BigFraction(0),a[i])==1)                          /////Нахождение минимального альфа
+            if(compareTwoFraction(ma,a[i])==1 && compareTwoFraction(new BigFraction(0),a[i]) == 1)                          /////Нахождение минимального альфа
                 ma = a[i];
         }
         ArrayList<Integer> mas = new ArrayList<Integer>();
         for (int i = 1; i < a.length; i++)
         {
-            if (a[i] == ma){
+            if (compareTwoFraction(ma,a[i])==0){
                 mas.add(i);             ////////Если несколько одинаковых альфа то сравниваем эти альфа по бетте
             }
         }
-
-        if((mas.size() != 1) ) {
+        if((mas.size() > 1) || mas.size() == 0 ) {
             int numb = mas.get(0);
             BigFraction mb = b[mas.get(0)];
             for (int i = 0; i < mas.size() ; i++)
@@ -227,7 +226,7 @@ public class MMethod
             }
             return numb;
         }
-        else {
+        else  {
             return mas.get(0);
         }
     }
