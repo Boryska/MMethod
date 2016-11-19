@@ -52,7 +52,6 @@ public class MMethod
         return l;
     }
 
-
     public void run(){
         L = checkMin(L);
         for (int i = 0; i < m ; i++)
