@@ -37,6 +37,18 @@ public class Controller {
     private Button buttonBuild;
     @FXML
     private Button buttonSolve;
+    @FXML
+    private Tab enterTab;
+    @FXML
+    private Tab solutionTab;
+    @FXML
+    private Tab checkTab;
+    @FXML
+    private Tab findTab;
+    @FXML
+    private Tab graphicTab;
+    @FXML
+    private TabPane tabPane;
 
     @FXML
     private void initialize() {
@@ -47,10 +59,10 @@ public class Controller {
             tableA.setVisible(false);
             tableB.setVisible(false);
             tableC.setVisible(false);
-            //solutionOfTask.setDisable(true);
-            //findTab.setDisable(true);
-            //checkTab.setDisable(true);
-            //graphicTab.setDisable(true);
+            solutionTab.setDisable(true);
+            findTab.setDisable(true);
+            checkTab.setDisable(true);
+            graphicTab.setDisable(true);
         } else initListeners();
     }
     private ArrayList<String> arrayErrors;
@@ -167,8 +179,8 @@ public class Controller {
 //                for(int i=0;i<mMethod.getAnswer().size();i++) {
 //                    textArea.setText(mMethod.getAnswer().get(i).toString());
 //                }
-//                solutionOfTask.setDisable(false);
-//                tabPane.getSelectionModel().select(solutionOfTask);
+                solutionTab.setDisable(false);
+                tabPane.getSelectionModel().select(solutionTab);
             } catch (EmptyException ex) {
                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
                 alert.setTitle("Ошибка");

@@ -1,4 +1,7 @@
 package math;
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.math.RoundingMode;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -28,6 +31,18 @@ public class MMethod
         this.m = A.length;
         this.n = A[0].length;
     }
+    public BigDecimal checkExtr (BigFraction[] x){
+        BigFraction val = new BigFraction(0);
+        for(int i=0;i<c.length;i++){
+            if(extr) {
+                val=val.add((c[i].multiply(new BigFraction(-1))).multiply(x[i]));
+            }else{
+                val=val.add(c[i].multiply(x[i]));
+            }
+        }
+        return new BigDecimal(val.doubleValue()).setScale(6);
+    }
+
     public void run(){
         // ТУТ САМ КОД АЛГОРИТМА
 
@@ -72,12 +87,7 @@ public class MMethod
 //            L[i] = Double.parseDouble(read.readLine());
 //        }
 //
-//        if(min){
-//            for (int i = 1; i < n+1 ; i++)
-//            {
-//                L[i] *= -1;
-//            }
-//        }
+
 //        for (int i = 0; i < m; i++)
 //        {
 //            System.out.println("Введите "+(i+1)+" ограничение:");

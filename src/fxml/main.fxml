@@ -25,9 +25,9 @@
           </Menu>
         </menus>
       </MenuBar>
-      <TabPane layoutX="60.0" layoutY="61.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="377.0" prefWidth="600.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="23.0">
+      <TabPane fx:id="tabPane" layoutX="60.0" layoutY="61.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="377.0" prefWidth="600.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="23.0">
         <tabs>
-          <Tab text="Введение данных">
+          <Tab fx:id="enterTab" text="Введение данных">
             <content>
               <AnchorPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="180.0" prefWidth="200.0">
                      <children>
@@ -110,22 +110,22 @@
                      </children></AnchorPane>
             </content>
           </Tab>
-          <Tab text="Решение задачи">
+          <Tab fx:id="solutionTab" text="Решение задачи">
             <content>
               <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
             </content>
           </Tab>
-            <Tab text="Проверка достоверности решения">
+            <Tab fx:id="checkTab" text="Проверка достоверности решения">
               <content>
                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
               </content>
             </Tab>
-            <Tab text="Исследование устойчивости">
+            <Tab fx:id="findTab" text="Исследование устойчивости">
               <content>
                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
               </content>
             </Tab>
-            <Tab text="График изменения линейной формы по итерации">
+            <Tab fx:id="graphicTab" text="График изменения линейной формы по итерации">
               <content>
                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
               </content>
