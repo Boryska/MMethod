@@ -15,10 +15,12 @@
         <menus>
           <Menu mnemonicParsing="false" text="Файл">
             <items>
-              <MenuItem mnemonicParsing="false" text="Выход" />
+              <MenuItem fx:id="openMenuItem" mnemonicParsing="false" onAction="#menuActions" text="Загрузить из файла" />
+                  <MenuItem fx:id="saveMenuItem" mnemonicParsing="false" onAction="#menuActions" text="Сохранить в файл" />
+                  <MenuItem fx:id="exitMenuItem" mnemonicParsing="false" onAction="#menuActions" text="Выход" />
             </items>
           </Menu>
-          <Menu mnemonicParsing="false" text="Помощь">
+          <Menu mnemonicParsing="false" text="Справка">
             <items>
               <MenuItem mnemonicParsing="false" text="О программе" />
             </items>

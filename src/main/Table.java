@@ -88,25 +88,71 @@ public class Table {
         }
         return C;
     }
+
+    public static void setTable(TableView tableView, BigFraction[] arr) {
+        int row = tableView.getItems().size();
+        TestDataGenerator dataGenerator = new TestDataGenerator();
+        tableView.getItems().clear();
+        for (int i = 0; i < row; i++) {
+            tableView.getItems().add(
+                    FXCollections.observableArrayList(
+                            dataGenerator.getNext(tableView.getColumns().size(), arr)
+                    )
+            );
+        }
+    }
+
+    public static void setTable(TableView tableView, BigFraction[][] arr) {
+        int row = tableView.getItems().size();
+        TestDataGenerator dataGenerator = new TestDataGenerator();
+        tableView.getItems().clear();
+        for (int i = 0; i < row; i++) {
+            tableView.getItems().add(
+                    FXCollections.observableArrayList(
+                            dataGenerator.getNext(tableView.getColumns().size(), arr)
+                    )
+            );
+        }
+    }
+
     private static class TestDataGenerator {
-        //private static final String[] LOREM = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc tempus cursus diam ac blandit. Ut ultrices lacus et mattis laoreet. Morbi vehicula tincidunt eros lobortis varius. Nam quis tortor commodo, vehicula ante vitae, sagittis enim. Vivamus mollis placerat leo non pellentesque. Nam blandit, odio quis facilisis posuere, mauris elit tincidunt ante, ut eleifend augue neque dictum diam. Curabitur sed lacus eget dolor laoreet cursus ut cursus elit. Phasellus quis interdum lorem, eget efficitur enim. Curabitur commodo, est ut scelerisque aliquet, urna velit tincidunt massa, tristique varius mi neque et velit. In condimentum quis nisi et ultricies. Nunc posuere felis a velit dictum suscipit ac non nisl. Pellentesque eleifend, purus vel consequat facilisis, sapien lacus rutrum eros, quis finibus lacus magna eget est. Nullam eros nisl, sodales et luctus at, lobortis at sem.".split(" ");
         private static final String[] LOREM = ("0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 " +
                 "0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0" +
                 " 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.").split(" ");
-        private int curWord = 0;
+        private int curWord = 0, curWordA = 0, curWordB = 0;
 
         List<String> getNext(int nWords) {
             List<String> words = new ArrayList<>();
-
             for (int i = 0; i < nWords; i++) {
                 if (curWord == Integer.MAX_VALUE) {
                     curWord = 0;
                 }
-
                 words.add(LOREM[curWord % LOREM.length]);
                 curWord++;
             }
+            return words;
+        }
 
+        List<String> getNext(int nWords, BigFraction[] arr) {
+            List<String> words = new ArrayList<>();
+            for (int i = 0; i < nWords; i++) {
+                if (nWords != 1)
+                    words.add(String.valueOf(arr[i].doubleValue()));
+                else
+                    words.add(String.valueOf(arr[curWordB].doubleValue()));
+            }
+            curWordB++;
+            return words;
+        }
+
+        List<String> getNext(int nWords, BigFraction[][] arr) {
+            List<String> words = new ArrayList<>();
+            if (curWordA == Integer.MAX_VALUE) {
+                curWordA = 0;
+            }
+            for (int j = 0; j < nWords; j++)
+                words.add(String.valueOf(arr[curWordA % arr.length][j].doubleValue()));
+            curWordA++;
             return words;
         }
     }
