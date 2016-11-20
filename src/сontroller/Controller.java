@@ -125,11 +125,14 @@ public class Controller {
                     Table.setTable(tableA, mMethod.getA());
                     Table.setTable(tableB, mMethod.getB());
                     Table.setTable(tableC, mMethod.getC());
+
                     if(mMethod.getExtr()){
                         comboBoxExtr.getSelectionModel().select("min");
                     }else{
                         comboBoxExtr.getSelectionModel().select("max");
                     }
+                    textFieldVariables.setText(String.valueOf(mMethod.getA().length));
+                    textFieldRestrictions.setText(String.valueOf(mMethod.getA()[0].length));
                     initialize();}
                 break;
             case "saveMenuItem":

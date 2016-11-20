@@ -66,8 +66,6 @@ public class MMethod
         this.b = b;
     }
 
-
-
     public void run() throws Exception{
         Fs0 = new int[m];
         Fs = new int[m];
