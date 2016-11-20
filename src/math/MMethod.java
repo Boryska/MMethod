@@ -228,6 +228,7 @@ public class MMethod
             System.out.println(count+ " -я итерация");
             System.out.println("Номер направляющего столбца K = "+ (k));
             ArrayList<Integer> omega = new ArrayList<>();
+            BigFraction tetaMas[] = new BigFraction[m];
             for (int i = 0; i < m; i++)
             {
 
@@ -243,8 +244,12 @@ public class MMethod
             }
             else {
                 BigFraction teta = new BigFraction(10000000);
+
                 for (int i = 0; i < m; i++)
                 {
+                    if( compareTwoFraction(new BigFraction(0),newA[i][k]) ==-1 ){
+                        tetaMas[i] = newA[i][0].divide(newA[i][k]);
+                    }
                     if ((compareTwoFraction(newA[i][k],new BigFraction(0)) ==1) && ( compareTwoFraction(teta,newA[i][0].divide(newA[i][k])) ==1) )
                     {
                         teta = newA[i][0].divide(newA[i][k]);                             /////Находим тета0 и устанавливаем р которое на ед меньше в силу того что я проебал этот момент
@@ -252,6 +257,10 @@ public class MMethod
                     }
                 }
             }
+            for (BigFraction x: tetaMas  ) {
+                System.out.print(x + " ");
+            }
+            System.out.println();
             System.out.println("Номер направляющей строки R = "+ (r+1));
             Fs[r] = k;                         ////// Замена условия в базисе
             CsI[r] = CjI[k] ;                      ////// Замена С's
@@ -315,18 +324,20 @@ public class MMethod
             System.out.println();
             k = minimumK(alfa,betta);
             System.out.println(k+"--------------------");
-            System.out.println("Оптимальное значение функции при заданных ограничениях равно: " + finaloo(CsII,newA).doubleValue() );
+            System.out.println("Оптимальное значение функции при заданных ограничениях равно: " + finaloo(CsII,newA,min).doubleValue() );
         }
     }
 
 
-    public static BigFraction finaloo (BigFraction c[],BigFraction A[][]){
+    public static BigFraction finaloo (BigFraction c[],BigFraction A[][],boolean min){
         BigFraction otvet = new BigFraction(0);
         for (int i = 0; i < c.length; i++)
         {
             otvet = otvet.add(c[i].multiply(A[i][0]));
         }
-        return otvet;
+        if(min)
+        return otvet.multiply(new BigFraction(-1));
+        else return otvet;
     }
     private static int compareTwoFraction(BigFraction fr1, BigFraction fr2){
         if(fr1.signum()>fr2.signum()){
