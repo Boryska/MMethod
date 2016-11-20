@@ -15,8 +15,7 @@ public class MMethod
     private boolean min;
     private int Fs0[];
     private int Fs[];
-    private static double eps = 1000000000;
-    private BigFraction CjI[];
+      private BigFraction CjI[];
     private BigFraction CjII[];
     private BigFraction CsI[];
     private BigFraction CsII[];
@@ -67,29 +66,7 @@ public class MMethod
         this.b = b;
     }
 
-//    public BigFraction[][] MainTable(BigFraction[][] a, BigFraction[] b){
-//        BigFraction l[][];
-//        l = new BigFraction[a.length+2][a[0].length+1];
-//        for(int i = 0; i < a.length+2; i++){
-//            for(int j = 0; j < a[0].length+1; j++){
-//                if(j == 0 && i < a.length){
-//                    l[i][j] =  b[i];
-//                }
-//                else if(j > a[0].length && i < a.length){
-//                    if(j==a[0].length+i+1){
-//                        l[i][j] = new BigFraction(1);
-//                    }
-//                    else{
-//                        l[i][j] = new BigFraction(0);
-//                    }
-//
-//                }
-//                else if(j = )
-//            }
-//        }
-//
-//        return l;
-//    }
+
 
     public void run() throws Exception{
         Fs0 = new int[m];
@@ -115,25 +92,13 @@ public class MMethod
             }
         }
         BigFraction newA[][] = new BigFraction[A.length][A[0].length+b.length];
-        for(int i=0;i<newA.length;i++){
-            System.arraycopy(A[i],0,newA[i],0,A[i].length);
-        }
-        for(int i=0;i<newA.length;i++){
-            for(int j=A[0].length; j<newA[0].length;j++) {
-                if(j==A[0].length+i){
-                    newA[i][j] = new BigFraction(1);
-                }else {
-                    newA[i][j] = new BigFraction(0);
-                }
-            }
-        }
-        A=newA;
+
+        newA = MainTable(A,b);
         System.out.println("m = " + A.length);System.out.println("n = " + A[0].length);
 
         for (int i = 0; i < Fs0.length; i++)
         {
-            Fs0[i] = i+A[0].length-Fs0.length;
-            //Fs0[i] = n+i;                         //////// Fs0
+            Fs0[i] = i+A[0].length-Fs0.length;               //////// Fs0
         }
         for (int i = 0; i < Fs.length ; i++)
         {
@@ -148,14 +113,22 @@ public class MMethod
                 CjI[i] = new BigFraction(-1);
             }
         }
-        System.out.println(m);
-        System.out.println(n);
+        BigFraction L [] = new BigFraction[n+1];
+        for (int i = 0; i < n+1  ; i++) {
+            if(i==0)
+                L[i]= new BigFraction(0);
+            else{
+                L[i] = c[i-1];
+            }
+        }
+        System.out.println("Kolvo ogr   "+m);
+        System.out.println("Kolvo peremennih    "+n);
         for (int i = 0; i < (n+m+1); i++)
         {
-            if(i>=n || i==0) {
-                CjII[i] = new BigFraction(0);
-            } ////////////   C''j
-            else{  CjII[i] = c[i];}
+            if(i>=n+1 || i==0) {
+                CjII[i] = new BigFraction(0);  ////////////   C''j
+            }
+            else{  CjII[i] = L[i];}
         }
         for (int i = 0; i < m; i++)
         {
@@ -168,23 +141,21 @@ public class MMethod
 
         for (int i = 0; i < (n+m+1) ; i++)
         {
-            System.out.println(i);
-            System.out.println("m = " + newA.length);
-            System.out.println("n = " + newA[0].length);
-            alfa[i]= alfabetta(CsI,A,CjI[i],i);
-            System.out.println(i + " " + alfa[i]);
+            alfa[i]= alfabetta(CsI,newA,CjI[i],i);
             newA[m][i] = alfa[i];
         }
 
         for (int i = 0; i < n+m+1 ; i++)
         {
-            betta[i]= alfabetta(CsII,A,CjII[i],i);                /////////// Betta
-            A[m+1][i]  = betta[i] ;
+            betta[i]= alfabetta(CsII,newA,CjII[i],i);                /////////// Betta
+            newA[m+1][i]  = betta[i] ;
         }
         System.out.println("Целевая функция");                                                  /////старт
+
+
         for (int i = 1; i <n+1; i++)
         {                                                                                       //////
-            System.out.print(c[i]+"*X" + i + " + ");                                                         //////////Красивый вывод целевой функции
+            System.out.print(L[i]+"*X" + i + " + ");                                                         //////////Красивый вывод целевой функции
         }
         if(min){                                                                                //////
             System.out.println("->min");
@@ -196,20 +167,20 @@ public class MMethod
         {
             for (int j = 1; j <n+1 ; j++)
             {
-                if(!(compareTwoFraction(A[i][j],new BigFraction(0))==0))
-                    System.out.print(A[i][j]+"*X" + j+ " + ");                                               //////  Вывод основной задачи
+                if(!(compareTwoFraction(newA[i][j],new BigFraction(0))==0))
+                    System.out.print(newA[i][j]+"*X" + j+ " + ");                                               //////  Вывод основной задачи
             }
-            System.out.println(" = " + A[i][0]);
+            System.out.println(" = " + newA[i][0]);
         }                                                                                       ////////fin
         System.out.println("М-задача");                                               //////Start
         for (int i = 0; i < m; i++)                                                              //////
         {
             for (int j = 1; j <n+m+1 ; j++)
             {
-                if(compareTwoFraction(A[i][j],new BigFraction(0))==0)
-                    System.out.print(A[i][j]+"*X" + j+ " + ");                                               //////  Вывод М задачи
+                if(!(compareTwoFraction(newA[i][j],new BigFraction(0))==0))
+                    System.out.print(newA[i][j]+"*X" + j+ " + ");                                               //////  Вывод М задачи
             }
-            System.out.println(" = " + A[i][0]);
+            System.out.println(" = " + newA[i][0]);
         }                                                                                       ////////fin
         System.out.println("Вектор Cj':");
         for (BigFraction x:CjI )
@@ -233,12 +204,22 @@ public class MMethod
         {
             System.out.print(x + " | ");
         }
+
         System.out.println();
         System.out.println("НАЧАЛО ИТЕРАЦИОННОГО ПРОЦЕССА");
         int count = 1;
         k = minimumK(alfa,betta);
         System.out.println(k);
+        for (int i = 0; i < m+2; i++)
+        {
 
+            for (int j = 0; j <n+m+1; j++)
+            {
+                System.out.print(newA[i][j].doubleValue()  + " | ");
+
+            }
+            System.out.println();
+        }
 
 
         while( ((alfa[k].multiply(1000000000).add(betta[k])).compareTo(new BigFraction(0))) < 0) //////////////////////////////////////////////////////////////////////
@@ -250,7 +231,7 @@ public class MMethod
             for (int i = 0; i < m; i++)
             {
 
-                if ( compareTwoFraction(A[i][k],new BigFraction(0)) ==1)
+                if ( compareTwoFraction(newA[i][k],new BigFraction(0)) ==1)
 
                 {
                     omega.add(i);                               //////////Нахождение положительных элементов
@@ -264,9 +245,9 @@ public class MMethod
                 BigFraction teta = new BigFraction(10000000);
                 for (int i = 0; i < m; i++)
                 {
-                    if ((compareTwoFraction(A[i][k],new BigFraction(0)) ==1) && ( compareTwoFraction(teta,A[i][0].divide(A[i][k])) ==1) )
+                    if ((compareTwoFraction(newA[i][k],new BigFraction(0)) ==1) && ( compareTwoFraction(teta,newA[i][0].divide(newA[i][k])) ==1) )
                     {
-                        teta = A[i][0].divide(A[i][k]);                             /////Находим тета0 и устанавливаем р которое на ед меньше в силу того что я проебал этот момент
+                        teta = newA[i][0].divide(newA[i][k]);                             /////Находим тета0 и устанавливаем р которое на ед меньше в силу того что я проебал этот момент
                         r = i;                                   //// Но для матрицы все хорошо
                     }
                 }
@@ -275,13 +256,13 @@ public class MMethod
             Fs[r] = k;                         ////// Замена условия в базисе
             CsI[r] = CjI[k] ;                      ////// Замена С's
             CsII[r] = CjII[k];                     ////// Замена С''s
-            A = findMatrix(A,k,r,m,n);
+            newA = findMatrix(newA,k,r,m,n);
             for (int i = 0; i < m+2; i++)
             {
 
                 for (int j = 0; j <n+m+1; j++)
                 {
-                    System.out.print(A[i][j].doubleValue()  + " | ");
+                    System.out.print(newA[i][j].doubleValue()  + " | ");
 
                 }
                 System.out.println();
@@ -290,12 +271,12 @@ public class MMethod
 
             for (int i = 0; i < n+m+1 ; i++)
             {
-                alfa[i]= alfabetta(CsI,A,CjI[i],i);                /////////// Alfa
+                alfa[i]= alfabetta(CsI,newA,CjI[i],i);                /////////// Alfa
 
             }
             for (int i = 0; i < n+m+1 ; i++)
             {
-                betta[i] = alfabetta(CsII, A, CjII[i], i);                /////////// Betta
+                betta[i] = alfabetta(CsII, newA, CjII[i], i);                /////////// Betta
 
             }
 
@@ -334,7 +315,7 @@ public class MMethod
             System.out.println();
             k = minimumK(alfa,betta);
             System.out.println(k+"--------------------");
-            System.out.println("Оптимальное значение функции при заданных ограничениях равно: " + finaloo(CsII,A).doubleValue() );
+            System.out.println("Оптимальное значение функции при заданных ограничениях равно: " + finaloo(CsII,newA).doubleValue() );
         }
     }
 
@@ -415,4 +396,28 @@ public class MMethod
         else  {
             return mas.get(0);
         }
-    }}
+    }
+   public BigFraction[][] MainTable(BigFraction[][] a, BigFraction[] b){
+    BigFraction l[][] = new BigFraction[m+2][m+n+1];
+    for (int i = 0; i < m+2 ; i++) {
+        for (int j = 0; j < m+n+1 ; j++) {
+            if( j == (i + n+1))
+                l[i][j] = new BigFraction(1);                           ///////////Заполнение ед матрицой
+            else
+                l[i][j] = new BigFraction(0);
+        }
+    }
+
+    for (int i = 0; i < m ; i++) {
+        l[i][0] = b[i];                                     //// Vector B
+    }
+
+    for (int i = 0; i < m ; i++) {
+        for (int j = 1; j < n+1 ; j++) {
+            l[i][j] = a[i][j-1];
+        }
+    }
+    return l;
+}
+
+}
