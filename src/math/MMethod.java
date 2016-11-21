@@ -255,7 +255,7 @@ public class MMethod
 //        System.out.println();
 //        System.out.println("НАЧАЛО ИТЕРАЦИОННОГО ПРОЦЕССА");
 
-        usl.append("\nНАЧАЛО ИТЕРАЦИОННОГО ПРОЦЕССА");
+        usl.append("\nНАЧАЛО ИТЕРАЦИОННОГО ПРОЦЕССА\n");
         int count = 1;
         k = minimumK(alfa,betta);
         for (int i = 0; i < m+2; i++)
@@ -285,7 +285,8 @@ public class MMethod
             }
             if (omega.size() == 0){
                 System.out.println("СИСТЕМА НЕОГРАНИЧЕННА");
-                break;
+                iterat.append("Внимание! Введенная система является неограниченной.");
+                return;
             }
             else {
                 BigFraction teta = new BigFraction(10000000);

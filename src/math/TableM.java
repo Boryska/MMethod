@@ -112,7 +112,7 @@ public class TableM {
             if(i==0){
                 format.append("%"+(i+1)+"$-3.2s |");
             }else{
-                format.append("%"+(i+1)+"$-"+((int) (5*3)+4)+"."+(6)+"s |");
+                format.append("%"+(i+1)+"$"+17+"."+(14)+"s |");
             }
         }
         for (int i = 0; i < mainTable[0].length -1 ; i++) {
@@ -121,8 +121,8 @@ public class TableM {
                 mainTable[1][i] = "C``j";
             }
             else if(i > 4){
-                mainTable[0][i]=new BigDecimal(CjI[i-4].intValue()).setScale(6,RoundingMode.FLOOR);
-                mainTable[1][i]=new BigDecimal(CjII[i-4].intValue()).setScale(5,RoundingMode.FLOOR);
+                mainTable[0][i]=CjI[i-4].intValue();
+                mainTable[1][i]=CjII[i-4].intValue();
             }
         }
         Object [] ogl = new Object[mainTable[0].length ];
@@ -167,7 +167,22 @@ public class TableM {
             mas.append(String.format(format.toString(), mainTable[i]));
             mas.append("\n");
         }
+        mas.append("\n");
+        for (int i = 1; i < alfa.length ; i++) {
+            if(alfa[i].signum() == -1){
+                mas.append(" "+i+ " < 0");
+            }
+            else if(alfa[i].signum() == 1){
+                mas.append(" "+i+ " < 0");
+            }
+            else if(alfa[i].signum() == 0){
+                if(betta[i].signum() == 1){
 
+                }
+
+            }
+
+        }
         return mas.toString();
     }
 }

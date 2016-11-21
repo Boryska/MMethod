@@ -297,8 +297,10 @@ public class Controller {
                         Table.getTableB(tableB, tableB.getItems().size()), extr);
                 method.run();
                 for(int i=0;i<method.getAnswer().size();i++) {
-                    textArea.setText(method.getAnswer().get(i).toString());
+                    textArea.setText(textArea.getText()+method.getAnswer().get(i).toString());
+
                 }
+
 
                 solutionTab.setDisable(false);
                 tabPane.getSelectionModel().select(solutionTab);
