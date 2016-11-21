@@ -2,6 +2,7 @@ package math;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.ArrayList;
 
 
 public class TableM {
@@ -84,7 +85,7 @@ public class TableM {
         for (int i = 0; i < Fs.length; i++) {
             if (Fs[i] < A[i].length - (A.length -2)) {
                 CsI[i] = new BigFraction(0);
-                CsII[i] = c[i];
+                CsII[i] = c[Fs[i]-1];
             } else {
                 CsI[i] = new BigFraction(-1);
                 CsII[i] = new BigFraction(0);
@@ -107,10 +108,11 @@ public class TableM {
         fillingTable();
         StringBuilder mas = new StringBuilder();
         StringBuilder format = new StringBuilder();
-        Object [][] mainTable = new Object[A.length+3][A[0].length+5];
+        Object [][] mainTable = new Object[A.length+5][A[0].length+5];
         for(int i=0;i<A[0].length+5;i++){
-            if(i==0){
-                format.append("%"+(i+1)+"$-3.2s |");
+            if(i==0){ format.append("%"+(i+1)+"$-3.3s |"); }
+            else if(i!=0 && i < 4){
+                format.append("%"+(i+1)+"$7.7s |");
             }else{
                 format.append("%"+(i+1)+"$"+17+"."+(14)+"s |");
             }
@@ -137,21 +139,32 @@ public class TableM {
         for (int i = 0; i < mainTable[0].length  ; i++) {
          mainTable[2][i] = ogl[i];
         }
-        for (int i = 3; i < mainTable.length-2 ; i++) {
+        for (int i = 3; i < mainTable.length-4 ; i++) {
             mainTable[i][0] = (i-2);
             mainTable[i][1] = CsI[i-3].intValue();
             mainTable[i][2] = CsII[i-3].intValue();
             mainTable[i][3] = Fs[i-3];
-            mainTable[i][mainTable[0].length-1] = teta[i-3];
+            if( teta[i-3] != null)    { mainTable[i][mainTable[0].length-1] = teta[i-3].doubleValue();}
             mainTable[i+1][0] = (i - 1) ;
             mainTable[i+2][0] = i;
-
+            mainTable[i+1][3] = "α"  ;
+            mainTable[i+2][3] = "β";
+            mainTable[i+3][0] = ((i - 1) +"'") ;
+            mainTable[i+4][0] = (i+ "'");
+            mainTable[i+3][3] = "α'"  ;
+            mainTable[i+4][3] = "β'";
 
         }
         for (int i = 3; i < mainTable.length; i++) {
             for (int j = 4; j < mainTable[0].length; j++) {
-                if(j!=mainTable[0].length-1){
+                if(j<mainTable[0].length-1 && i <mainTable.length -2){
                     mainTable[i][j] = A[i-3][j-4].doubleValue();
+                }
+                else if(j<mainTable[0].length-1 && i == mainTable.length -2){
+                    mainTable[i][j] = alfa[j-4].doubleValue();
+                }
+                else if(j<mainTable[0].length-1 && i == mainTable.length -1){
+                    mainTable[i][j] = betta[j-4].doubleValue();
                 }
             }
         }
@@ -168,20 +181,49 @@ public class TableM {
             mas.append("\n");
         }
         mas.append("\n");
+        String[] delta = new String[alfa.length -1];
         for (int i = 1; i < alfa.length ; i++) {
             if(alfa[i].signum() == -1){
-                mas.append(" "+i+ " < 0");
+                delta[i-1]=("Δ"+i+ " < 0");
             }
             else if(alfa[i].signum() == 1){
-                mas.append(" "+i+ " < 0");
+                delta[i-1]=("Δ"+i+ " > 0");
             }
             else if(alfa[i].signum() == 0){
-                if(betta[i].signum() == 1){
-
+                if(betta[i].signum() == 0){
+                    delta[i-1]=("Δ"+i+ " = 0");
                 }
-
+                if(betta[i].signum() == -1){
+                    delta[i-1]=("Δ"+i+ " < 0");
+                }
+                else if(betta[i].signum() == 1){
+                    delta[i-1]=("Δ"+i+ " > 0");
+                }
             }
 
+        }
+        StringBuilder format1 = new StringBuilder();
+
+        for(int i=0;i<A[0].length-1;i++){
+            if(i==0){ format1.append("%"+(i+1)+"$65.6s "); }
+            else{
+                format1.append("%"+(i+1)+"$"+18+"."+7+"s ");
+            }
+
+        }
+        mas.append(String.format(format1.toString(),delta));
+        mas.append("\n\n");
+
+        for (int j = 1; j <A[0].length; j++) {
+            if ((alfa[j].signum() == -1) || (alfa[j].signum() == 0 && betta[j].signum() == -1)) {
+                mas.append("Ω"+j+"={");
+                for (int i = 0; i < A.length; i++) {
+                    if (A[i][j].signum() == 1) {
+                        mas.append(new BigDecimal(A[i][j].doubleValue()).setScale(4,BigDecimal.ROUND_FLOOR)+" ; ");
+                    }
+                }
+                mas.append("}≠∅\n");
+            }
         }
         return mas.toString();
     }

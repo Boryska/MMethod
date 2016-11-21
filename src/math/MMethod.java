@@ -158,7 +158,7 @@ public class MMethod
 
         System.out.println("Целевая функция");                                                  /////старт
         usl.append("Условия исходной задачи:\n");
-        usl.append("Целевая функиця:\n L = ");
+        usl.append("Целевая функиця:\nL = ");
         StringBuilder usl1 = new StringBuilder();
         for (int i = 1; i <n+1; i++)
         {        if(i != n)     usl1.append(L[i].intValue()+"*X" + i + " + ");
@@ -271,12 +271,12 @@ public class MMethod
         {
             StringBuilder iterat = new StringBuilder();
             System.out.println(count+ " -я итерация");
+            iterat.append(count+"-я итерация\n");
             System.out.println("Номер направляющего столбца K = "+ (k));
             ArrayList<Integer> omega = new ArrayList<>();
             BigFraction tetaMas[] = new BigFraction[m];
             for (int i = 0; i < m; i++)
             {
-
                 if ( compareTwoFraction(newA[i][k],new BigFraction(0)) ==1)
 
                 {
@@ -311,11 +311,13 @@ public class MMethod
 
             TableM raschet = new TableM(alfa,betta,c,tetaMas,newA,k,r,Fs);
             iterat.append(raschet.toString());
-
+            iterat.append("\nТак как, существуют Δj <0 и все Ωj≠∅, имеет место ситуация 3 \nНаправляющий столбец: " + k +"-ый\nНаправляющая строка: " + (r+1)+"-ая\n\n");
             System.out.println("Номер направляющей строки R = "+ (r+1));
+            iterat.append("Fs ->A" +Fs[r]+"\nA"+k+"->Fs\n\n");
             Fs[r] = k;                         ////// Замена условия в базисе
             CsI[r] = CjI[k] ;                      ////// Замена С's
             CsII[r] = CjII[k];                     ////// Замена С''s
+
             newA = findMatrix(newA,k,r,m,n);
             for (int i = 0; i < m+2; i++)
             {
@@ -375,24 +377,48 @@ public class MMethod
             System.out.println();
             k = minimumK(alfa,betta);
             System.out.println(k+"--------------------");
-            System.out.println("Оптимальное значение функции при заданных ограничениях равно: " + finaloo(CsII,newA,min).doubleValue() );
+
             listAnswer.add(iterat);
         }
+        System.out.println("L*= " + finaloo(c,xOptimalniy(Fs,newA),min).doubleValue() );
         StringBuilder ab = new StringBuilder();
+        ab.append("Конечная таблица М-метода:\n");
         BigFraction[] tetaMas = new BigFraction[m];
         TableM raschet = new TableM(alfa,betta,c,tetaMas,newA,k,r,Fs);
         ab.append(raschet.toString());
+        ab.append("Так как,все Δj >0 , имеет место ситуация 1\nФормируем решение:\n");
+        ab.append("Fs* = {");
+        for (int x: Fs ) {
+            ab.append("A"+x+" ; ");
+        }
+        ab.append("}\n");
+        ab.append("X* = {");
+        for (BigFraction x:xOptimalniy(Fs,newA)) {
+           // System.out.println(x);
+            ab.append(new BigDecimal(x.doubleValue()).setScale(6,BigDecimal.ROUND_FLOOR)+" ; ");
+        }
+        ab.append("}\nОптимальное значение функции при заданных ограничениях равно: " + new BigDecimal(finaloo(c,xOptimalniy(Fs,newA),min).doubleValue()).setScale(6,BigDecimal.ROUND_FLOOR));
+
+
         listAnswer.add(ab);
     }
-
-
-    public static BigFraction finaloo (BigFraction c[],BigFraction A[][],boolean min){
+    public BigFraction[] xOptimalniy(int[] fs,BigFraction[][] a){
+        BigFraction[] xToReturn = new BigFraction[n];
+        for(int i = 0; i < n; i++) {
+            xToReturn[i] = new BigFraction("0");
+        }
+        for(int i = 0; i < fs.length; i++){
+         xToReturn[fs[i]-1]= a[i][0];
+        }
+        return xToReturn;
+    }
+    public static BigFraction finaloo (BigFraction c[],BigFraction x[],boolean minimum){
         BigFraction otvet = new BigFraction(0);
         for (int i = 0; i < c.length; i++)
         {
-            otvet = otvet.add(c[i].multiply(A[i][0]));
+            otvet = otvet.add(c[i].multiply(x[i]));
         }
-        if(min)
+        if(minimum)
         return otvet.multiply(new BigFraction(-1));
         else return otvet;
     }
