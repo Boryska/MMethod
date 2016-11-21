@@ -388,6 +388,7 @@ public class MMethod
         ab.append(raschet.toString());
         ab.append("Так как,все Δj >0 , имеет место ситуация 1\nФормируем решение:\n");
         ab.append("Fs* = {");
+
         for (int x: Fs ) {
             ab.append("A"+x+" ; ");
         }
