@@ -5,6 +5,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.LinkedList;
+
 @XmlRootElement(name = "mmethod")
 @XmlType(propOrder = {"c","a","b","extr"})
 public class MMethod
@@ -19,8 +21,13 @@ public class MMethod
     private BigFraction CjII[];
     private BigFraction CsI[];
     private BigFraction CsII[];
-    BigFraction alfa[];
-    BigFraction betta[];
+    private BigFraction alfa[];
+
+
+
+    private BigFraction betta[];
+    private LinkedList<StringBuilder> listAnswer = new LinkedList<>();
+
     public MMethod(){}
     public MMethod(BigFraction[] c, BigFraction A[][], BigFraction b[], boolean extr){
         this.c=c;
@@ -65,6 +72,9 @@ public class MMethod
     public void setB(BigFraction[] b) {
         this.b = b;
     }
+    public LinkedList<StringBuilder> getAnswer() {
+        return listAnswer;
+    }
 
     public void run() throws Exception{
         Fs0 = new int[m];
@@ -75,7 +85,7 @@ public class MMethod
         CsII = new BigFraction[m];
         alfa = new BigFraction[n+m+1];
         betta = new BigFraction[n+m+1];
-
+        StringBuilder usl = new StringBuilder();
 
         if(min){
             for(int i=0;i<c.length;i++){
@@ -89,18 +99,17 @@ public class MMethod
                     A[i][j].multiply(new BigFraction(-1)); //A[i][j]*=-1;
             }
         }
-        BigFraction newA[][] = new BigFraction[A.length][A[0].length+b.length];
+        BigFraction newA[][];
 
         newA = MainTable(A,b);
-        System.out.println("m = " + A.length);System.out.println("n = " + A[0].length);
 
-        for (int i = 0; i < Fs0.length; i++)
+               for (int i = 0; i < Fs0.length; i++)
         {
             Fs0[i] = i+A[0].length-Fs0.length;               //////// Fs0
         }
         for (int i = 0; i < Fs.length ; i++)
         {
-            Fs[i] = i+A[0].length-Fs.length;                          //////Fs
+            Fs[i] = i+2+ newA[0].length - newA.length;                          //////Fs
         }
         for (int i = 0; i < (n+m+1); i++)
         {
@@ -119,8 +128,6 @@ public class MMethod
                 L[i] = c[i-1];
             }
         }
-        System.out.println("Kolvo ogr   "+m);
-        System.out.println("Kolvo peremennih    "+n);
         for (int i = 0; i < (n+m+1); i++)
         {
             if(i>=n+1 || i==0) {
@@ -148,81 +155,121 @@ public class MMethod
             betta[i]= alfabetta(CsII,newA,CjII[i],i);                /////////// Betta
             newA[m+1][i]  = betta[i] ;
         }
+
         System.out.println("Целевая функция");                                                  /////старт
-
-
+        usl.append("Условия исходной задачи:\n");
+        usl.append("Целевая функиця:\n L = ");
+        StringBuilder usl1 = new StringBuilder();
         for (int i = 1; i <n+1; i++)
-        {                                                                                       //////
-            System.out.print(L[i]+"*X" + i + " + ");                                                         //////////Красивый вывод целевой функции
+        {        if(i != n)     usl1.append(L[i].intValue()+"*X" + i + " + ");
+          //  System.out.print(L[i]+"*X" + i + " + ");           //////////Красивый вывод целевой функции
+
+        else  usl1.append(L[i].intValue()+"*X" + i);
+            //System.out.print(L[i]+"*X" + i);
         }
+        usl.append(usl1);
         if(min){                                                                                //////
-            System.out.println("->min");
+            //System.out.println("->min");
+            usl.append("->min\n");
         }                                                                                       /////
-        else{ System.out.println("->max");}                                                     //////фин
-        System.out.println();
-        System.out.println("Вектора ограничений");                                               //////Start
+        else{ usl.append("->max\n");
+            //System.out.println("->max");
+            }                                                     //////фин
+            //System.out.println();
+        //System.out.println("Вектора ограничений");                                               //////Start
+        usl.append("Вектора ограничений:\n");
         for (int i = 0; i < m; i++)                                                              //////
         {
             for (int j = 1; j <n+1 ; j++)
             {
+                if(j!=n){
                 if(!(compareTwoFraction(newA[i][j],new BigFraction(0))==0))
-                    System.out.print(newA[i][j]+"*X" + j+ " + ");                                               //////  Вывод основной задачи
+                   // System.out.print(newA[i][j]+"*X" + j+ " + ");
+                    usl.append(newA[i][j].intValue()+"*X" + j+ " + ");
+                }
+                else{
+                    if(!(compareTwoFraction(newA[i][j],new BigFraction(0))==0))
+                        //System.out.print(newA[i][j]+"*X" + j);
+                        usl.append(newA[i][j].intValue()+"*X" + j);
+                }
             }
-            System.out.println(" = " + newA[i][0]);
+           // System.out.println(" = " + newA[i][0]);
+            usl.append(" = " + newA[i][0].intValue() + "\n");
         }                                                                                       ////////fin
-        System.out.println("М-задача");                                               //////Start
+        //System.out.println("М-задача");                                               //////Start
+        usl.append("\nМ-задача:"+"\nЦелевая функция М-задачи:\n"+ usl1 + " - M*(");
+        for (int i = n+1; i < n+m+1 ; i++) {
+                if(i != (n+m))
+                    usl.append("X"+i+" + ");
+                    else usl.append("X"+i);
+        }
+        usl.append(")");
+        if(min){                                                                                //////
+
+            usl.append("->min\n");
+        }                                                                                       /////
+        else{ usl.append("->max\n");
+
+        }
         for (int i = 0; i < m; i++)                                                              //////
         {
             for (int j = 1; j <n+m+1 ; j++)
             {
-                if(!(compareTwoFraction(newA[i][j],new BigFraction(0))==0))
-                    System.out.print(newA[i][j]+"*X" + j+ " + ");                                               //////  Вывод М задачи
+                if(j!= (n+i+1)){
+                    if(!(compareTwoFraction(newA[i][j],new BigFraction(0))==0))
+
+                        usl.append(newA[i][j].intValue()+"*X" + j+ " + ");
+                }
+                else{
+                    if(!(compareTwoFraction(new BigFraction(0),newA[i][j])==0))
+                    usl.append(newA[i][j].intValue()+"*X" + j);
+                }
             }
-            System.out.println(" = " + newA[i][0]);
-        }                                                                                       ////////fin
-        System.out.println("Вектор Cj':");
-        for (BigFraction x:CjI )
-        {
-            System.out.print(x + " | ");
-        }
-        System.out.println();
-        System.out.println("Вектор Cj'':");
-        for (BigFraction x:CjII )
-        {
-            System.out.print(x + " | ");
-        }
-        System.out.println("Вектор Сs':");
-        for (BigFraction x:CsI )
-        {
-            System.out.print(x + " | ");
-        }
-        System.out.println();
-        System.out.println("Вектор Cs'':");
-        for (BigFraction x:CsII )
-        {
-            System.out.print(x + " | ");
+            // System.out.println(" = " + newA[i][0]);
+            usl.append(" = " + newA[i][0].intValue() + "\n");
         }
 
-        System.out.println();
-        System.out.println("НАЧАЛО ИТЕРАЦИОННОГО ПРОЦЕССА");
+//        System.out.println("Вектор Cj':");
+//        for (BigFraction x:CjI )
+//        {
+//            System.out.print(x + " | ");
+////        }
+//        System.out.println();
+//        System.out.println("Вектор Cj'':");
+//        for (BigFraction x:CjII )
+//        {
+//            System.out.print(x + " | ");
+//        }
+//        System.out.println("Вектор Сs':");
+//        for (BigFraction x:CsI )
+//        {
+//            System.out.print(x + " | ");
+//        }
+//        System.out.println();
+//        System.out.println("Вектор Cs'':");
+//        for (BigFraction x:CsII )
+//        {
+//            System.out.print(x + " | ");
+//        }
+//
+//        System.out.println();
+//        System.out.println("НАЧАЛО ИТЕРАЦИОННОГО ПРОЦЕССА");
+
+        usl.append("\nНАЧАЛО ИТЕРАЦИОННОГО ПРОЦЕССА");
         int count = 1;
         k = minimumK(alfa,betta);
-        System.out.println(k);
         for (int i = 0; i < m+2; i++)
         {
-
             for (int j = 0; j <n+m+1; j++)
             {
                 System.out.print(newA[i][j].doubleValue()  + " | ");
-
             }
             System.out.println();
         }
-
-
+        listAnswer.add(usl);
         while( ((alfa[k].multiply(1000000000).add(betta[k])).compareTo(new BigFraction(0))) < 0) //////////////////////////////////////////////////////////////////////
         {
-
+            StringBuilder iterat = new StringBuilder();
             System.out.println(count+ " -я итерация");
             System.out.println("Номер направляющего столбца K = "+ (k));
             ArrayList<Integer> omega = new ArrayList<>();
@@ -259,6 +306,11 @@ public class MMethod
                 System.out.print(x + " ");
             }
             System.out.println();
+
+
+            TableM raschet = new TableM(alfa,betta,c,tetaMas,newA,k,r,Fs);
+            iterat.append(raschet.toString());
+
             System.out.println("Номер направляющей строки R = "+ (r+1));
             Fs[r] = k;                         ////// Замена условия в базисе
             CsI[r] = CjI[k] ;                      ////// Замена С's
@@ -323,7 +375,13 @@ public class MMethod
             k = minimumK(alfa,betta);
             System.out.println(k+"--------------------");
             System.out.println("Оптимальное значение функции при заданных ограничениях равно: " + finaloo(CsII,newA,min).doubleValue() );
+            listAnswer.add(iterat);
         }
+        StringBuilder ab = new StringBuilder();
+        BigFraction[] tetaMas = new BigFraction[m];
+        TableM raschet = new TableM(alfa,betta,c,tetaMas,newA,k,r,Fs);
+        ab.append(raschet.toString());
+        listAnswer.add(ab);
     }
 
 
