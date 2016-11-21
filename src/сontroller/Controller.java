@@ -56,6 +56,8 @@ public class Controller {
     private TabPane tabPane;
     @FXML
     private TextArea textArea;
+    @FXML
+    private TextArea textAreaCheck;
 
     @FXML
     private void initialize() {
@@ -300,8 +302,7 @@ public class Controller {
                     textArea.setText(textArea.getText()+method.getAnswer().get(i).toString());
 
                 }
-
-
+                textArea.setEditable(false);
                 solutionTab.setDisable(false);
                 tabPane.getSelectionModel().select(solutionTab);
             } catch (EmptyException ex) {
@@ -334,6 +335,10 @@ public class Controller {
                 alert.showAndWait();
             }
             break;
+            case "buttonCheck":
+                checkTab.setDisable(false);
+                tabPane.getSelectionModel().select(checkTab);
+                break;
         }
     }
 
