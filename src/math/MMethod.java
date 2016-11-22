@@ -11,7 +11,7 @@ import java.util.LinkedList;
 @XmlType(propOrder = {"c","a","b","extr"})
 public class MMethod
 {
-    private BigFraction b[], c[], A[][];
+    private BigFraction b[], c[], A[][],newA[][];
     private int m, n;
     private int r = -1,k;
     private boolean min;
@@ -22,9 +22,6 @@ public class MMethod
     private BigFraction CsI[];
     private BigFraction CsII[];
     private BigFraction alfa[];
-
-
-
     private BigFraction betta[];
     private LinkedList<StringBuilder> listAnswer = new LinkedList<>();
 
@@ -34,8 +31,8 @@ public class MMethod
         this.b=b;
         this.A=A;
         this.min=extr;
-        this.m = 12; //A.length;
-        this.n = 19;//A[0].length;
+        this.m = A.length;
+        this.n = A[0].length;
     }
     public boolean getExtr() {
         return min;
@@ -76,6 +73,11 @@ public class MMethod
         return listAnswer;
     }
 
+
+
+    public void checkResult() throws Exception{
+
+    }
     public void run() throws Exception{
         Fs0 = new int[m];
         Fs = new int[m];
@@ -99,9 +101,7 @@ public class MMethod
                     A[i][j].multiply(new BigFraction(-1)); //A[i][j]*=-1;
             }
         }
-        BigFraction newA[][];
-
-        newA = MainTable(A,b);
+                newA = MainTable(A,b);
 
                for (int i = 0; i < Fs0.length; i++)
         {
@@ -398,10 +398,8 @@ public class MMethod
            // System.out.println(x);
             ab.append(new BigDecimal(x.doubleValue()).setScale(6,BigDecimal.ROUND_FLOOR)+" ; ");
         }
-        ab.append("}\nОптимальное значение функции при заданных ограничениях равно: " + new BigDecimal(finaloo(c,xOptimalniy(Fs,newA),min).doubleValue()).setScale(6,BigDecimal.ROUND_FLOOR));
-
-
-        listAnswer.add(ab);
+        ab.append("}\nL*= " + new BigDecimal(finaloo(c,xOptimalniy(Fs,newA),min).doubleValue()).setScale(6,BigDecimal.ROUND_FLOOR));
+  listAnswer.add(ab);
     }
     public BigFraction[] xOptimalniy(int[] fs,BigFraction[][] a){
         BigFraction[] xToReturn = new BigFraction[n];

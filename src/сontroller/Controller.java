@@ -194,7 +194,7 @@ public class Controller {
             case "aboutMenuItem":
                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
                 alert.setTitle("О программе");
-                alert.setHeaderText("Программа решения задач линейного программирования М-методом");
+                alert.setHeaderText("Программа для решения задач линейного программирования М-методом(I-агоритм)");
                 alert.setContentText("Выполнили студенты группы КН-34б:\nКондратьев Виталий, Ворона Борис, Кущ Алина");
                 alert.showAndWait();
         }
@@ -338,6 +338,14 @@ public class Controller {
             case "buttonCheck":
                 checkTab.setDisable(false);
                 tabPane.getSelectionModel().select(checkTab);
+                MMethod method = new MMethod(Table.getTableC(tableC, tableC.getColumns().size()),
+                        Table.getTableA(tableA, tableA.getColumns().size(), tableA.getItems().size()),
+                        Table.getTableB(tableB, tableB.getItems().size()), extr);
+                try {
+                    method.checkResult();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 break;
         }
     }
