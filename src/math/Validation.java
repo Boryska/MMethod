@@ -9,9 +9,11 @@ public class Validation { //Проверка достоверности
     private BigFraction det;
     private BigFraction[][] finalA;
 
+    public Validation(){
+        this.finalFs = MMethod.getFs();
+        this.finalA = MMethod.getNewA();
+    }
     public void checkResult(){
-        finalFs = MMethod.getFs();
-        finalA = MMethod.getNewA();
         System.out.println();
         System.out.println();
         System.out.println("FinalA");
@@ -23,24 +25,38 @@ public class Validation { //Проверка достоверности
         }
         System.out.println();
         System.out.println("FinalFs");
-        for(int i = 1; i < finalFs.length; i++){
-            System.out.print(finalFs[i] + "   ");
+        for(int i = finalFs.length-1 ; i > 0 ; i--){
+            for(int j = 0 ; j < i ; j++){
+                if( finalFs[j] > finalFs[j+1] ){
+                    int tmp = finalFs[j];
+                    finalFs[j] = finalFs[j+1];
+                    finalFs[j+1] = tmp;
+                }
+            }
         }
-
-    }
-//    public BigFraction[][] getAFs(){
-//        BigFraction[][] AFS = new BigFraction[rows][cols];
-//        return AFS;
-//    }
-    public void AdmissibilityCheck(){ //Проверка допустимости
-
+        for (int x: finalFs ) {
+            System.out.print("A"+x+" ; ");
+        }
+        System.out.println();
     }
 
-    private BigFraction findDeterminant(BigFraction[][] AFss){
-        BigFraction subsidiaryArr[] = new BigFraction[AFss[0].length];
-        BigFraction arr[][] = new BigFraction[AFss.length][AFss.length];
+    public BigFraction[][] getAFs(){
+        BigFraction[][] Buf = new BigFraction[finalA.length-2][finalFs.length];
+        for(int i = 0; i < Buf.length; i++){
+            for(int j = 0; j < Buf[0].length; j++){
+                Buf[i][j] = finalA[i][finalFs[j]];
+                System.out.print(Buf[i][j].doubleValue() + "   ");
+            }
+            System.out.println();
+        }
+        return Buf;
+    }
+
+    private BigFraction findDeterminant(BigFraction[][] x){
+        BigFraction subsidiaryArr[] = new BigFraction[x[0].length];
+        BigFraction arr[][] = new BigFraction[x.length][x.length];
         for(int i=0;i<arr.length;i++)
-            System.arraycopy(AFss[i], 0, arr[i], 0, AFss[i].length);
+            System.arraycopy(x[i], 0, arr[i], 0, x[i].length);
         BigFraction coef;
         for(int i=0;i<arr.length-1;i++){
             coef=arr[i][i];
@@ -65,10 +81,19 @@ public class Validation { //Проверка достоверности
         }
         return ans;
     }
-    public void OpornoCheck(){ //Проверка опорности
-        //AFs = MMethod.getAFs();
-        det = findDeterminant(AFs);
+
+    public void AdmissibilityCheck(){ //Проверка допустимости
+
     }
+
+    public void OpornoCheck(){ //Проверка опорности
+        checkResult();
+        AFs = getAFs();
+        det = findDeterminant(AFs);
+        System.out.println();
+        System.out.println("det = " + det);
+    }
+
     public void OptimalityCheck(){ //Проверка оптимальности
 
     }

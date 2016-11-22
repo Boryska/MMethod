@@ -341,8 +341,7 @@ public class Controller {
             case "buttonCheck":
                 checkTab.setDisable(false);
                 Validation val = new Validation();
-                val.checkResult();
-                //method.checkResult();
+                val.OpornoCheck();
                 tabPane.getSelectionModel().select(checkTab);
 
         }

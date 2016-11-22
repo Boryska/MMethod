@@ -299,9 +299,9 @@ public class BigFraction extends Number implements Comparable<BigFraction>
         if(f == null)
             throw new IllegalArgumentException("Null argument");
 
-        if(f.numerator.equals(BigInteger.ZERO))
+        if(f.numerator.equals(BigInteger.ZERO)) {
             throw new ArithmeticException("Divide by zero");
-
+        }
         return new BigFraction(numerator.multiply(f.denominator), denominator.multiply(f.numerator));
     }
 
@@ -310,11 +310,13 @@ public class BigFraction extends Number implements Comparable<BigFraction>
      */
     public BigFraction divide(BigInteger b)
     {
-        if(b == null)
+        if(b == null) {
             throw new IllegalArgumentException("Null argument");
+        }
 
-        if(b.equals(BigInteger.ZERO))
+        if(b.equals(BigInteger.ZERO)) {
             throw new ArithmeticException("Divide by zero");
+        }
 
         return new BigFraction(numerator, denominator.multiply(b));
     }
