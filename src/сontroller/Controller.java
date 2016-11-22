@@ -13,11 +13,13 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.TextFieldTableCell;
 import main.Table;
 import math.MMethod;
+import math.Validation;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
+import org.apache.commons.lang.Validate;
 import org.apache.commons.lang.math.NumberUtils;
 import parser.JaxbParser;
 
@@ -83,6 +85,7 @@ public class Controller {
     private FileChooser fileChooser;
     private File file;
     private FileChooser.ExtensionFilter extFilter;
+    private MMethod method;
 
     private void initLoader() {
         setMainStage(mainStage);
@@ -294,7 +297,7 @@ public class Controller {
                 if (comboBoxExtr.getSelectionModel().getSelectedItem() == "max"){
                     extr = false;}
                 else {extr = true;}
-                MMethod method = new MMethod(Table.getTableC(tableC, tableC.getColumns().size()),
+                method = new MMethod(Table.getTableC(tableC, tableC.getColumns().size()),
                         Table.getTableA(tableA, tableA.getColumns().size(), tableA.getItems().size()),
                         Table.getTableB(tableB, tableB.getItems().size()), extr);
                 method.run();
@@ -337,16 +340,11 @@ public class Controller {
             break;
             case "buttonCheck":
                 checkTab.setDisable(false);
+                Validation val = new Validation();
+                val.checkResult();
+                //method.checkResult();
                 tabPane.getSelectionModel().select(checkTab);
-                MMethod method = new MMethod(Table.getTableC(tableC, tableC.getColumns().size()),
-                        Table.getTableA(tableA, tableA.getColumns().size(), tableA.getItems().size()),
-                        Table.getTableB(tableB, tableB.getItems().size()), extr);
-                try {
-                    method.checkResult();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                break;
+
         }
     }
 

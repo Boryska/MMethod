@@ -6,6 +6,22 @@ package math;
 public class Validation { //Проверка достоверности
     private BigFraction[][] AFs;
     private BigFraction det;
+    private BigFraction[][] finalA;
+
+    public void checkResult(){
+        finalA = MMethod.getNewA();
+        System.out.println();
+        System.out.println();
+        System.out.println("FinalA");
+        for(int i = 0; i < finalA.length; i++){
+            for(int j = 0; j < finalA[0].length; j++){
+                System.out.print(finalA[i][j].doubleValue() + "           ");
+            }
+            System.out.println();
+        }
+
+    }
+
     public void AdmissibilityCheck(){ //Проверка допустимости
 
     }
@@ -46,5 +62,4 @@ public class Validation { //Проверка достоверности
     public void OptimalityCheck(){ //Проверка оптимальности
 
     }
-
 }

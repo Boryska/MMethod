@@ -11,7 +11,8 @@ import java.util.LinkedList;
 @XmlType(propOrder = {"c","a","b","extr"})
 public class MMethod
 {
-    private BigFraction b[], c[], A[][],newA[][];
+    private BigFraction b[], c[], A[][];
+    private static BigFraction[][] newA;
     private int m, n;
     private int r = -1,k;
     private boolean min;
@@ -24,7 +25,6 @@ public class MMethod
     private BigFraction alfa[];
     private BigFraction betta[];
     private LinkedList<StringBuilder> listAnswer = new LinkedList<>();
-    private LinkedList<StringBuilder> listCheck = new LinkedList<>();
 
     public MMethod(){}
     public MMethod(BigFraction[] c, BigFraction A[][], BigFraction b[], boolean extr){
@@ -73,19 +73,24 @@ public class MMethod
     public LinkedList<StringBuilder> getAnswer() {
         return listAnswer;
     }
-    public LinkedList<StringBuilder> getCheck() {
-        return listCheck;
-    }
-
 //    public BigFraction[][] getAFs(){
 //        BigFraction[][] AFS = new BigFraction[rows][cols];
 //        return AFS;
 //    }
-
-    public void checkResult() throws Exception {
-        this.run();
-
+    public static BigFraction[][] getNewA() {
+        return newA;
     }
+//    public void checkResult(){
+//        System.out.println();
+//        System.out.println();
+//        System.out.println("pisos");
+//        for(int i = 0; i < newA.length; i++){
+//            for(int j = 0; j < newA[0].length; j++){
+//                System.out.println(newA[i][j].doubleValue());
+//            }
+//        }
+//
+//    }
 
     public void run() throws Exception{
         Fs0 = new int[m];
@@ -524,4 +529,11 @@ public class MMethod
     return l;
 }
 
+//    public BigFraction[][] getNewA() {
+//        return newA;
+//    }
+//
+//    public void setNewA(BigFraction[][] newA) {
+//        this.newA = newA;
+//    }
 }
