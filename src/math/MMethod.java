@@ -17,7 +17,7 @@ public class MMethod
     private boolean min;
     private int Fs0[];
     private int Fs[];
-      private BigFraction CjI[];
+    private BigFraction CjI[];
     private BigFraction CjII[];
     private BigFraction CsI[];
     private BigFraction CsII[];
@@ -34,8 +34,8 @@ public class MMethod
         this.b=b;
         this.A=A;
         this.min=extr;
-        this.m = 12; //A.length;
-        this.n = 19;//A[0].length;
+        this.m = A.length;
+        this.n = A[0].length;
     }
     public boolean getExtr() {
         return min;
@@ -75,6 +75,11 @@ public class MMethod
     public LinkedList<StringBuilder> getAnswer() {
         return listAnswer;
     }
+
+//    public BigFraction[][] getAFs(){
+//        BigFraction[][] AFS = new BigFraction[rows][cols];
+//        return AFS;
+//    }
 
     public void run() throws Exception{
         Fs0 = new int[m];
@@ -492,7 +497,7 @@ public class MMethod
             return mas.get(0);
         }
     }
-   public BigFraction[][] MainTable(BigFraction[][] a, BigFraction[] b){
+    public BigFraction[][] MainTable(BigFraction[][] a, BigFraction[] b){
     BigFraction l[][] = new BigFraction[m+2][m+n+1];
     for (int i = 0; i < m+2 ; i++) {
         for (int j = 0; j < m+n+1 ; j++) {
