@@ -17,7 +17,7 @@ public class MMethod
     private int r = -1,k;
     private boolean min;
     private int Fs0[];
-    private int Fs[];
+    private static int Fs[];
     private BigFraction CjI[];
     private BigFraction CjII[];
     private BigFraction CsI[];
@@ -73,24 +73,14 @@ public class MMethod
     public LinkedList<StringBuilder> getAnswer() {
         return listAnswer;
     }
-//    public BigFraction[][] getAFs(){
-//        BigFraction[][] AFS = new BigFraction[rows][cols];
-//        return AFS;
-//    }
+
     public static BigFraction[][] getNewA() {
         return newA;
     }
-//    public void checkResult(){
-//        System.out.println();
-//        System.out.println();
-//        System.out.println("pisos");
-//        for(int i = 0; i < newA.length; i++){
-//            for(int j = 0; j < newA[0].length; j++){
-//                System.out.println(newA[i][j].doubleValue());
-//            }
-//        }
-//
-//    }
+
+    public static int[] getFs() {
+        return Fs;
+    }
 
     public void run() throws Exception{
         Fs0 = new int[m];
@@ -528,12 +518,4 @@ public class MMethod
     }
     return l;
 }
-
-//    public BigFraction[][] getNewA() {
-//        return newA;
-//    }
-//
-//    public void setNewA(BigFraction[][] newA) {
-//        this.newA = newA;
-//    }
 }

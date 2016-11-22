@@ -5,10 +5,12 @@ package math;
  */
 public class Validation { //Проверка достоверности
     private BigFraction[][] AFs;
+    private int finalFs[];
     private BigFraction det;
     private BigFraction[][] finalA;
 
     public void checkResult(){
+        finalFs = MMethod.getFs();
         finalA = MMethod.getNewA();
         System.out.println();
         System.out.println();
@@ -19,9 +21,17 @@ public class Validation { //Проверка достоверности
             }
             System.out.println();
         }
+        System.out.println();
+        System.out.println("FinalFs");
+        for(int i = 1; i < finalFs.length; i++){
+            System.out.print(finalFs[i] + "   ");
+        }
 
     }
-
+//    public BigFraction[][] getAFs(){
+//        BigFraction[][] AFS = new BigFraction[rows][cols];
+//        return AFS;
+//    }
     public void AdmissibilityCheck(){ //Проверка допустимости
 
     }
