@@ -11,7 +11,7 @@ import java.util.LinkedList;
 @XmlType(propOrder = {"c","a","b","extr"})
 public class MMethod
 {
-    private BigFraction b[], c[], A[][];
+    private BigFraction b[], c[], A[][],newA[][];
     private int m, n;
     private int r = -1,k;
     private boolean min;
@@ -22,11 +22,9 @@ public class MMethod
     private BigFraction CsI[];
     private BigFraction CsII[];
     private BigFraction alfa[];
-
-
-
     private BigFraction betta[];
     private LinkedList<StringBuilder> listAnswer = new LinkedList<>();
+    private LinkedList<StringBuilder> listCheck = new LinkedList<>();
 
     public MMethod(){}
     public MMethod(BigFraction[] c, BigFraction A[][], BigFraction b[], boolean extr){
@@ -75,11 +73,19 @@ public class MMethod
     public LinkedList<StringBuilder> getAnswer() {
         return listAnswer;
     }
+    public LinkedList<StringBuilder> getCheck() {
+        return listCheck;
+    }
 
 //    public BigFraction[][] getAFs(){
 //        BigFraction[][] AFS = new BigFraction[rows][cols];
 //        return AFS;
 //    }
+
+    public void checkResult() throws Exception {
+        this.run();
+
+    }
 
     public void run() throws Exception{
         Fs0 = new int[m];
@@ -104,8 +110,6 @@ public class MMethod
                     A[i][j].multiply(new BigFraction(-1)); //A[i][j]*=-1;
             }
         }
-        BigFraction newA[][];
-
         newA = MainTable(A,b);
 
                for (int i = 0; i < Fs0.length; i++)
