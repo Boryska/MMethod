@@ -11,17 +11,20 @@ import java.util.LinkedList;
 @XmlType(propOrder = {"c","a","b","extr"})
 public class MMethod
 {
-    private BigFraction b[], c[], A[][],newA[][];
+    private BigFraction b[], c[], A[][];
     private int m, n;
     private int r = -1,k;
     private boolean min;
     private int Fs0[];
     private int Fs[];
-      private BigFraction CjI[];
+    private BigFraction CjI[];
     private BigFraction CjII[];
     private BigFraction CsI[];
     private BigFraction CsII[];
     private BigFraction alfa[];
+
+
+
     private BigFraction betta[];
     private LinkedList<StringBuilder> listAnswer = new LinkedList<>();
 
@@ -73,11 +76,11 @@ public class MMethod
         return listAnswer;
     }
 
+//    public BigFraction[][] getAFs(){
+//        BigFraction[][] AFS = new BigFraction[rows][cols];
+//        return AFS;
+//    }
 
-
-    public void checkResult() throws Exception{
-
-    }
     public void run() throws Exception{
         Fs0 = new int[m];
         Fs = new int[m];
@@ -101,7 +104,9 @@ public class MMethod
                     A[i][j].multiply(new BigFraction(-1)); //A[i][j]*=-1;
             }
         }
-                newA = MainTable(A,b);
+        BigFraction newA[][];
+
+        newA = MainTable(A,b);
 
                for (int i = 0; i < Fs0.length; i++)
         {
@@ -398,8 +403,10 @@ public class MMethod
            // System.out.println(x);
             ab.append(new BigDecimal(x.doubleValue()).setScale(6,BigDecimal.ROUND_FLOOR)+" ; ");
         }
-        ab.append("}\nL*= " + new BigDecimal(finaloo(c,xOptimalniy(Fs,newA),min).doubleValue()).setScale(6,BigDecimal.ROUND_FLOOR));
-  listAnswer.add(ab);
+        ab.append("}\nОптимальное значение функции при заданных ограничениях равно: " + new BigDecimal(finaloo(c,xOptimalniy(Fs,newA),min).doubleValue()).setScale(6,BigDecimal.ROUND_FLOOR));
+
+
+        listAnswer.add(ab);
     }
     public BigFraction[] xOptimalniy(int[] fs,BigFraction[][] a){
         BigFraction[] xToReturn = new BigFraction[n];
@@ -490,7 +497,7 @@ public class MMethod
             return mas.get(0);
         }
     }
-   public BigFraction[][] MainTable(BigFraction[][] a, BigFraction[] b){
+    public BigFraction[][] MainTable(BigFraction[][] a, BigFraction[] b){
     BigFraction l[][] = new BigFraction[m+2][m+n+1];
     for (int i = 0; i < m+2 ; i++) {
         for (int j = 0; j < m+n+1 ; j++) {
