@@ -12,7 +12,7 @@ import java.util.LinkedList;
 public class MMethod
 {
     private BigFraction b[], c[], A[][];
-    private static BigFraction newA[][], startA[][], startB[];
+    private static BigFraction newA[][], startA[][], startB[], startL[];
     private int m, n;
     private int r = -1,k;
     private boolean min;
@@ -34,10 +34,15 @@ public class MMethod
         this.A=A;
         this.startA = A;
         this.startB = b;
+        this.startL = c;
         this.min=extr;
         this.m = A.length;
 
         this.n = A[0].length;
+    }
+
+    public static BigFraction[] getStartL() {
+        return startL;
     }
 
     public static BigFraction[][] getStartA() {

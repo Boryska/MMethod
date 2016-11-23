@@ -9,14 +9,20 @@ public class Validation { //Проверка достоверности
     private BigInteger det;
     private BigFraction[][] startA;
     private BigFraction[][] finalA;
-    private BigFraction[] startB, XI;
+    private BigFraction[] startB, startL, XI;
 
     public Validation(){
         this.finalFs = MMethod.getFs();
         this.finalA = MMethod.getNewA();
         this.startA = MMethod.getStartA();
         this.startB = MMethod.getStartB();
+        this.startL = MMethod.getStartL();
+        this.XI = new BigFraction[finalFs.length];
+        for(int i = 0; i < XI.length; i++){
+            XI[i] = finalA[i][0];
+        }
     }
+
     public void checkResult(){
         System.out.println();
         System.out.println();
@@ -29,10 +35,6 @@ public class Validation { //Проверка достоверности
         }
         System.out.println();
         System.out.println("FinalFs");
-        XI = new BigFraction[finalFs.length];
-        for(int i = 0; i < XI.length; i++){
-            XI[i] = finalA[i][0];
-        }
         // Bubble Fs && X* SORT
 //        for(int i = finalFs.length-1 ; i > 0 ; i--){
 //            for(int j = 0 ; j < i ; j++){
@@ -46,8 +48,6 @@ public class Validation { //Проверка достоверности
 //                }
 //            }
 //        }
-
-
         for (int x: finalFs ) {
             System.out.print("A"+x+"     ; ");
         }
@@ -167,28 +167,40 @@ public class Validation { //Проверка достоверности
             for (int j = 0; j < aMatrix[0].length; j++) {//////Столбцы
                 for (int k = 0; k < aMatrix.length ; k++) {/////Строки
                     for (int l = 0; l < aMatrix[0].length; l++) {//////Столбцы
-
-                        if( k < i && l < j){ sss[k][l] = aMatrix[k][l];
-
-
+                        if( k < i && l < j){
+                            sss[k][l] = aMatrix[k][l];
                         }
-                        else if( k > i && l > j){ sss[k-1][l-1] = aMatrix[k][l];
-
+                        else if( k > i && l > j){
+                            sss[k-1][l-1] = aMatrix[k][l];
                         }
-                        else if( k < i && l > j){ sss[k][l-1] = aMatrix[k][l];
-
+                        else if( k < i && l > j){
+                            sss[k][l-1] = aMatrix[k][l];
                         }
-                        else if( k > i && l < j){ sss[k-1][l] = aMatrix[k][l];}
-
+                        else if( k > i && l < j){
+                            sss[k-1][l] = aMatrix[k][l];}
                         }
                 }
-
-                if ((i+j)%2 == 0) result[j][i] = new BigFraction(findDet(sss)).divide(new BigFraction(det));
-                else  result[j][i] =   new BigFraction(findDet(sss)).divide(new BigFraction(det)).multiply(new BigFraction(-1));
-
+                if ((i+j)%2 == 0) {
+                    result[j][i] = new BigFraction(findDet(sss)).divide(new BigFraction(det));
+                }
+                else  {
+                    result[j][i] =   new BigFraction(findDet(sss)).divide(new BigFraction(det)).multiply(new BigFraction(-1));
+                }
             }
         }
+        return result;
+    }
 
+    public BigFraction[] vectorMatrix(BigFraction[][] matrix, BigFraction[] vector){
+        BigFraction[] result = new BigFraction[vector.length];
+        BigFraction ssum;
+        for (int i = 0; i < vector.length; i++) {
+            ssum = new BigFraction(0);
+            for (int j = 0; j < vector.length; j++) {
+                 ssum = ssum.add(matrix[j][i].multiply(vector[j]));
+            }
+            result[i] = ssum;
+        }
         return result;
     }
 
@@ -210,7 +222,6 @@ public class Validation { //Проверка достоверности
         return result;
     }
 
-
     public void AdmissibilityCheck(){
         //Проверка допустимости
         //Проверка неотрицательности
@@ -231,7 +242,8 @@ public class Validation { //Проверка достоверности
         }
     }
 
-    public void OpornoCheck(){ //Проверка опорности
+    public void OpornoCheck(){
+        //Проверка опорности
         System.out.println("Проверка опорности решения");
         checkResult();
         AFs = getAFs();
@@ -253,7 +265,8 @@ public class Validation { //Проверка достоверности
 
     }
 
-    public void OptimalityCheck(){ //Проверка оптимальности
+    public void OptimalityCheck(){
+        //Проверка оптимальности
 
     }
 }
