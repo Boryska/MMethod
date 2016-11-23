@@ -6,7 +6,8 @@ import java.math.BigInteger;
 public class Validation { //Проверка достоверности
     private BigFraction[][] AFs;
     private int finalFs[];
-    private BigInteger det;
+    //private BigInteger det;
+    private BigFraction det;
     private BigFraction[][] startA;
     private BigFraction[][] finalA;
     private BigFraction[] startB, startL, XI;
@@ -64,103 +65,103 @@ public class Validation { //Проверка достоверности
         return Buf;
     }
 
-    public BigInteger findDet (BigFraction x [][]) {
-        if(x.length == 1){
-            return x[0][0].getNumerator();
-        }
-        else {
-            BigDecimal a[][] = new BigDecimal[x.length][x.length];
-            int n = x.length;
-            for (int i = 0; i < n; i++) {
-                for (int j = 0; j < n; j++) {
-                    a[i][j] = x[i][j].toBigDecimal();
-                }
-            }
-            try {
+//    public static BigInteger findDet (BigFraction x [][]) {
+//        if(x.length == 1){
+//            return x[0][0].getNumerator();
+//        }
+//        else {
+//            BigDecimal a[][] = new BigDecimal[x.length][x.length];
+//            int n = x.length;
+//            for (int i = 0; i < n; i++) {
+//                for (int j = 0; j < n; j++) {
+//                    a[i][j] = x[i][j].toBigDecimal();
+//                }
+//            }
+//            try {
+//
+//                for (int i = 0; i < n; i++) {
+//                    boolean nonzero = false;
+//                    for (int j = 0; j < n; j++)
+//                        if (a[i][j].compareTo(new BigDecimal(BigInteger.ZERO)) > 0)
+//                            nonzero = true;
+//                    if (!nonzero)
+//                        return BigInteger.ZERO;
+//                }
+//
+//                BigDecimal scaling[] = new BigDecimal[n];
+//                for (int i = 0; i < n; i++) {
+//                    BigDecimal big = new BigDecimal(BigInteger.ZERO);
+//                    for (int j = 0; j < n; j++)
+//                        if (a[i][j].abs().compareTo(big) > 0)
+//                            big = a[i][j].abs();
+//                    scaling[i] = (new BigDecimal(BigInteger.ONE)).divide
+//                            (big, 100, BigDecimal.ROUND_HALF_EVEN);
+//                }
+//
+//                int sign = 1;
+//
+//                for (int j = 0; j < n; j++) {
+//
+//                    for (int i = 0; i < j; i++) {
+//                        BigDecimal sum = a[i][j];
+//                        for (int k = 0; k < i; k++)
+//                            sum = sum.subtract(a[i][k].multiply(a[k][j]));
+//                        a[i][j] = sum;
+//                    }
+//
+//                    BigDecimal big = new BigDecimal(BigInteger.ZERO);
+//                    int imax = -1;
+//                    for (int i = j; i < n; i++) {
+//                        BigDecimal sum = a[i][j];
+//                        for (int k = 0; k < j; k++)
+//                            sum = sum.subtract(a[i][k].multiply(a[k][j]));
+//                        a[i][j] = sum;
+//                        BigDecimal cur = sum.abs();
+//                        cur = cur.multiply(scaling[i]);
+//                        if (cur.compareTo(big) >= 0) {
+//                            big = cur;
+//                            imax = i;
+//                        }
+//                    }
+//
+//                    if (j != imax) {
+//
+//                        for (int k = 0; k < n; k++) {
+//                            BigDecimal t = a[j][k];
+//                            a[j][k] = a[imax][k];
+//                            a[imax][k] = t;
+//                        }
+//
+//                        BigDecimal t = scaling[imax];
+//                        scaling[imax] = scaling[j];
+//                        scaling[j] = t;
+//
+//                        sign = -sign;
+//                    }
+//
+//                    if (j != n - 1)
+//                        for (int i = j + 1; i < n; i++)
+//                            a[i][j] = a[i][j].divide
+//                                    (a[j][j], 100, BigDecimal.ROUND_HALF_EVEN);
+//
+//                }
+//
+//                BigDecimal result = new BigDecimal(1);
+//                if (sign == -1)
+//                    result = result.negate();
+//                for (int i = 0; i < n; i++)
+//                    result = result.multiply(a[i][i]);
+//
+//                return result.divide
+//                        (BigDecimal.valueOf(1), 0, BigDecimal.ROUND_HALF_EVEN).toBigInteger();
+//
+//            } catch (Exception e) {
+//                return BigInteger.ZERO;
+//            }
+//        }
+//    }
 
-                for (int i = 0; i < n; i++) {
-                    boolean nonzero = false;
-                    for (int j = 0; j < n; j++)
-                        if (a[i][j].compareTo(new BigDecimal(BigInteger.ZERO)) > 0)
-                            nonzero = true;
-                    if (!nonzero)
-                        return BigInteger.ZERO;
-                }
-
-                BigDecimal scaling[] = new BigDecimal[n];
-                for (int i = 0; i < n; i++) {
-                    BigDecimal big = new BigDecimal(BigInteger.ZERO);
-                    for (int j = 0; j < n; j++)
-                        if (a[i][j].abs().compareTo(big) > 0)
-                            big = a[i][j].abs();
-                    scaling[i] = (new BigDecimal(BigInteger.ONE)).divide
-                            (big, 100, BigDecimal.ROUND_HALF_EVEN);
-                }
-
-                int sign = 1;
-
-                for (int j = 0; j < n; j++) {
-
-                    for (int i = 0; i < j; i++) {
-                        BigDecimal sum = a[i][j];
-                        for (int k = 0; k < i; k++)
-                            sum = sum.subtract(a[i][k].multiply(a[k][j]));
-                        a[i][j] = sum;
-                    }
-
-                    BigDecimal big = new BigDecimal(BigInteger.ZERO);
-                    int imax = -1;
-                    for (int i = j; i < n; i++) {
-                        BigDecimal sum = a[i][j];
-                        for (int k = 0; k < j; k++)
-                            sum = sum.subtract(a[i][k].multiply(a[k][j]));
-                        a[i][j] = sum;
-                        BigDecimal cur = sum.abs();
-                        cur = cur.multiply(scaling[i]);
-                        if (cur.compareTo(big) >= 0) {
-                            big = cur;
-                            imax = i;
-                        }
-                    }
-
-                    if (j != imax) {
-
-                        for (int k = 0; k < n; k++) {
-                            BigDecimal t = a[j][k];
-                            a[j][k] = a[imax][k];
-                            a[imax][k] = t;
-                        }
-
-                        BigDecimal t = scaling[imax];
-                        scaling[imax] = scaling[j];
-                        scaling[j] = t;
-
-                        sign = -sign;
-                    }
-
-                    if (j != n - 1)
-                        for (int i = j + 1; i < n; i++)
-                            a[i][j] = a[i][j].divide
-                                    (a[j][j], 100, BigDecimal.ROUND_HALF_EVEN);
-
-                }
-
-                BigDecimal result = new BigDecimal(1);
-                if (sign == -1)
-                    result = result.negate();
-                for (int i = 0; i < n; i++)
-                    result = result.multiply(a[i][i]);
-
-                return result.divide
-                        (BigDecimal.valueOf(1), 0, BigDecimal.ROUND_HALF_EVEN).toBigInteger();
-
-            } catch (Exception e) {
-                return BigInteger.ZERO;
-            }
-        }
-    }
-
-    public BigFraction [][] findAfsObr(BigFraction [][] aMatrix , BigInteger det){
+    public BigFraction [][] findAfsObr(BigFraction [][] aMatrix , BigFraction det){
         BigFraction[][] result = new BigFraction [aMatrix.length][aMatrix[0].length];
         BigFraction[][] sss = new BigFraction [aMatrix.length-1][aMatrix[0].length-1];
         for (int i = 0; i < aMatrix.length ; i++) {/////Строки
@@ -181,10 +182,12 @@ public class Validation { //Проверка достоверности
                         }
                 }
                 if ((i+j)%2 == 0) {
-                    result[j][i] = new BigFraction(findDet(sss)).divide(new BigFraction(det));
+                    //result[j][i] = new BigFraction(findDet(sss)).divide(new BigFraction(det));
+                    result[j][i] = findDeterminant(sss).divide(det);
                 }
                 else  {
-                    result[j][i] =   new BigFraction(findDet(sss)).divide(new BigFraction(det)).multiply(new BigFraction(-1));
+                    //result[j][i] =   new BigFraction(findDet(sss)).divide(new BigFraction(det)).multiply(new BigFraction(-1));
+                    result[j][i] = findDeterminant(sss).divide(det).multiply(new BigFraction(-1));
                 }
             }
         }
@@ -242,15 +245,54 @@ public class Validation { //Проверка достоверности
         }
     }
 
+    private BigFraction findDeterminant(BigFraction[][] m){
+        BigFraction subsidiaryArr[] = new BigFraction[m[0].length];
+        BigFraction arr[][] = new BigFraction[m.length][m.length];
+        for(int i=0;i<arr.length;i++)
+            System.arraycopy(m[i], 0, arr[i], 0, m[i].length);
+        BigFraction coef;
+        for(int i=0;i<arr.length-1;i++){
+            coef=arr[i][i];
+            if(coef.doubleValue()==1){
+                System.arraycopy(arr[i], 0, subsidiaryArr, 0, arr[i].length);
+            }else {
+                for (int j = 0; j < arr[i].length; j++)  {
+                    subsidiaryArr[j] = arr[i][j].divide(arr[i][i]);
+                }
+            }
+            for(int z=i+1;z<arr.length;z++) {
+                coef=arr[z][i];
+                for (int j = 0; j < arr[z].length; j++) {
+                    arr[z][j] = arr[z][j].subtract(subsidiaryArr[j].multiply(coef));
+                }
+            }
+
+        }
+        BigFraction ans = new BigFraction(1);
+        for(int i=0;i<arr.length;i++){
+            ans=ans.multiply(arr[i][i]);
+        }
+        return ans;
+    }
+
+//    public static void main(String[] args) { // determinant test
+//        BigFraction FFA[][] = {
+//                {new BigFraction(-1), new BigFraction(0)},
+//                {new BigFraction(-8), new BigFraction(1)}};
+//        BigFraction ff = findDeterminant(FFA);
+//        System.out.println(ff);
+//    }
+
     public void OpornoCheck(){
         //Проверка опорности
         System.out.println("Проверка опорности решения");
         checkResult();
         AFs = getAFs();
-        det = findDet(AFs);
+        //det = findDet(AFs);
+        det = findDeterminant(AFs);
         System.out.println();
         System.out.println("Детерминант равен  " + det);
-        BigFraction[][] AfsObr = findAfsObr( AFs , det);
+        BigFraction[][] AfsObr = findAfsObr(AFs, det);
         for (int i = 0; i < AFs.length; i++) {
             for (int j = 0; j < AFs[0].length; j++) {
                 System.out.print(AFs[i][j] + " ");

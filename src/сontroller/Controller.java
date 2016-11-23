@@ -17,9 +17,7 @@ import math.Validation;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.LinkedList;
 
-import org.apache.commons.lang.Validate;
 import org.apache.commons.lang.math.NumberUtils;
 import parser.JaxbParser;
 
@@ -74,7 +72,14 @@ public class Controller {
             findTab.setDisable(true);
             checkTab.setDisable(true);
             graphicTab.setDisable(true);
-        } else initListeners();
+        }
+        else {
+            initListeners();
+            solutionTab.setDisable(true);
+            findTab.setDisable(true);
+            checkTab.setDisable(true);
+            graphicTab.setDisable(true);
+        }
     }
 
     private ArrayList<String> arrayErrors;
@@ -130,7 +135,6 @@ public class Controller {
                     Table.setTable(tableA, mMethod.getA());
                     Table.setTable(tableB, mMethod.getB());
                     Table.setTable(tableC, mMethod.getC());
-
                     if(mMethod.getExtr()){
                         comboBoxExtr.getSelectionModel().select("min");
                     }else{
@@ -138,7 +142,11 @@ public class Controller {
                     }
                     textFieldVariables.setText(String.valueOf(mMethod.getA().length));
                     textFieldRestrictions.setText(String.valueOf(mMethod.getA()[0].length));
-                    initialize();}
+                    tabPane.getSelectionModel().select(enterTab);
+                    textArea.clear();
+                    textAreaCheck.clear();
+                    initialize();
+                }
                 break;
             case "saveMenuItem":
                 try {
@@ -301,6 +309,7 @@ public class Controller {
                         Table.getTableA(tableA, tableA.getColumns().size(), tableA.getItems().size()),
                         Table.getTableB(tableB, tableB.getItems().size()), extr);
                 method.run();
+                textArea.clear();
                 for(int i=0;i<method.getAnswer().size();i++) {
                     textArea.setText(textArea.getText()+method.getAnswer().get(i).toString());
 
