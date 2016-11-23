@@ -12,7 +12,7 @@ import java.util.LinkedList;
 public class MMethod
 {
     private BigFraction b[], c[], A[][];
-    private static BigFraction[][] newA;
+    private static BigFraction newA[][], startA[][], startB[];
     private int m, n;
     private int r = -1,k;
     private boolean min;
@@ -27,17 +27,31 @@ public class MMethod
     private LinkedList<StringBuilder> listAnswer = new LinkedList<>();
 
     public MMethod(){}
+
     public MMethod(BigFraction[] c, BigFraction A[][], BigFraction b[], boolean extr){
         this.c=c;
         this.b=b;
         this.A=A;
+        this.startA = A;
+        this.startB = b;
         this.min=extr;
         this.m = A.length;
+
         this.n = A[0].length;
     }
+
+    public static BigFraction[][] getStartA() {
+        return startA;
+    }
+
+    public static BigFraction[] getStartB() {
+        return startB;
+    }
+
     public boolean getExtr() {
         return min;
     }
+
     public BigFraction[][] getA() {
         return A;
     }
@@ -63,13 +77,14 @@ public class MMethod
     }
 
     public BigFraction[] getB() {
-
         return b;
     }
+
     @XmlElement
     public void setB(BigFraction[] b) {
         this.b = b;
     }
+
     public LinkedList<StringBuilder> getAnswer() {
         return listAnswer;
     }
@@ -407,6 +422,7 @@ public class MMethod
 
         listAnswer.add(ab);
     }
+
     public BigFraction[] xOptimalniy(int[] fs,BigFraction[][] a){
         BigFraction[] xToReturn = new BigFraction[n];
         for(int i = 0; i < n; i++) {
@@ -417,6 +433,7 @@ public class MMethod
         }
         return xToReturn;
     }
+
     public static BigFraction finaloo (BigFraction c[],BigFraction x[],boolean minimum){
         BigFraction otvet = new BigFraction(0);
         for (int i = 0; i < c.length; i++)
@@ -427,6 +444,7 @@ public class MMethod
         return otvet.multiply(new BigFraction(-1));
         else return otvet;
     }
+
     private static int compareTwoFraction(BigFraction fr1, BigFraction fr2){
         if(fr1.signum()>fr2.signum()){
             return 1;
@@ -441,6 +459,7 @@ public class MMethod
         }
 
     }
+
     public static BigFraction[][] findMatrix(BigFraction A[][],int stolb,int strok,int m, int n){
         BigFraction X[][] = new BigFraction [m+2][n+m+1];
 
@@ -457,6 +476,7 @@ public class MMethod
         }
         return  X;
     }
+
     public static BigFraction alfabetta(BigFraction[] Cs, BigFraction A[][], BigFraction Cj, int iter){
         BigFraction res = new BigFraction (0);
         for (int i = 0; i < Cs.length; i++)
@@ -465,6 +485,7 @@ public class MMethod
         }
         return  res.subtract(Cj);
     }
+
     public static int minimumK (BigFraction[]a,BigFraction []b){
         BigFraction ma = a[1];
         for (int i = 1; i < a.length ; i++)
@@ -496,6 +517,7 @@ public class MMethod
             return mas.get(0);
         }
     }
+
     public BigFraction[][] MainTable(BigFraction[][] a, BigFraction[] b){
     BigFraction l[][] = new BigFraction[m+2][m+n+1];
     for (int i = 0; i < m+2 ; i++) {

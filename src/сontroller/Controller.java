@@ -342,6 +342,7 @@ public class Controller {
                 checkTab.setDisable(false);
                 Validation val = new Validation();
                 val.OpornoCheck();
+                val.AdmissibilityCheck();
                 tabPane.getSelectionModel().select(checkTab);
 
         }

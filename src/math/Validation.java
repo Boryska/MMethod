@@ -11,7 +11,7 @@ public class Validation { //Проверка достоверности
     private BigInteger det;
     private BigFraction[][] startA;
     private BigFraction[][] finalA;
-    private BigFraction[] startB;
+    private BigFraction[] startB, XI;
 
     public Validation(){
         this.finalFs = MMethod.getFs();
@@ -31,12 +31,20 @@ public class Validation { //Проверка достоверности
         }
         System.out.println();
         System.out.println("FinalFs");
+        XI = new BigFraction[finalFs.length];
+        for(int i = 0; i < XI.length; i++){
+            XI[i] = finalA[i][0];
+        }
+        // Bubble Fs && X* SORT
         for(int i = finalFs.length-1 ; i > 0 ; i--){
             for(int j = 0 ; j < i ; j++){
                 if( finalFs[j] > finalFs[j+1] ){
-                    int tmp = finalFs[j];
+                    int tmpFs = finalFs[j];
+                    BigFraction tmpX = XI[j];
                     finalFs[j] = finalFs[j+1];
-                    finalFs[j+1] = tmp;
+                    XI[j] = XI[j+1];
+                    finalFs[j+1] = tmpFs;
+                    XI[j+1] = tmpX;
                 }
             }
         }
@@ -169,6 +177,12 @@ public class Validation { //Проверка достоверности
         //Проверка неотрицательности
         //--------------------
         //Проверка выполнения условий задачи
+
+        System.out.print("X* = { ");
+        for (int i = 0; i < XI.length; i++) {
+            System.out.print(XI[i].doubleValue() + ";  ");
+        }
+        System.out.println("}");
         System.out.println("Проверка выполнения условий задачи ");
         for(int i = 0; i < startA.length; i++){
             for(int j = 0; j < startA[0].length; j++){
@@ -180,7 +194,7 @@ public class Validation { //Проверка достоверности
 
     public void OpornoCheck(){ //Проверка опорности
         System.out.println("Проверка опорности решения");
-        //checkResult();
+        checkResult();
         AFs = getAFs();
         det = findDet(AFs);
         System.out.println();
