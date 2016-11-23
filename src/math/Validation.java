@@ -6,30 +6,30 @@ import java.math.BigInteger;
 public class Validation { //Проверка достоверности
     private BigFraction[][] AFs;
     private int finalFs[];
-    //private BigInteger det;
+
     private BigFraction det;
     private BigFraction[][] startA;
     private BigFraction[][] finalA;
     private BigFraction[] startB, startL, XI;
 
-    public Validation(){
+    public Validation() {
         this.finalFs = MMethod.getFs();
         this.finalA = MMethod.getNewA();
         this.startA = MMethod.getStartA();
         this.startB = MMethod.getStartB();
         this.startL = MMethod.getStartL();
         this.XI = new BigFraction[finalFs.length];
-        for(int i = 0; i < XI.length; i++){
+        for (int i = 0; i < XI.length; i++) {
             XI[i] = finalA[i][0];
         }
     }
 
-    public void checkResult(){
+    public void checkResult() {
         System.out.println();
         System.out.println();
         System.out.println("FinalA");
-        for(int i = 0; i < finalA.length; i++){
-            for(int j = 0; j < finalA[0].length; j++){
+        for (int i = 0; i < finalA.length; i++) {
+            for (int j = 0; j < finalA[0].length; j++) {
                 System.out.print(finalA[i][j].doubleValue() + "           ");
             }
             System.out.println();
@@ -49,17 +49,17 @@ public class Validation { //Проверка достоверности
 //                }
 //            }
 //        }
-        for (int x: finalFs ) {
-            System.out.print("A"+x+"     ; ");
+        for (int x : finalFs) {
+            System.out.print("A" + x + "     ; ");
         }
         System.out.println();
     }
 
-    public BigFraction[][] getAFs(){
+    public BigFraction[][] getAFs() {
         BigFraction[][] Buf = new BigFraction[finalFs.length][finalFs.length];
-               for(int i = 0; i < Buf.length; i++){
-                       for(int j = 0; j < Buf[0].length; j++){
-                Buf[i][j] = startA[i][finalFs[j]-1];
+        for (int i = 0; i < Buf.length; i++) {
+            for (int j = 0; j < Buf[0].length; j++) {
+                Buf[i][j] = startA[i][finalFs[j] - 1];
             }
         }
         return Buf;
@@ -160,6 +160,16 @@ public class Validation { //Проверка достоверности
 //            }
 //        }
 //    }
+        public static BigFraction findDet (BigFraction x [][]) {
+            BigFraction determinant = new BigFraction(0);
+            for (int i = 0; i < x.length; i++) {
+                //BigFraction mn = x[][];
+                for (int j = 0; j < x.length; j++) {
+                    
+                }
+            }
+            return determinant;
+        }
 
     public BigFraction [][] findAfsObr(BigFraction [][] aMatrix , BigFraction det){
         BigFraction[][] result = new BigFraction [aMatrix.length][aMatrix[0].length];
@@ -246,24 +256,40 @@ public class Validation { //Проверка достоверности
     }
 
     private BigFraction findDeterminant(BigFraction[][] m){
-        BigFraction subsidiaryArr[] = new BigFraction[m[0].length];
+
+        BigFraction raschet[] = new BigFraction[m.length];
+        BigFraction c [] = new BigFraction[m.length];
         BigFraction arr[][] = new BigFraction[m.length][m.length];
-        for(int i=0;i<arr.length;i++)
-            System.arraycopy(m[i], 0, arr[i], 0, m[i].length);
         BigFraction coef;
+        int count = 0;
+        for(int i=0;i<arr.length;i++)
+
+
+            for (int j = 0; j < arr.length ; j++) {
+                arr[i][j] = m[i][j];
+            }
+
         for(int i=0;i<arr.length-1;i++){
-            coef=arr[i][i];
-            if(coef.doubleValue()==1){
-                System.arraycopy(arr[i], 0, subsidiaryArr, 0, arr[i].length);
-            }else {
-                for (int j = 0; j < arr[i].length; j++)  {
-                    subsidiaryArr[j] = arr[i][j].divide(arr[i][i]);
+
+            for (int j = i; j < arr.length -1  ; j++) {
+                for (int k = 0; k < arr.length; k++) {
+                        if(MMethod.compareTwoFraction(arr[j][j] , arr[j][j+1]) == -1 ){
+                            System.arraycopy(arr[j], 0, c, 0, arr.length);
+                            System.arraycopy(arr[j+1], 0, arr[j], 0, arr.length);
+                            System.arraycopy(c, 0, arr[j+1], 0, arr.length);
+                            count++;
+                        }
                 }
             }
+
+
+            for (int j = 0; j < arr[i].length; j++)  {
+                        raschet[j] = arr[i][j].divide(arr[i][i]);
+        }
             for(int z=i+1;z<arr.length;z++) {
                 coef=arr[z][i];
                 for (int j = 0; j < arr[z].length; j++) {
-                    arr[z][j] = arr[z][j].subtract(subsidiaryArr[j].multiply(coef));
+                    arr[z][j] = arr[z][j].subtract(raschet[j].multiply(coef));
                 }
             }
 
@@ -272,7 +298,9 @@ public class Validation { //Проверка достоверности
         for(int i=0;i<arr.length;i++){
             ans=ans.multiply(arr[i][i]);
         }
-        return ans;
+        System.out.println(count+"   -------");
+        BigFraction znak = new BigFraction(-1).pow(count);
+        return ans.multiply(znak);
     }
 
 //    public static void main(String[] args) { // determinant test
@@ -295,7 +323,7 @@ public class Validation { //Проверка достоверности
         BigFraction[][] AfsObr = findAfsObr(AFs, det);
         for (int i = 0; i < AFs.length; i++) {
             for (int j = 0; j < AFs[0].length; j++) {
-                System.out.print(AFs[i][j] + " ");
+                System.out.print(AFs[i][j].intValue() + " ");
             }
             System.out.println();        }
         for (int i = 0; i < AfsObr.length ; i++) {

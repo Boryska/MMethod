@@ -450,7 +450,7 @@ public class MMethod
         else return otvet;
     }
 
-    private static int compareTwoFraction(BigFraction fr1, BigFraction fr2){
+    public static int compareTwoFraction(BigFraction fr1, BigFraction fr2){
         if(fr1.signum()>fr2.signum()){
             return 1;
         }else if(fr1.signum()<fr2.signum()){
