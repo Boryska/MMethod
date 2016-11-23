@@ -399,7 +399,7 @@ public class MMethod
 
             listAnswer.add(iterat);
         }
-        System.out.println("L*= " + finaloo(c,xOptimalniy(Fs,newA),min).doubleValue() );
+        System.out.println(" " + finaloo(c,xOptimalniy(Fs,newA),min).doubleValue() );
         StringBuilder ab = new StringBuilder();
         ab.append("Конечная таблица М-метода:\n");
         BigFraction[] tetaMas = new BigFraction[m];
