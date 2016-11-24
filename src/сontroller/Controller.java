@@ -140,8 +140,8 @@ public class Controller {
                     }else{
                         comboBoxExtr.getSelectionModel().select("max");
                     }
-                    textFieldVariables.setText(String.valueOf(mMethod.getA().length));
-                    textFieldRestrictions.setText(String.valueOf(mMethod.getA()[0].length));
+                    textFieldRestrictions.setText(String.valueOf(mMethod.getA().length));
+                    textFieldVariables.setText(String.valueOf(mMethod.getA()[0].length));
                     tabPane.getSelectionModel().select(enterTab);
                     textArea.clear();
                     textAreaCheck.clear();
@@ -351,7 +351,7 @@ public class Controller {
                 checkTab.setDisable(false);
                 Validation val = new Validation();
                 val.OpornoCheck();
-                val.AdmissibilityCheck();
+                val.DopustimostCheck();
                 tabPane.getSelectionModel().select(checkTab);
 
         }

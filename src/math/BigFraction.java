@@ -488,8 +488,7 @@ public class BigFraction extends Number implements Comparable<BigFraction>
      * as both numerator and denominator, or the equivalent of a double-precision
      * number, whichever is more.
      */
-    public BigDecimal toBigDecimal()
-    {
+    public BigDecimal toBigDecimal() {
         //Implementation note:  A fraction can be represented exactly in base-10 iff its
         //denominator is of the form 2^a * 5^b, where a and b are nonnegative integers.
         //(In other words, if there are no prime factors of the denominator except for
