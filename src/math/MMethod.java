@@ -404,7 +404,12 @@ public class MMethod
 
             listAnswer.add(iterat);
         }
-        System.out.println(" " + finaloo(c,xOptimalniy(Fs,newA),min).doubleValue() );
+        if(min){
+            for(int i=0;i<c.length;i++){
+                c[i]=c[i].multiply(new BigFraction(-1)); //c[i]*=-1;
+            }
+        }
+        System.out.println(" " + finaloo(c,xOptimalniy(Fs,newA)).doubleValue() );
         StringBuilder ab = new StringBuilder();
         ab.append("Конечная таблица М-метода:\n");
         BigFraction[] tetaMas = new BigFraction[m];
@@ -422,7 +427,7 @@ public class MMethod
            // System.out.println(x);
             ab.append(new BigDecimal(x.doubleValue()).setScale(6,BigDecimal.ROUND_FLOOR)+" ; ");
         }
-        ab.append("}\nОптимальное значение функции при заданных ограничениях равно: " + new BigDecimal(finaloo(c,xOptimalniy(Fs,newA),min).doubleValue()).setScale(6,BigDecimal.ROUND_FLOOR));
+        ab.append("}\nОптимальное значение функции при заданных ограничениях равно: " + new BigDecimal(finaloo(c,xOptimalniy(Fs,newA)).doubleValue()).setScale(6,BigDecimal.ROUND_FLOOR));
 
 
         listAnswer.add(ab);
@@ -439,15 +444,14 @@ public class MMethod
         return xToReturn;
     }
 
-    public static BigFraction finaloo (BigFraction c[],BigFraction x[],boolean minimum){
+    public static BigFraction finaloo (BigFraction c[],BigFraction x[]){
         BigFraction otvet = new BigFraction(0);
         for (int i = 0; i < c.length; i++)
         {
             otvet = otvet.add(c[i].multiply(x[i]));
         }
-        if(minimum)
-        return otvet.multiply(new BigFraction(-1));
-        else return otvet;
+
+         return otvet;
     }
 
     public static int compareTwoFraction(BigFraction fr1, BigFraction fr2){

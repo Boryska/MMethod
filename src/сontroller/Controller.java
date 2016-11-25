@@ -352,6 +352,7 @@ public class Controller {
                 Validation val = new Validation();
                 val.OpornoCheck();
                 val.DopustimostCheck();
+                val.OptimalityCheck();
                 tabPane.getSelectionModel().select(checkTab);
 
         }

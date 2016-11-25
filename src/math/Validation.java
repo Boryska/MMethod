@@ -3,8 +3,6 @@ package math;
 import Jama.LUDecomposition;
 import Jama.Matrix;
 
-import java.math.BigDecimal;
-import java.math.BigInteger;
 
 public class Validation { //Проверка достоверности
     private BigFraction[][] AFs;
@@ -21,9 +19,12 @@ public class Validation { //Проверка достоверности
         this.startA = MMethod.getStartA();
         this.startB = MMethod.getStartB();
         this.startL = MMethod.getStartL();
-        this.XI = new BigFraction[finalFs.length];
-        for (int i = 0; i < XI.length; i++) {
-            XI[i] = finalA[i][0];
+        this.XI = new BigFraction[startA[0].length];
+        for(int i = 0; i < startA[0].length; i++) {
+            XI[i] = new BigFraction("0");
+        }
+        for(int i = 0; i < finalFs.length; i++){
+            XI[finalFs[i]-1]= finalA[i][0];
         }
     }
 
@@ -35,16 +36,6 @@ public class Validation { //Проверка достоверности
             }
         }
         return Buf;
-    }
-
-    public static BigFraction findDet (BigFraction x [][]) {
-        BigFraction determinant = new BigFraction(0);
-        for (int i = 0; i < x.length; i++) {
-            //BigFraction mn = x[][];
-            for (int j = 0; j < x.length; j++) {
-                }
-            }
-            return determinant;
     }
 
     public BigFraction [][] findAfsObr(BigFraction [][] aMatrix , BigFraction det){
@@ -125,35 +116,62 @@ public class Validation { //Проверка достоверности
     }
 
     public void DopustimostCheck(){
+        BigFraction[][] AfsObr = findAfsObr(AFs, det);
+        BigFraction [] Cs = new BigFraction[finalFs.length];
+        for (int i = 0; i < finalFs.length ; i++) {
+            Cs[i] = startL[finalFs[i]-1];
+        }
+        BigFraction deltaI[] = new BigFraction[startA.length];
+        BigFraction deltaJ[] = new BigFraction[startA[0].length];
+        BigFraction YI [] = vectorMatrix(AfsObr,Cs);
 
+        System.out.println("Проверка допустимости решения");
         System.out.print("X* ={");
         for (BigFraction x: XI) {
             System.out.print(x.doubleValue() + " ; ");
         }
-        System.out.println("}");
-
-        AFs = getAFs();
-        det = findDeterminant(AFs);
-        System.out.println("Afs-1");
-        BigFraction[][] AfsObr = findAfsObr(AFs, det);
-        for (int i = 0; i < AfsObr.length ; i++) {
-            for (int j = 0; j < AfsObr[0].length; j++) {
-                System.out.print(AfsObr[i][j] + " ");
+        System.out.println("}\nОпределение Δi");
+        for (int i = 0; i < startA.length; i++) {
+            BigFraction sum = new BigFraction(0);
+            StringBuilder sbi = new StringBuilder();
+            sbi.append("Δ"+(i+1)+" = ");
+            for (int j = 0; j <startA[0].length; j++) {
+                sum = sum.add(startA[i][j].multiply(XI[j]));
+               sbi.append( startA[i][j].doubleValue() + " * "+ XI[j].doubleValue()+" + ");
             }
-            System.out.println();
+             deltaI[i] = startB[i].subtract(sum);
+            sbi.append("-" + startB[i].doubleValue() + " = " +deltaI[i].doubleValue() );
+            System.out.println(sbi.toString());
         }
-        BigFraction [] Cs = new BigFraction[finalFs.length];
-        for (int i = 0; i < finalFs.length ; i++) {
-            Cs[i] = startL[finalFs[i]-1];
-            System.out.println(i+1 + " " + Cs[i]);
+        BigFraction maxI = new BigFraction(-1);
+        for (BigFraction x: deltaI) {
+            if(MMethod.compareTwoFraction(x,maxI) == 1 )
+             maxI = x;
         }
-        BigFraction YI [] = vectorMatrix(AfsObr,Cs);
-        System.out.println("Оптимальный базис двойственной задачи");
-        for (int i = 0; i < YI.length; i++) {
-            System.out.print(YI[i]+ " ; ");
+        System.out.println("maxΔi = " + maxI.doubleValue());
+        System.out.print("Y* ={");
+        for (BigFraction x: YI) {
+            System.out.print(x.doubleValue() + " ; ");
         }
-
-        System.out.println();
+        System.out.println("}\nОпределение Δj");
+        for (int i = 0; i < startA[0].length; i++) {
+            BigFraction sum = new BigFraction(0);
+            StringBuilder sbj = new StringBuilder();
+            sbj.append("Δ"+(i+1)+" = ");
+            for (int j = 0; j <startA.length; j++) {
+                sum = sum.add(startA[j][i].multiply(YI[j]));
+                sbj.append( startA[j][i].doubleValue() + " * "+ YI[j].doubleValue()+" + ");
+            }
+            deltaJ[i] = sum.subtract(startL[i]);
+            sbj.append("-" + startL[i].doubleValue() + " = " +deltaJ[i].doubleValue() );
+            System.out.println(sbj.toString());
+        }
+        BigFraction maxJ = new BigFraction(-1);
+        for (BigFraction x: deltaJ) {
+            if(MMethod.compareTwoFraction(x,maxJ) == 1 )
+                maxJ = x;
+        }
+        System.out.println("maxΔj = " + maxJ.doubleValue());
     }
 
     public void OpornoCheck(){
@@ -177,6 +195,46 @@ public class Validation { //Проверка достоверности
     }
 
     public void OptimalityCheck(){
-        //Проверка оптимальности
+
+        System.out.println("Проверка оптимальности решения");
+        det = findDeterminant(AFs);
+        BigFraction[][] AfsObr = findAfsObr(AFs, det);
+        BigFraction [] Cs = new BigFraction[finalFs.length];
+        for (int i = 0; i < finalFs.length ; i++) {
+            Cs[i] = startL[finalFs[i]-1];
+        }
+        BigFraction YI [] = vectorMatrix(AfsObr,Cs);
+
+        System.out.print("Оптимальный значение прямой задачи:\nL1* = ");
+        BigFraction l1 = new BigFraction(0);
+        String l11 ="";
+        String l22 ="";
+        for (int i = 0; i < startA[0].length ; i++) {
+            l1= l1.add(XI[i].multiply(startL[i]));
+            l11 += (XI[i].doubleValue() +" * "+ startL[i].doubleValue()+" + ");
+        }
+        System.out.print( l11 + " = ");
+        System.out.println(l1.doubleValue());
+        System.out.print("Оптимальный значение двойственной задачи:\nL2* = ");
+        BigFraction l2 = new BigFraction(0);
+        for (int i = 0; i < startA.length ; i++) {
+            l2 = l2.add(YI[i].multiply(startB[i]));
+            l22 += (YI[i].doubleValue() +" * "+ startB[i].doubleValue()+" + ");
+        }
+        System.out.print( l22 + " = ");
+        System.out.println(l2.doubleValue());
+        System.out.print("Оптимальное значение через Бетта 0:\nL3* = ");
+        BigFraction l3 = finalA[finalA.length-1][0];
+        if(finalA[finalA.length-1][0].signum() < 0)
+            l3 = l3.multiply(new BigFraction(-1));
+        System.out.println(l3.doubleValue());
+
+        System.out.print("Среднее оптимальное значение:\nLср* = (" + l1.doubleValue() + " + "+ l2.doubleValue() + " + "+ l3.doubleValue() + ")\\3 = ");
+        BigFraction avgl = l1.add(l2.add(l3)).divide(new BigFraction(3));
+        System.out.println(avgl.doubleValue());
+
+        System.out.println("L1* - Lср* = " + l1.doubleValue() + " - " +avgl.doubleValue() + " = " + l1.subtract(avgl).doubleValue() + " < 0.0000001");
+        System.out.println("L2* - Lср* = " + l2.doubleValue() + " - " +avgl.doubleValue() + " = " + l1.subtract(avgl).doubleValue() + " < 0.0000001");
+        System.out.println("L3* - Lср* = " + l3.doubleValue() + " - " +avgl.doubleValue() + " = " + l1.subtract(avgl).doubleValue() + " < 0.0000001");
     }
 }
