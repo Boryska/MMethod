@@ -58,6 +58,8 @@ public class Controller {
     private TextArea textArea;
     @FXML
     private TextArea textAreaCheck;
+    @FXML
+    private  Menu menuReport;
 
     @FXML
     private void initialize() {
@@ -72,6 +74,7 @@ public class Controller {
             findTab.setDisable(true);
             checkTab.setDisable(true);
             graphicTab.setDisable(true);
+            menuReport.setDisable(true);
         }
         else {
             initListeners();
@@ -79,6 +82,7 @@ public class Controller {
             findTab.setDisable(true);
             checkTab.setDisable(true);
             graphicTab.setDisable(true);
+            menuReport.setDisable(true);
         }
     }
 
@@ -208,6 +212,17 @@ public class Controller {
                 alert.setHeaderText("Программа для решения задач линейного программирования М-методом(I-агоритм)");
                 alert.setContentText("Выполнили студенты группы КН-34б:\nКондратьев Виталий, Ворона Борис, Кущ Алина");
                 alert.showAndWait();
+                break;
+            case "reportMenuItem":
+                fileChooser = new FileChooser();//Класс работы с диалогом выборки и сохранения
+                fileChooser.setTitle("Сохранение отчета");//Заголовок диалога
+                extFilter =  new FileChooser.ExtensionFilter("PDF files (*.pdf)", "*.PDF", "*.pdf");//Расширение
+                fileChooser.getExtensionFilters().add(extFilter);
+                file = fileChooser.showSaveDialog(mainStage);//Указываем текущую сцену CodeNote.mainStage
+                if (file != null) { //Save
+                    //
+                }
+                break;
         }
     }
 

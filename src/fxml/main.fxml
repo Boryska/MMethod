@@ -21,6 +21,11 @@
                   <MenuItem fx:id="exitMenuItem" mnemonicParsing="false" onAction="#menuActions" text="Выход" />
             </items>
           </Menu>
+            <Menu fx:id="menuReport" mnemonicParsing="false" text="Отчет">
+              <items>
+                <MenuItem fx:id="report" mnemonicParsing="false" onAction="#menuActions" text="Создать отчет" />
+              </items>
+            </Menu>
           <Menu mnemonicParsing="false" text="Справка">
             <items>
               <MenuItem fx:id="aboutMenuItem" mnemonicParsing="false" onAction="#menuActions" text="О программе" />

@@ -4,10 +4,9 @@ import Jama.LUDecomposition;
 import Jama.Matrix;
 
 
-public class Validation { //Проверка достоверности
+public class Validation {
     private BigFraction[][] AFs;
     private int finalFs[];
-
     private BigFraction det;
     private BigFraction[][] startA;
     private BigFraction[][] finalA;
@@ -21,7 +20,7 @@ public class Validation { //Проверка достоверности
         this.startL = MMethod.getStartL();
         this.XI = new BigFraction[startA[0].length];
         for(int i = 0; i < startA[0].length; i++) {
-            XI[i] = new BigFraction("0");
+            XI[i] = new BigFraction(0);
         }
         for(int i = 0; i < finalFs.length; i++){
             XI[finalFs[i]-1]= finalA[i][0];
@@ -80,24 +79,6 @@ public class Validation { //Проверка достоверности
                  ssum = ssum.add(matrix[j][i].multiply(vector[j]));
             }
             result[i] = ssum;
-        }
-        return result;
-    }
-
-    public BigFraction[][] Minor ( BigFraction[][] matrix, int rowNum, int colNum ) {
-        BigFraction[][] result = new BigFraction[matrix.length - 1][matrix[0].length - 1];
-
-        for ( int i = 0; i < matrix.length; i++ ) {
-            boolean isRowDeleted = rowNum < i;
-            int resultRowIndex = isRowDeleted ? i - 1 : i;
-
-            for ( int j = 0; j < matrix[i].length; j++ ) {
-                boolean isColDeleted = colNum < j;
-                int resultColIndex = isColDeleted ? j - 1 : j;
-
-                if (rowNum != i && colNum != j)
-                    result[resultRowIndex][resultColIndex] = matrix[i][j];
-            }
         }
         return result;
     }
@@ -175,7 +156,6 @@ public class Validation { //Проверка достоверности
     }
 
     public void OpornoCheck(){
-        //Проверка опорности
         System.out.println("Проверка опорности решения");
         AFs = getAFs();
         det = findDeterminant(AFs);
@@ -195,7 +175,6 @@ public class Validation { //Проверка достоверности
     }
 
     public void OptimalityCheck(){
-
         System.out.println("Проверка оптимальности решения");
         det = findDeterminant(AFs);
         BigFraction[][] AfsObr = findAfsObr(AFs, det);
@@ -232,9 +211,8 @@ public class Validation { //Проверка достоверности
         System.out.print("Среднее оптимальное значение:\nLср* = (" + l1.doubleValue() + " + "+ l2.doubleValue() + " + "+ l3.doubleValue() + ")\\3 = ");
         BigFraction avgl = l1.add(l2.add(l3)).divide(new BigFraction(3));
         System.out.println(avgl.doubleValue());
-
-        System.out.println("L1* - Lср* = " + l1.doubleValue() + " - " +avgl.doubleValue() + " = " + l1.subtract(avgl).doubleValue() + " < 0.0000001");
-        System.out.println("L2* - Lср* = " + l2.doubleValue() + " - " +avgl.doubleValue() + " = " + l1.subtract(avgl).doubleValue() + " < 0.0000001");
-        System.out.println("L3* - Lср* = " + l3.doubleValue() + " - " +avgl.doubleValue() + " = " + l1.subtract(avgl).doubleValue() + " < 0.0000001");
+        System.out.println(l1.subtract(avgl).doubleValue() < 0.0000001 ? "L1* - Lср* = " + l1.doubleValue() + " - " + avgl.doubleValue() + " = " + l1.subtract(avgl).doubleValue() + " < 0.0000001" : "L1* - Lср* = " + l1.doubleValue() + " - " + avgl.doubleValue() + " = " + l1.subtract(avgl).doubleValue() + " >= 0.0000001");
+        System.out.println(l2.subtract(avgl).doubleValue() < 0.0000001 ? "L2* - Lср* = " + l2.doubleValue() + " - " + avgl.doubleValue() + " = " + l2.subtract(avgl).doubleValue() + " < 0.0000001" : "L2* - Lср* = " + l2.doubleValue() + " - " + avgl.doubleValue() + " = " + l2.subtract(avgl).doubleValue() + " >= 0.0000001");
+        System.out.println(l3.subtract(avgl).doubleValue() < 0.0000001 ? "L3* - Lср* = " + l3.doubleValue() + " - " + avgl.doubleValue() + " = " + l3.subtract(avgl).doubleValue() + " < 0.0000001" : "L3* - Lср* = " + l3.doubleValue() + " - " + avgl.doubleValue() + " = " + l3.subtract(avgl).doubleValue() + " >= 0.0000001");
     }
 }

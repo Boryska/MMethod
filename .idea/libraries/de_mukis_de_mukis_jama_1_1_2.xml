@@ -1,6 +1,5 @@
 <component name="libraryTable">
-  <library name="de.mukis:de.mukis.jama:1.1.2" type="repository">
-    <properties maven-id="de.mukis:de.mukis.jama:1.1.2" />
+  <library name="de.mukis:de.mukis.jama:1.1.2">
     <CLASSES>
       <root url="jar://$PROJECT_DIR$/src/lib/de.mukis.jama-1.1.2.jar!/" />
     </CLASSES>
