@@ -14,7 +14,6 @@ import javafx.scene.control.cell.TextFieldTableCell;
 import main.Table;
 import math.MMethod;
 import math.Validation;
-import math.Graphics;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -33,10 +32,6 @@ public class Controller {
     private TableView tableC;
     @FXML
     private ComboBox comboBoxExtr;
-    @FXML
-    private ComboBox comboBoxDeltaB1;
-    @FXML
-    private ComboBox comboBoxDeltaB2;
     @FXML
     private TextField textFieldVariables;
     @FXML
@@ -369,21 +364,16 @@ public class Controller {
             break;
             case "buttonCheck":
                 checkTab.setDisable(false);
-                findTab.setDisable(false);
                 Validation val = new Validation();
                 val.OpornoCheck();
                 val.DopustimostCheck();
                 val.OptimalityCheck();
-                tabPane.getSelectionModel().select(checkTab);
-                initDeltaComboBoxes();
-            break;
-        }
-    }
+                textAreaCheck.clear();
+                textAreaCheck.setText(val.getListCheck().toString());
+                textAreaCheck.setEditable(false);
 
-    private void initDeltaComboBoxes() {
-        for (int i = 0; i < Integer.parseInt(textFieldRestrictions.getText()); i++) {
-            comboBoxDeltaB1.getItems().add(i+1);
-            comboBoxDeltaB2.getItems().add(i+1);
+                tabPane.getSelectionModel().select(checkTab);
+
         }
     }
 

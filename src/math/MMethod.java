@@ -16,7 +16,6 @@ public class MMethod
     private int m, n;
     private int r = -1,k;
     private boolean min;
-    private int Fs0[];
     private static int Fs[];
     private BigFraction CjI[];
     private BigFraction CjII[];
@@ -103,7 +102,7 @@ public class MMethod
     }
 
     public void run() throws Exception{
-        Fs0 = new int[m];
+
         Fs = new int[m];
         CjI = new BigFraction[n+m+1];
         CjII = new BigFraction[n+m+1];
@@ -127,10 +126,6 @@ public class MMethod
         }
         newA = MainTable(A,b);
 
-               for (int i = 0; i < Fs0.length; i++)
-        {
-            Fs0[i] = i+A[0].length-Fs0.length;               //////// Fs0
-        }
         for (int i = 0; i < Fs.length ; i++)
         {
             Fs[i] = i+2+ newA[0].length - newA.length;                          //////Fs
