@@ -143,7 +143,7 @@ public class TableM {
             mainTable[i][0] = (i-2);
             mainTable[i][1] = CsI[i-3].intValue();
             mainTable[i][2] = CsII[i-3].intValue();
-            mainTable[i][3] = Fs[i-3];
+            mainTable[i][3] = "A" + Fs[i-3];
             if( teta[i-3] != null)    { mainTable[i][mainTable[0].length-1] = teta[i-3].doubleValue();}
             mainTable[i+1][0] = (i - 1) ;
             mainTable[i+2][0] = i;

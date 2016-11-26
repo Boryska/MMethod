@@ -297,19 +297,21 @@ public class MMethod
             System.out.println(count+ " -я итерация");
             iterat.append(count+"-я итерация\n");
             System.out.println("Номер направляющего столбца K = "+ (k));
-            ArrayList<Integer> omega = new ArrayList<>();
+            boolean check = false;
             BigFraction tetaMas[] = new BigFraction[m];
-            for (int i = 0; i < m; i++)
-            {
-                if ( compareTwoFraction(newA[i][k],new BigFraction(0)) ==1)
-
-                {
-                    omega.add(i);                               //////////Нахождение положительных элементов
+            for (int j = 0;j < n+m+1; j++) {
+                if(alfa[j].signum() == -1 || alfa[j].signum() == 0 && betta[j].signum() == -1)
+                for (int i = 0; i < m; i++) {
+                    if (!(compareTwoFraction(newA[i][j], new BigFraction(0)) == 0)) {
+                        check = false;
+                    }
                 }
+                if(check) break;
             }
-            if (omega.size() == 0){
-                System.out.println("СИСТЕМА НЕОГРАНИЧЕННА");
+            if (check){
                 iterat.append("Внимание! Введенная система является неограниченной.");
+                listAnswer.add(iterat);
+                System.out.println("СИСТЕМА НЕОГРАНИЧЕННА");
                 return;
             }
             else {
@@ -409,6 +411,11 @@ public class MMethod
                 c[i]=c[i].multiply(new BigFraction(-1)); //c[i]*=-1;
             }
         }
+        for (int i = 0; i < Fs.length ; i++) {
+            if(Fs[i] > n){
+                Fs[i] = (i+1);
+            }
+        }
         System.out.println(" " + finaloo(c,xOptimalniy(Fs,newA)).doubleValue() );
         StringBuilder ab = new StringBuilder();
         ab.append("Конечная таблица М-метода:\n");
@@ -439,7 +446,7 @@ public class MMethod
             xToReturn[i] = new BigFraction("0");
         }
         for(int i = 0; i < fs.length; i++){
-         xToReturn[fs[i]-1]= a[i][0];
+            xToReturn[fs[i]-1] = a[i][0];
         }
         return xToReturn;
     }

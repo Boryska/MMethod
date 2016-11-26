@@ -170,8 +170,11 @@ public class Validation {
             }
             System.out.println();
         }
+        if(MMethod.compareTwoFraction(det,new BigFraction(0)) != 0)
         System.out.println("Так как детерминант данной матарицы равен " + det.doubleValue()+ " и не равно 0, то вектора условий соответствующие базисным компонентам линейно независимы.");
+        else{
 
+        }
     }
 
     public void OptimalityCheck(){
