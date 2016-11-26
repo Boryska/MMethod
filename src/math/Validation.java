@@ -6,6 +6,7 @@ import Jama.Matrix;
 
 public class Validation {
     private BigFraction[][] AFs;
+    private static BigFraction[][] obrAFs;
     private int finalFs[];
     private BigFraction det;
     private BigFraction[][] startA;
@@ -25,6 +26,10 @@ public class Validation {
         for(int i = 0; i < finalFs.length; i++){
             XI[finalFs[i]-1]= finalA[i][0];
         }
+    }
+
+    public static BigFraction[][] getObrAFs() {
+        return obrAFs;
     }
 
     public BigFraction[][] getAFs() {
@@ -181,6 +186,8 @@ public class Validation {
         System.out.println("Проверка оптимальности решения");
         det = findDeterminant(AFs);
         BigFraction[][] AfsObr = findAfsObr(AFs, det);
+
+        BigFraction[][] ObrAfs = findAfsObr(AFs, det);
         BigFraction [] Cs = new BigFraction[finalFs.length];
         for (int i = 0; i < finalFs.length ; i++) {
             Cs[i] = startL[finalFs[i]-1];
