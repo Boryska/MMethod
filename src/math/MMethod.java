@@ -187,13 +187,8 @@ public class MMethod
             //System.out.print(L[i]+"*X" + i);
         }
         usl.append(usl1);
-        if(min){                                                                                //////
-            //System.out.println("->min");
-            usl.append("->min\n");
-        }                                                                                       /////
-        else{ usl.append("->max\n");
-            //System.out.println("->max");
-            }                                                     //////фин
+            usl.append("->max\n");                                                                                            /////
+                                                            //////фин
             //System.out.println();
         //System.out.println("Вектора ограничений");                                               //////Start
         usl.append("Вектора ограничений:\n");
@@ -401,17 +396,13 @@ public class MMethod
 
             listAnswer.add(iterat);
         }
-        if(min){
-            for(int i=0;i<c.length;i++){
-                c[i]=c[i].multiply(new BigFraction(-1)); //c[i]*=-1;
-            }
-        }
+
         for (int i = 0; i < Fs.length ; i++) {
             if(Fs[i] > n){
                 Fs[i] = (i+1);
             }
         }
-        System.out.println(" " + finaloo(c,xOptimalniy(Fs,newA)).doubleValue() );
+        System.out.println(" " + finaloo(c,xOptimalniy(Fs,newA),min).doubleValue() );
         StringBuilder ab = new StringBuilder();
         ab.append("Конечная таблица М-метода:\n");
         BigFraction[] tetaMas = new BigFraction[m];
@@ -429,7 +420,7 @@ public class MMethod
            // System.out.println(x);
             ab.append(new BigDecimal(x.doubleValue()).setScale(6,BigDecimal.ROUND_FLOOR)+" ; ");
         }
-        ab.append("}\nОптимальное значение функции при заданных ограничениях равно: " + new BigDecimal(finaloo(c,xOptimalniy(Fs,newA)).doubleValue()).setScale(6,BigDecimal.ROUND_FLOOR));
+        ab.append("}\nОптимальное значение функции при заданных ограничениях равно: " + new BigDecimal(finaloo(c,xOptimalniy(Fs,newA),min).doubleValue()).setScale(6,BigDecimal.ROUND_FLOOR));
 
 
         listAnswer.add(ab);
@@ -446,14 +437,16 @@ public class MMethod
         return xToReturn;
     }
 
-    public static BigFraction finaloo (BigFraction c[],BigFraction x[]){
+    public static BigFraction finaloo (BigFraction c[],BigFraction x[], boolean min){
         BigFraction otvet = new BigFraction(0);
         for (int i = 0; i < c.length; i++)
         {
             otvet = otvet.add(c[i].multiply(x[i]));
         }
-
-         return otvet;
+            if (min) {
+                return otvet.multiply(new BigFraction(-1));
+            }
+        else {return otvet;}
     }
 
     public static int compareTwoFraction(BigFraction fr1, BigFraction fr2){
