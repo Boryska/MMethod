@@ -24,6 +24,11 @@ public class MMethod
     private BigFraction alfa[];
     private BigFraction betta[];
     private LinkedList<StringBuilder> listAnswer = new LinkedList<>();
+    private static ArrayList<Double> iterations;
+
+    public static ArrayList<Double> getIterations() {
+        return iterations;
+    }
 
     public MMethod(){}
 
@@ -102,7 +107,7 @@ public class MMethod
     }
 
     public void run() throws Exception{
-
+        iterations = new ArrayList<>();
         Fs = new int[m];
         CjI = new BigFraction[n+m+1];
         CjII = new BigFraction[n+m+1];
@@ -243,32 +248,6 @@ public class MMethod
             usl.append(" = " + newA[i][0].intValue() + "\n");
         }
 
-//        System.out.println("Вектор Cj':");
-//        for (BigFraction x:CjI )
-//        {
-//            System.out.print(x + " | ");
-////        }
-//        System.out.println();
-//        System.out.println("Вектор Cj'':");
-//        for (BigFraction x:CjII )
-//        {
-//            System.out.print(x + " | ");
-//        }
-//        System.out.println("Вектор Сs':");
-//        for (BigFraction x:CsI )
-//        {
-//            System.out.print(x + " | ");
-//        }
-//        System.out.println();
-//        System.out.println("Вектор Cs'':");
-//        for (BigFraction x:CsII )
-//        {
-//            System.out.print(x + " | ");
-//        }
-//
-//        System.out.println();
-//        System.out.println("НАЧАЛО ИТЕРАЦИОННОГО ПРОЦЕССА");
-
         usl.append("\nНАЧАЛО ИТЕРАЦИОННОГО ПРОЦЕССА\n");
         int count = 1;
         k = minimumK(alfa,betta);
@@ -281,6 +260,12 @@ public class MMethod
             System.out.println();
         }
         listAnswer.add(usl);
+        if (min){
+            iterations.add(betta[0].doubleValue() * (-1));
+        }
+        else{
+            iterations.add(betta[0].doubleValue());
+        }
         while( ((alfa[k].multiply(1000000000).add(betta[k])).compareTo(new BigFraction(0))) < 0) //////////////////////////////////////////////////////////////////////
         {
             StringBuilder iterat = new StringBuilder();
@@ -314,8 +299,8 @@ public class MMethod
                     }
                     if ((compareTwoFraction(newA[i][k],new BigFraction(0)) ==1) && ( compareTwoFraction(teta,newA[i][0].divide(newA[i][k])) ==1) )
                     {
-                        teta = newA[i][0].divide(newA[i][k]);                             /////Находим тета0 и устанавливаем р которое на ед меньше в силу того что я проебал этот момент
-                        r = i;                                   //// Но для матрицы все хорошо
+                        teta = newA[i][0].divide(newA[i][k]);
+                        r = i;
                     }
                 }
             }
@@ -393,7 +378,12 @@ public class MMethod
             System.out.println();
             k = minimumK(alfa,betta);
             System.out.println(k+"--------------------");
-
+            if(min){
+                iterations.add(betta[0].doubleValue() * (-1));
+            }
+            else {
+                iterations.add(betta[0].doubleValue());
+            }
             listAnswer.add(iterat);
         }
 

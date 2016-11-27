@@ -5,7 +5,13 @@ import exceptions.MyMessageException;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.event.EventHandler;
+import javafx.scene.chart.CategoryAxis;
+import javafx.scene.chart.LineChart;
+import javafx.scene.chart.NumberAxis;
+import javafx.scene.chart.XYChart;
+import javafx.scene.input.MouseEvent;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.fxml.FXML;
@@ -60,7 +66,12 @@ public class Controller {
     private TextArea textAreaCheck;
     @FXML
     private  Menu menuReport;
-
+    @FXML
+    private LineChart<String, Double> iterationLineChart;
+    @FXML
+    private CategoryAxis iteration;
+    @FXML
+    private NumberAxis value;
     @FXML
     private void initialize() {
         if (check == false) {
@@ -75,6 +86,7 @@ public class Controller {
             checkTab.setDisable(true);
             graphicTab.setDisable(true);
             menuReport.setDisable(true);
+
         }
         else {
             initListeners();
@@ -87,6 +99,7 @@ public class Controller {
     }
 
     private ArrayList<String> arrayErrors;
+    private ArrayList<Double> iterList;
     private static Stage mainStage;
     private static ArrayList<TableColumn> arrayTableAColumn, arrayTableBColumn, arrayTableCColumn;
     private ObservableList data;
@@ -95,6 +108,7 @@ public class Controller {
     private File file;
     private FileChooser.ExtensionFilter extFilter;
     private MMethod method;
+    XYChart.Series<String, Double> series;
 
     private void initLoader() {
         setMainStage(mainStage);
@@ -327,10 +341,26 @@ public class Controller {
                 textArea.clear();
                 for(int i=0;i<method.getAnswer().size();i++) {
                     textArea.setText(textArea.getText()+method.getAnswer().get(i).toString());
-
                 }
                 textArea.setEditable(false);
                 solutionTab.setDisable(false);
+                iterationLineChart.getData().clear();
+                series = new XYChart.Series<String, Double>();
+                iterList = method.getIterations();
+                for (int i = 0; i < iterList.size(); i++) {
+                    series.getData().add(new XYChart.Data<String, Double>(Integer.toString(i), iterList.get(i).doubleValue()));
+                }
+                series.setName("Линейная форма");
+                iterationLineChart.getData().addAll(series);
+                for(final XYChart.Data<String, Double> data : series.getData()){
+                    data.getNode().addEventHandler(MouseEvent.MOUSE_ENTERED, new EventHandler<MouseEvent>() {
+                        @Override
+                        public void handle(MouseEvent event) {
+                            Tooltip.install(data.getNode(), new Tooltip("Итерация : " + data.getXValue() + "\nЗначение : " + String.valueOf(data.getYValue())));
+                        }
+                    });
+                }
+                graphicTab.setDisable(false);
                 tabPane.getSelectionModel().select(solutionTab);
             } catch (EmptyException ex) {
                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -371,7 +401,6 @@ public class Controller {
                 textAreaCheck.clear();
                 textAreaCheck.setText(val.getListCheck().toString());
                 textAreaCheck.setEditable(false);
-
                 tabPane.getSelectionModel().select(checkTab);
 
         }
