@@ -24,10 +24,15 @@ public class MMethod
     private BigFraction alfa[];
     private BigFraction betta[];
     private LinkedList<StringBuilder> listAnswer = new LinkedList<>();
-    private static ArrayList<Double> iterations;
+    private static ArrayList<Double> iteratAlfa, iteratBetta;
 
-    public static ArrayList<Double> getIterations() {
-        return iterations;
+    public static ArrayList<Double> getIteratAlfa() {
+        return iteratAlfa;
+    }
+
+    public static ArrayList<Double> getIteratBetta() {
+        return iteratBetta;
+
     }
 
     public MMethod(){}
@@ -107,7 +112,8 @@ public class MMethod
     }
 
     public void run() throws Exception{
-        iterations = new ArrayList<>();
+        iteratAlfa = new ArrayList<>();
+        iteratBetta = new ArrayList<>();
         Fs = new int[m];
         CjI = new BigFraction[n+m+1];
         CjII = new BigFraction[n+m+1];
@@ -260,11 +266,12 @@ public class MMethod
             System.out.println();
         }
         listAnswer.add(usl);
+        iteratAlfa.add(alfa[0].doubleValue());
         if (min){
-            iterations.add(betta[0].doubleValue() * (-1));
+            iteratBetta.add(betta[0].doubleValue() * (-1));
         }
         else{
-            iterations.add(betta[0].doubleValue());
+            iteratBetta.add(betta[0].doubleValue());
         }
         while( ((alfa[k].multiply(1000000000).add(betta[k])).compareTo(new BigFraction(0))) < 0) //////////////////////////////////////////////////////////////////////
         {
@@ -378,11 +385,12 @@ public class MMethod
             System.out.println();
             k = minimumK(alfa,betta);
             System.out.println(k+"--------------------");
+            iteratAlfa.add(alfa[0].doubleValue());
             if(min){
-                iterations.add(betta[0].doubleValue() * (-1));
+                iteratBetta.add(betta[0].doubleValue() * (-1));
             }
             else {
-                iterations.add(betta[0].doubleValue());
+                iteratBetta.add(betta[0].doubleValue());
             }
             listAnswer.add(iterat);
         }

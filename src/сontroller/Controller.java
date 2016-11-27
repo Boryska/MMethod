@@ -67,11 +67,17 @@ public class Controller {
     @FXML
     private  Menu menuReport;
     @FXML
-    private LineChart<String, Double> iterationLineChart;
+    private LineChart<String, Double> AlfaLineChart;
     @FXML
-    private CategoryAxis iteration;
+    private CategoryAxis xAlfa;
     @FXML
-    private NumberAxis value;
+    private NumberAxis yAlfa;
+    @FXML
+    private LineChart<String, Double> BettaLineChart;
+    @FXML
+    private CategoryAxis xBetta;
+    @FXML
+    private NumberAxis yBetta;
     @FXML
     private void initialize() {
         if (check == false) {
@@ -99,7 +105,7 @@ public class Controller {
     }
 
     private ArrayList<String> arrayErrors;
-    private ArrayList<Double> iterList;
+    private ArrayList<Double> iterAlfaList, iterBettaList;
     private static Stage mainStage;
     private static ArrayList<TableColumn> arrayTableAColumn, arrayTableBColumn, arrayTableCColumn;
     private ObservableList data;
@@ -108,7 +114,7 @@ public class Controller {
     private File file;
     private FileChooser.ExtensionFilter extFilter;
     private MMethod method;
-    XYChart.Series<String, Double> series;
+    XYChart.Series<String, Double> iterAlfa, iterBetta;
 
     private void initLoader() {
         setMainStage(mainStage);
@@ -344,15 +350,35 @@ public class Controller {
                 }
                 textArea.setEditable(false);
                 solutionTab.setDisable(false);
-                iterationLineChart.getData().clear();
-                series = new XYChart.Series<String, Double>();
-                iterList = method.getIterations();
-                for (int i = 0; i < iterList.size(); i++) {
-                    series.getData().add(new XYChart.Data<String, Double>(Integer.toString(i), iterList.get(i).doubleValue()));
+                AlfaLineChart.getData().clear();
+                BettaLineChart.getData().clear();
+                iterAlfa = new XYChart.Series();
+                iterBetta = new XYChart.Series();
+                iterAlfaList = method.getIteratAlfa();
+                iterBettaList = method.getIteratBetta();
+                for (int i = 0; i < iterAlfaList.size(); i++) {
+                    iterAlfa.getData().add(new XYChart.Data(Integer.toString(i), iterAlfaList.get(i).doubleValue()));
                 }
-                series.setName("Линейная форма");
-                iterationLineChart.getData().addAll(series);
-                for(final XYChart.Data<String, Double> data : series.getData()){
+                for (int i = 0; i < iterBettaList.size(); i++) {
+                    iterBetta.getData().add(new XYChart.Data(Integer.toString(i), iterBettaList.get(i).doubleValue()));
+                }
+                AlfaLineChart.getData().addAll(iterAlfa);
+                BettaLineChart.getData().addAll(iterBetta);
+                AlfaLineChart.setLegendVisible(false);
+                BettaLineChart.setLegendVisible(false);
+                AlfaLineChart.setStyle("CHART_COLOR_1: red;");
+                BettaLineChart.setStyle("CHART_COLOR_1: blue;");
+                AlfaLineChart.setTitle("График изменения α по итерациям");
+                BettaLineChart.setTitle("График изменения β по итерациям");
+                for(final XYChart.Data<String, Double> data : iterAlfa.getData()){
+                    data.getNode().addEventHandler(MouseEvent.MOUSE_ENTERED, new EventHandler<MouseEvent>() {
+                        @Override
+                        public void handle(MouseEvent event) {
+                            Tooltip.install(data.getNode(), new Tooltip("Итерация : " + data.getXValue() + "\nЗначение : " + String.valueOf(data.getYValue())));
+                        }
+                    });
+                }
+                for(final XYChart.Data<String, Double> data : iterBetta.getData()){
                     data.getNode().addEventHandler(MouseEvent.MOUSE_ENTERED, new EventHandler<MouseEvent>() {
                         @Override
                         public void handle(MouseEvent event) {
