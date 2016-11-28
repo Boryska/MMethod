@@ -79,6 +79,10 @@ public class Controller {
     @FXML
     private NumberAxis yBetta;
     @FXML
+    private ComboBox comboBoxDeltaB1;
+    @FXML
+    private ComboBox comboBoxDeltaB2;
+    @FXML
     private void initialize() {
         if (check == false) {
             comboBoxExtr.getItems().add("max");
@@ -202,7 +206,7 @@ public class Controller {
                     if (file != null) { //Save
                         MMethod myMethod = new MMethod(Table.getTableC(tableC, tableC.getColumns().size()),
                                 Table.getTableA(tableA, tableA.getColumns().size(), tableA.getItems().size()),
-                                Table.getTableB(tableB, tableB.getItems().size()), extr);
+                                Table.getTableB(tableB, tableB.getItems().size()), !extr);
 
                         jaxbParser = new JaxbParser();
                         jaxbParser.saveObject(file,myMethod);
@@ -420,6 +424,8 @@ public class Controller {
             break;
             case "buttonCheck":
                 checkTab.setDisable(false);
+                findTab.setDisable(false);
+                initDeltaComboBoxes();
                 Validation val = new Validation();
                 val.OpornoCheck();
                 val.DopustimostCheck();
@@ -428,7 +434,18 @@ public class Controller {
                 textAreaCheck.setText(val.getListCheck().toString());
                 textAreaCheck.setEditable(false);
                 tabPane.getSelectionModel().select(checkTab);
+                break;
+            case "buttonDraw":
+                break;
+            case "buttonShowEquation":
+                break;
+        }
+    }
 
+    private void initDeltaComboBoxes() {
+        for (int i = 0; i < Integer.parseInt(textFieldRestrictions.getText()); i++) {
+            comboBoxDeltaB1.getItems().add(i+1);
+            comboBoxDeltaB2.getItems().add(i+1);
         }
     }
 
