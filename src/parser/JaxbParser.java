@@ -6,9 +6,6 @@ import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import java.io.File;
 
-/**
- * Created by Борис on 19.11.2016.
- */
 public class JaxbParser implements Parser {
     @Override
     public Object getObject(File file, Class c) throws JAXBException {

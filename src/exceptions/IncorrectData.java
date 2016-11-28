@@ -6,9 +6,6 @@ import org.apache.commons.lang.math.NumberUtils;
 
 import java.util.ArrayList;
 
-/**
- * Created by Борис on 28.10.2016.
- */
 public class IncorrectData extends Exception{
     private ArrayList<String> errors;
     private static ObservableList data;

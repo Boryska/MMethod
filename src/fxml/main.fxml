@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.*?>
 <?import javafx.scene.chart.*?>
 <?import javafx.scene.text.*?>
 <?import javafx.geometry.*?>
@@ -218,24 +219,24 @@
                            <children>
                               <AnchorPane prefHeight="200.0" prefWidth="200.0">
                                  <children>
-                                    <LineChart fx:id="AlfaLineChart" layoutX="100.0" layoutY="-107.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                    <LineChart fx:id="AlfaLineChart" layoutX="100.0" layoutY="-107.0" title="График изменения α по итерациям" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                       <xAxis>
-                                        <CategoryAxis side="BOTTOM" fx:id="xAlfa" />
+                                        <NumberAxis label="Номер итерации" side="BOTTOM" fx:id="xAlfa" />
                                       </xAxis>
                                       <yAxis>
-                                        <NumberAxis fx:id="yAlfa" side="LEFT" />
+                                        <NumberAxis fx:id="yAlfa" label="Значение α" side="LEFT" />
                                       </yAxis>
                                     </LineChart>
                                  </children>
                               </AnchorPane>
                               <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="1">
                                  <children>
-                                    <LineChart fx:id="BettaLineChart" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                    <LineChart fx:id="BettaLineChart" title="График изменения β по итерациям" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                       <xAxis>
-                                        <CategoryAxis side="BOTTOM" fx:id="xBetta" />
+                                        <NumberAxis label="Номер итерации" side="BOTTOM" fx:id="xBetta" />
                                       </xAxis>
                                       <yAxis>
-                                        <NumberAxis fx:id="yBetta" side="LEFT" />
+                                        <NumberAxis fx:id="yBetta" label="Значение β" side="LEFT" />
                                       </yAxis>
                                     </LineChart>
                                  </children>

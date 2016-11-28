@@ -4,9 +4,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 
-
 public class TableM {
-
 
     private BigFraction alfa[], betta[], c[],CsI[],CsII[],CjI[],CjII[],teta[], A[][];
     private int k,r,Fs[];
@@ -44,7 +42,7 @@ public class TableM {
     public void setC(BigFraction[] c) {
         this.c = c;
     }
-     public void setTeta(BigFraction[] teta) {
+    public void setTeta(BigFraction[] teta) {
         this.teta = teta;
     }
     public void setA(BigFraction[][] a) {
@@ -103,6 +101,7 @@ public class TableM {
         }
 
     }
+
     @Override
     public String toString() {
         fillingTable();

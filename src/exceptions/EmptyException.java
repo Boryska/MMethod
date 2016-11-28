@@ -2,9 +2,7 @@ package exceptions;
 import javafx.collections.ObservableList;
 import javafx.scene.control.TableView;
 import java.util.ArrayList;
-/**
- * Created by Борис on 28.10.2016.
- */
+
 public class EmptyException extends  Exception{
     private ArrayList<String> errors;
     private static ObservableList data;

@@ -80,17 +80,9 @@ public class Controller {
     @FXML
     private  Menu menuReport;
     @FXML
-    private LineChart<String, Double> AlfaLineChart;
+    private LineChart<Number, Number> AlfaLineChart;
     @FXML
-    private CategoryAxis xAlfa;
-    @FXML
-    private NumberAxis yAlfa;
-    @FXML
-    private LineChart<String, Double> BettaLineChart;
-    @FXML
-    private CategoryAxis xBetta;
-    @FXML
-    private NumberAxis yBetta;
+    private LineChart<Number, Number> BettaLineChart;
     @FXML
     private ComboBox comboBoxDeltaB1;
     @FXML
@@ -111,7 +103,7 @@ public class Controller {
             graphicTab.setDisable(true);
             showEquationTabPane.setDisable(true);
             menuReport.setDisable(true);
-
+            drawclick = false;
         }
         else {
             initListeners();
@@ -121,6 +113,7 @@ public class Controller {
             graphicTab.setDisable(true);
             showEquationTabPane.setDisable(true);
             menuReport.setDisable(true);
+            drawclick = false;
         }
     }
 
@@ -129,12 +122,12 @@ public class Controller {
     private static Stage mainStage;
     private static ArrayList<TableColumn> arrayTableAColumn, arrayTableBColumn, arrayTableCColumn;
     private ObservableList data;
-    private boolean extr, check = false;
+    private boolean extr, check = false, drawclick;
     private FileChooser fileChooser;
     private File file;
     private FileChooser.ExtensionFilter extFilter;
     private MMethod method;
-    XYChart.Series<String, Double> iterAlfa, iterBetta;
+    XYChart.Series<Number, Number> iterAlfa, iterBetta;
 
     private void initLoader() {
         setMainStage(mainStage);
@@ -377,10 +370,10 @@ public class Controller {
                 iterAlfaList = method.getIteratAlfa();
                 iterBettaList = method.getIteratBetta();
                 for (int i = 0; i < iterAlfaList.size(); i++) {
-                    iterAlfa.getData().add(new XYChart.Data(Integer.toString(i), iterAlfaList.get(i).doubleValue()));
+                    iterAlfa.getData().add(new XYChart.Data(i, iterAlfaList.get(i).doubleValue()));
                 }
                 for (int i = 0; i < iterBettaList.size(); i++) {
-                    iterBetta.getData().add(new XYChart.Data(Integer.toString(i), iterBettaList.get(i).doubleValue()));
+                    iterBetta.getData().add(new XYChart.Data(i, iterBettaList.get(i).doubleValue()));
                 }
                 AlfaLineChart.getData().addAll(iterAlfa);
                 BettaLineChart.getData().addAll(iterBetta);
@@ -388,9 +381,7 @@ public class Controller {
                 BettaLineChart.setLegendVisible(false);
                 AlfaLineChart.setStyle("CHART_COLOR_1: red;");
                 BettaLineChart.setStyle("CHART_COLOR_1: blue;");
-                AlfaLineChart.setTitle("График изменения α по итерациям");
-                BettaLineChart.setTitle("График изменения β по итерациям");
-                for(final XYChart.Data<String, Double> data : iterAlfa.getData()){
+                for(final XYChart.Data<Number, Number> data : iterAlfa.getData()){
                     data.getNode().addEventHandler(MouseEvent.MOUSE_ENTERED, new EventHandler<MouseEvent>() {
                         @Override
                         public void handle(MouseEvent event) {
@@ -398,7 +389,7 @@ public class Controller {
                         }
                     });
                 }
-                for(final XYChart.Data<String, Double> data : iterBetta.getData()){
+                for(final XYChart.Data<Number, Number> data : iterBetta.getData()){
                     data.getNode().addEventHandler(MouseEvent.MOUSE_ENTERED, new EventHandler<MouseEvent>() {
                         @Override
                         public void handle(MouseEvent event) {
@@ -469,6 +460,7 @@ public class Controller {
                     }
                     Graphics gr = new Graphics(Integer.parseInt(comboBoxDeltaB1.getSelectionModel().getSelectedItem().toString()),Integer.parseInt(comboBoxDeltaB2.getSelectionModel().getSelectedItem().toString()));
                     gr.OblastUstoichevosti();
+                    drawclick = true;
                 }
                 catch (EmptyException ex) {
                     Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -483,9 +475,24 @@ public class Controller {
                 }
                 break;
             case "buttonShowEquation":
-                showEquationTabPane.setDisable(true);
-                equationTextArea.setEditable(false);
-                tabPaneGraphic.getSelectionModel().select(showEquationTabPane);
+                try {
+                    if(!drawclick){
+                        throw new MyMessageException("Сперва постройте график!");
+                    }
+                    showEquationTabPane.setDisable(true);
+                    equationTextArea.setEditable(false);
+                    //Тут код записи уравнений в equationTextArea
+                    //
+                    tabPaneGraphic.getSelectionModel().select(showEquationTabPane);
+                }
+                catch (MyMessageException ex) {
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setTitle("Ошибка");
+                    alert.setContentText(ex.getStackTrace().toString());
+                    alert.setHeaderText(ex.getMessage());
+                    ex.printStackTrace();
+                    alert.showAndWait();
+                }
                 break;
         }
     }

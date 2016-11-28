@@ -78,9 +78,11 @@ public class Validation {
         }
         return result;
     }
+
     public StringBuilder getListCheck() {
         return listCheck;
     }
+
     public static BigFraction[] vectorMatrix(BigFraction[][] matrix, BigFraction[] vector){
         BigFraction[] result = new BigFraction[vector.length];
         BigFraction ssum;
@@ -211,6 +213,7 @@ public class Validation {
             return;
         }
     }
+
     public void OpornoCheck(){
        listCheck.append("Проверка опорности решения\n");
         AFs = getAFs();

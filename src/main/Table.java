@@ -9,9 +9,7 @@ import javafx.scene.control.TableView;
 
 import java.util.ArrayList;
 import java.util.List;
-/**
- * Created by Борис on 27.10.2016.
- */
+
 public class Table {
     public static void createTable(TableView tableView, int cols, int rows, String name){
         TestDataGenerator dataGenerator = new TestDataGenerator();
