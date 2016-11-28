@@ -12,6 +12,7 @@ public class Graphics {
     private BigFraction[][] obrAFs;
     ArrayList<Double> startX = new ArrayList();
     ArrayList<Double> finY = new ArrayList();
+
     public Graphics(int firstBetta, int secondBetta){
       this.firstdbetta = firstBetta;
         this.seconddbetta = secondBetta;

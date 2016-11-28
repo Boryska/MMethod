@@ -50,6 +50,10 @@ public class Controller {
     @FXML
     private Label labelExtr;
     @FXML
+    private Label firstComponentLabel;
+    @FXML
+    private Label secondComponentLabel;
+    @FXML
     private Tab enterTab;
     @FXML
     private Tab solutionTab;
@@ -62,9 +66,17 @@ public class Controller {
     @FXML
     private TabPane tabPane;
     @FXML
+    private TabPane tabPaneGraphic;
+    @FXML
+    private Tab showEquationTabPane;
+    @FXML
+    private Tab buildGraphicTabPane;
+    @FXML
     private TextArea textArea;
     @FXML
     private TextArea textAreaCheck;
+    @FXML
+    private TextArea equationTextArea;
     @FXML
     private  Menu menuReport;
     @FXML
@@ -83,6 +95,7 @@ public class Controller {
     private ComboBox comboBoxDeltaB1;
     @FXML
     private ComboBox comboBoxDeltaB2;
+
     @FXML
     private void initialize() {
         if (check == false) {
@@ -96,6 +109,7 @@ public class Controller {
             findTab.setDisable(true);
             checkTab.setDisable(true);
             graphicTab.setDisable(true);
+            showEquationTabPane.setDisable(true);
             menuReport.setDisable(true);
 
         }
@@ -105,6 +119,7 @@ public class Controller {
             findTab.setDisable(true);
             checkTab.setDisable(true);
             graphicTab.setDisable(true);
+            showEquationTabPane.setDisable(true);
             menuReport.setDisable(true);
         }
     }
@@ -437,10 +452,40 @@ public class Controller {
                 tabPane.getSelectionModel().select(checkTab);
                 break;
             case "buttonDraw":
-                Graphics gr = new Graphics(Integer.parseInt(comboBoxDeltaB1.getSelectionModel().getSelectedItem().toString()),Integer.parseInt(comboBoxDeltaB2.getSelectionModel().getSelectedItem().toString()));
-                gr.OblastUstoichevosti();
+                try {
+                    if (comboBoxDeltaB1.getSelectionModel().isEmpty() || comboBoxDeltaB2.getSelectionModel().isEmpty()) {
+                        arrayErrors = new ArrayList<>();
+                        if (comboBoxDeltaB1.getSelectionModel().isEmpty()) {
+                            arrayErrors.add(firstComponentLabel.getText());
+                        }
+                        if (comboBoxDeltaB2.getSelectionModel().isEmpty()) {
+                            arrayErrors.add(secondComponentLabel.getText());
+                        }
+                        throw new EmptyException(arrayErrors);
+                    } else if (Integer.parseInt(comboBoxDeltaB1.getSelectionModel().getSelectedItem().toString()) == Integer.parseInt(comboBoxDeltaB2.getSelectionModel().getSelectedItem().toString())) {
+                        arrayErrors = new ArrayList<>();
+                        arrayErrors.add(firstComponentLabel.getText() + " и " + secondComponentLabel.getText() + " не должны совпадать ");
+                        throw new IncorrectData(arrayErrors);
+                    }
+                    Graphics gr = new Graphics(Integer.parseInt(comboBoxDeltaB1.getSelectionModel().getSelectedItem().toString()),Integer.parseInt(comboBoxDeltaB2.getSelectionModel().getSelectedItem().toString()));
+                    gr.OblastUstoichevosti();
+                }
+                catch (EmptyException ex) {
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setTitle("Ошибка");
+                    alert.setHeaderText(ex.getMessageFields());
+                    alert.showAndWait();
+                } catch (IncorrectData ex) {
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setTitle("Ошибка");
+                    alert.setHeaderText(ex.getMessageFields());
+                    alert.showAndWait();
+                }
                 break;
             case "buttonShowEquation":
+                showEquationTabPane.setDisable(true);
+                equationTextArea.setEditable(false);
+                tabPaneGraphic.getSelectionModel().select(showEquationTabPane);
                 break;
         }
     }
