@@ -24,6 +24,7 @@ public class MMethod
     private BigFraction alfa[];
     private BigFraction betta[];
     private LinkedList<StringBuilder> listAnswer = new LinkedList<>();
+    private StringBuilder zvit1 = new StringBuilder();
     private static ArrayList<Double> iteratAlfa, iteratBetta;
 
     public static ArrayList<Double> getIteratAlfa() {
@@ -34,7 +35,9 @@ public class MMethod
         return iteratBetta;
 
     }
-
+    public StringBuilder getZvit1() {
+        return zvit1;
+    }
     public MMethod(){}
 
     public MMethod(BigFraction[] c, BigFraction A[][], BigFraction b[], boolean extr){
@@ -186,22 +189,35 @@ public class MMethod
             newA[m+1][i]  = betta[i] ;
         }
 
-        System.out.println("Целевая функция");                                                  /////старт
+
         usl.append("Условия исходной задачи:\n");
         usl.append("Целевая функиця:\nL = ");
         StringBuilder usl1 = new StringBuilder();
         for (int i = 1; i <n+1; i++)
-        {        if(i != n)     usl1.append(L[i].intValue()+"*X" + i + " + ");
-          //  System.out.print(L[i]+"*X" + i + " + ");           //////////Красивый вывод целевой функции
-
-        else  usl1.append(L[i].intValue()+"*X" + i);
-            //System.out.print(L[i]+"*X" + i);
+        {        if(i != n) {
+            usl1.append(L[i].intValue() + "*X" + i + " + ");
+        }
+        else {
+            usl1.append(L[i].intValue() + "*X" + i);
+        }
         }
         usl.append(usl1);
             usl.append("->max\n");                                                                                            /////
-                                                            //////фин
-            //System.out.println();
-        //System.out.println("Вектора ограничений");                                               //////Start
+
+        zvit1.append("Условия исходной задачи:\n");
+        zvit1.append("Целевая функиця:\nL = ");
+        for (int i = 0; i <c.length; i++)
+        {        if(i != n) {
+            zvit1.append(c[i].intValue() + "*X" + i + " + ");
+        }
+        else {
+            zvit1.append(c[i].intValue() + "*X" + i);
+            }
+        }
+       if (min) zvit1.append("->min\n");
+        else   zvit1.append("->max\n");
+
+        zvit1.append("Вектора ограничений:\n");
         usl.append("Вектора ограничений:\n");
         for (int i = 0; i < m; i++)                                                              //////
         {
@@ -209,12 +225,12 @@ public class MMethod
             {
                 if(j!=n){
                 if(!(compareTwoFraction(newA[i][j],new BigFraction(0))==0))
-                   // System.out.print(newA[i][j]+"*X" + j+ " + ");
+                    zvit1.append(newA[i][j].intValue()+"*X" + j+ " + ");
                     usl.append(newA[i][j].intValue()+"*X" + j+ " + ");
                 }
                 else{
                     if(!(compareTwoFraction(newA[i][j],new BigFraction(0))==0))
-                        //System.out.print(newA[i][j]+"*X" + j);
+                        zvit1.append(newA[i][j].intValue()+"*X" + j);
                         usl.append(newA[i][j].intValue()+"*X" + j);
                 }
             }
@@ -224,19 +240,22 @@ public class MMethod
         //System.out.println("М-задача");                                               //////Start
         usl.append("\nМ-задача:"+"\nЦелевая функция М-задачи:\n"+ usl1 + " - M*(");
         for (int i = n+1; i < n+m+1 ; i++) {
-                if(i != (n+m))
+                if(i != (n+m)){
                     usl.append("X"+i+" + ");
-                    else usl.append("X"+i);
+                    zvit1.append("X"+i+" + ");
+                }
+                    else {
+                    usl.append("X"+i);
+                    zvit1.append("X"+i);
+
+                }
         }
         usl.append(")");
-        if(min){                                                                                //////
+        zvit1.append(")");
+         usl.append("->max\n");
+        zvit1.append("->max\n");
 
-            usl.append("->min\n");
-        }                                                                                       /////
-        else{ usl.append("->max\n");
-
-        }
-        for (int i = 0; i < m; i++)                                                              //////
+        for (int i = 0; i < m; i++)
         {
             for (int j = 1; j <n+m+1 ; j++)
             {
@@ -394,18 +413,33 @@ public class MMethod
             }
             listAnswer.add(iterat);
         }
-
-        for (int i = 0; i < Fs.length ; i++) {
-            if(Fs[i] > n){
-                Fs[i] = (i+1);
-            }
-        }
-        System.out.println(" " + finaloo(c,xOptimalniy(Fs,newA),min).doubleValue() );
         StringBuilder ab = new StringBuilder();
         ab.append("Конечная таблица М-метода:\n");
         BigFraction[] tetaMas = new BigFraction[m];
         TableM raschet = new TableM(alfa,betta,c,tetaMas,newA,k,r,Fs);
         ab.append(raschet.toString());
+
+        for (int i = 0; i < Fs.length ; i++) {
+            if(Fs[i] > n && newA[i][0].doubleValue() != 0){
+                ab.append("\n Так как в базисе присудствую исскуственные переменные отличные от нуля задача не имеет решения");
+                listAnswer.add(ab);
+                return;
+            }
+        }
+        for (int i = 0; i < Fs.length ; i++) {
+            if(Fs[i] > n){
+
+                int a = i+1;
+                for (int j = 0; j < Fs.length ; j++) {
+                    if(a == Fs[j] ){
+                        j = 0;
+                        a++;
+                    }
+                }
+                   Fs[i] = a;
+            }
+        }
+        System.out.println(" " + finaloo(c,xOptimalniy(Fs,newA),min).doubleValue() );
         ab.append("Так как,все Δj >0 , имеет место ситуация 1\nФормируем решение:\n");
         ab.append("Fs* = {");
 

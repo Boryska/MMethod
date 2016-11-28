@@ -1,9 +1,11 @@
 package сontroller;
+import com.itextpdf.text.Paragraph;
 import exceptions.EmptyException;
 import exceptions.IncorrectData;
 import exceptions.MyMessageException;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
@@ -11,6 +13,7 @@ import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
+import javafx.scene.image.WritableImage;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -21,13 +24,20 @@ import main.Table;
 import math.Graphics;
 import math.MMethod;
 import math.Validation;
+import com.itextpdf.text.Document;
+import com.itextpdf.text.pdf.PdfWriter;
 
+
+import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 
 import org.apache.commons.lang.math.NumberUtils;
 import parser.JaxbParser;
 
+import javax.imageio.ImageIO;
 import javax.xml.bind.JAXBException;
 
 public class Controller {
@@ -112,7 +122,7 @@ public class Controller {
             checkTab.setDisable(true);
             graphicTab.setDisable(true);
             showEquationTabPane.setDisable(true);
-            menuReport.setDisable(true);
+            menuReport.setDisable(false);
             drawclick = false;
         }
     }
@@ -247,15 +257,48 @@ public class Controller {
                 alert.showAndWait();
                 break;
             case "reportMenuItem":
-                fileChooser = new FileChooser();//Класс работы с диалогом выборки и сохранения
-                fileChooser.setTitle("Сохранение отчета");//Заголовок диалога
-                extFilter =  new FileChooser.ExtensionFilter("PDF files (*.pdf)", "*.PDF", "*.pdf");//Расширение
-                fileChooser.getExtensionFilters().add(extFilter);
-                file = fileChooser.showSaveDialog(mainStage);//Указываем текущую сцену CodeNote.mainStage
-                if (file != null) { //Save
-                    //
+                try {
+                    fileChooser = new FileChooser();//Класс работы с диалогом выборки и сохранения
+                    fileChooser.setTitle("Сохранение отчета");//Заголовок диалога
+                    extFilter = new FileChooser.ExtensionFilter("PDF files (*.pdf)", "*.PDF", "*.pdf");//Расширение
+                    fileChooser.getExtensionFilters().add(extFilter);
+                    file = fileChooser.showSaveDialog(mainStage);//Указываем текущую сцену CodeNote.mainStage
+                    if (file != null) { //Save
+                        file.getParentFile().mkdirs();
+                        File graphAlpha = new File(file.getAbsolutePath().replaceAll(".pdf", "Alpha.png").replaceAll("\\\\", "/"));
+                        File graphBetta = new File(file.getAbsolutePath().replaceAll(".pdf", "Betta.png").replaceAll("\\\\", "/"));
+                        AlfaLineChart.setAnimated(false);
+                        WritableImage snapShotAlpha = AlfaLineChart.snapshot(null, null);
+                        ImageIO.write(SwingFXUtils.fromFXImage(snapShotAlpha, null), "png", graphAlpha);
+                        BettaLineChart.setAnimated(false);
+                        WritableImage snapShotBeta = BettaLineChart.snapshot(null, null);
+                        ImageIO.write(SwingFXUtils.fromFXImage(snapShotBeta, null), "png", graphBetta);
+                        String k = "<br/><h2 align='center'>Графики линейной формы по итерациям</h2>" +
+                                " <img border='0' src='" + file.getAbsolutePath().replaceAll(".pdf", "Alpha.png").replaceAll("\\\\", "/") + "' alt='name' />" +
+                                " <img border='0' src='" + file.getAbsolutePath().replaceAll(".pdf", "Betta.png").replaceAll("\\\\", "/") + "' alt='name' />";
+                        OutputStream files = new FileOutputStream(file);
+                        Document document = new Document();
+                        PdfWriter writer = PdfWriter.getInstance(document,files);
+                        document.open();
+                    StringBuilder sb = new StringBuilder();
+                    sb.append(method.getAnswer().get(0));
+//                    sb.append(mMethod.getHtmlDataToCheck());
+                    sb.append(k);
+                    document.add(new Paragraph(sb.toString()));
+                    graphAlpha.delete();
+                    graphBetta.delete();
+                    document.close();
+
+                    }
+                }  catch (Exception ex) {
+                    Alert alrt = new Alert(Alert.AlertType.INFORMATION);
+                    alrt.setTitle("Ошибка");
+                    alrt.setContentText(ex.getStackTrace().toString());
+                    alrt.showAndWait();
                 }
-                break;
+                    break;
+
+
         }
     }
 
