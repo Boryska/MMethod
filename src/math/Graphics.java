@@ -42,10 +42,9 @@ public class Graphics {
         for (int i = 0; i < Ddb.length; i++) {
             finY.add((Ddb[i][2].divide(Ddb[i][1])).doubleValue());
             startX.add((Ddb[i][2].divide(Ddb[i][0])).doubleValue());
-                System.out.println("( " + startX.get(i) + " ; 0)     ( 0 ;" + finY.get(i) + " )");
+
+                System.out.println("( " + startX.get(i) + " ; 0)     ( 0 ;" + finY.get(i) + " )") ;
         }
-
-
     }
 
     public BigFraction []MV( BigFraction [][] Matrix, BigFraction[]Vector ){
