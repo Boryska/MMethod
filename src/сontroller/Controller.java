@@ -18,6 +18,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.TextFieldTableCell;
 import main.Table;
+import math.Graphics;
 import math.MMethod;
 import math.Validation;
 
@@ -436,6 +437,8 @@ public class Controller {
                 tabPane.getSelectionModel().select(checkTab);
                 break;
             case "buttonDraw":
+                Graphics gr = new Graphics(Integer.parseInt(comboBoxDeltaB1.getSelectionModel().getSelectedItem().toString()),Integer.parseInt(comboBoxDeltaB2.getSelectionModel().getSelectedItem().toString()));
+                gr.OblastUstoichevosti();
                 break;
             case "buttonShowEquation":
                 break;

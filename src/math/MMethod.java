@@ -255,7 +255,7 @@ public class MMethod
         }
 
         usl.append("\nНАЧАЛО ИТЕРАЦИОННОГО ПРОЦЕССА\n");
-        int count = 1;
+        int count = 0;
         k = minimumK(alfa,betta);
         for (int i = 0; i < m+2; i++)
         {

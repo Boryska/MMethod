@@ -81,7 +81,7 @@ public class Validation {
     public StringBuilder getListCheck() {
         return listCheck;
     }
-    public BigFraction[] vectorMatrix(BigFraction[][] matrix, BigFraction[] vector){
+    public static BigFraction[] vectorMatrix(BigFraction[][] matrix, BigFraction[] vector){
         BigFraction[] result = new BigFraction[vector.length];
         BigFraction ssum;
         for (int i = 0; i < vector.length; i++) {
@@ -255,13 +255,13 @@ public class Validation {
         }
         listCheck.append("\n\nПроверка оптимальности решения");
         det = findDeterminant(AFs);
-        BigFraction[][] AfsObr = findAfsObr(AFs, det);
+        obrAFs = findAfsObr(AFs, det);
 
         BigFraction [] Cs = new BigFraction[finalFs.length];
         for (int i = 0; i < finalFs.length ; i++) {
             Cs[i] = startL[finalFs[i]-1];
         }
-        BigFraction YI [] = vectorMatrix(AfsObr,Cs);
+        BigFraction YI [] = vectorMatrix(obrAFs,Cs);
 
         listCheck.append("\nОптимальное значение прямой задачи:\nL1* = ");
         BigFraction l1 = new BigFraction(0);
