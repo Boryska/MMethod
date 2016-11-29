@@ -9,8 +9,8 @@ public class Graphics {
     private int seconddbetta;
     private BigFraction[] startB;
     private BigFraction[][] obrAFs;
-    ArrayList<Double> startX = new ArrayList();
-    ArrayList<Double> finY = new ArrayList();
+    private ArrayList<Point> listPoint = new ArrayList();
+    StringBuilder ustoichevost = new StringBuilder();
 
     public Graphics(int firstBetta, int secondBetta){
       this.firstdbetta = firstBetta;
@@ -20,7 +20,8 @@ public class Graphics {
     }
 
     public void OblastUstoichevosti(){
-        BigFraction [][] Ddb = new BigFraction[obrAFs.length][3];
+
+        BigFraction [][] Ddb = new BigFraction[obrAFs.length+2][3];
         System.out.println();
         for (int i = 0; i < obrAFs.length; i++) {
             for (int j = 0; j < 3; j++) {
@@ -39,13 +40,59 @@ public class Graphics {
             }
             System.out.println();
         }
-        for (int i = 0; i < Ddb.length; i++) {
-            finY.add((Ddb[i][2].divide(Ddb[i][1])).doubleValue());
-            startX.add((Ddb[i][2].divide(Ddb[i][0])).doubleValue());
 
-                System.out.println("( " + startX.get(i) + " ; 0)     ( 0 ;" + finY.get(i) + " )") ;
+
+
+
+        for (int i = 0; i < Ddb.length; i++) {
+            for (int j = i+1; j < Ddb.length; j++) {
+                if(checktochek(Gaus(Ddb[i].clone() , Ddb[j].clone()),Ddb)){
+                    listPoint.add(Gaus(Ddb[i].clone() , Ddb[j].clone()));
+                    System.out.println((i+1) +" n " +(j+1));
+                }
+            }
+        }
+        for (Point x : listPoint){
+            System.out.println(x.getX().doubleValue() +"    ;   "+ x.getY().doubleValue());
         }
     }
+
+    public boolean checktochek(Point tochka ,  BigFraction[][] uslovia){
+        boolean cheking = true;
+        for (int i = 0; i < uslovia.length ; i++) {
+            if(MMethod.compareTwoFraction(tochka.getX().multiply(uslovia[i][0]).add(tochka.getY().multiply(uslovia[i][1])),uslovia[i][2])== -1){
+                cheking =false;
+                break;
+            }
+
+        }
+        return cheking;
+    }
+    public static Point Gaus(BigFraction[] f, BigFraction[] s) { /// не ставить в Ф уравнение типа (0 + б9 > -1910)
+        BigFraction x;
+        BigFraction y;
+        BigFraction[] arr = new BigFraction[f.length];
+        for (int i = 0; i < arr.length; i++){
+            arr[i] = f[i].divide(f[0]);
+            arr[i] = arr[i].multiply(s[0]);
+         }
+        for (int i = 0; i <arr.length ; i++) {
+            s[i] = s[i].subtract(arr[i]);
+        }
+        y = s[2].divide(s[1]);
+        x = f[1].multiply(y);
+        x = f[2].subtract(x);
+        x = x.divide(f[0]);
+        return new Point(x,y);
+    }
+
+
+//    public static void main(String[] args) {
+//
+//        BigFraction[] test1 = {new BigFraction(0.0279656),new BigFraction(0.010635),new BigFraction(-17.598298)};
+//        BigFraction[] test2 = {new BigFraction(0.007633),new BigFraction(0.0176601),new BigFraction(-14.767295)};
+//        System.out.print(Gaus(test1,test2).getX().doubleValue() + " ;   "+ Gaus(test1,test2).getY().doubleValue() );
+//    }
 
     public BigFraction []MV( BigFraction [][] Matrix, BigFraction[]Vector ){
         BigFraction[] result = new BigFraction[Matrix.length];

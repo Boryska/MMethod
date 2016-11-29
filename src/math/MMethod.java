@@ -319,12 +319,8 @@ public class MMethod
 
         listAnswer.add(usl);
         iteratAlfa.add(alfa[0].doubleValue());
-        if (min){
-            iteratBetta.add(betta[0].doubleValue() * (-1));
-        }
-        else{
-            iteratBetta.add(betta[0].doubleValue());
-        }
+        iteratBetta.add(betta[0].doubleValue());
+
         while( ((alfa[k].multiply(1000000000).add(betta[k])).compareTo(new BigFraction(0))) < 0) //////////////////////////////////////////////////////////////////////
         {
             StringBuilder iterat = new StringBuilder();
@@ -383,12 +379,9 @@ public class MMethod
             count++;
             k = minimumK(alfa,betta);
             iteratAlfa.add(alfa[0].doubleValue());
-            if(min){
-                iteratBetta.add(betta[0].doubleValue() * (-1));
-            }
-            else {
-                iteratBetta.add(betta[0].doubleValue());
-            }
+            iteratBetta.add(betta[0].doubleValue());
+
+
             listAnswer.add(iterat);
         }
         StringBuilder ab = new StringBuilder();
