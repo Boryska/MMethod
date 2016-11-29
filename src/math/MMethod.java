@@ -204,18 +204,28 @@ public class MMethod
         usl.append(usl1);
             usl.append("->max\n");                                                                                            /////
 
-        zvit1.append("Условия исходной задачи:\n");
+        zvit1.append("                                                                 Условия исходной задачи\n\n");
         zvit1.append("Целевая функиця:\nL = ");
-        for (int i = 0; i <c.length; i++)
-        {        if(i != n) {
-            zvit1.append(c[i].intValue() + "*X" + i + " + ");
-        }
-        else {
-            zvit1.append(c[i].intValue() + "*X" + i);
-            }
-        }
-       if (min) zvit1.append("->min\n");
-        else   zvit1.append("->max\n");
+       if (min){
+           for (int i = 0; i <c.length; i++)
+           {        if(i != n) {
+               zvit1.append(c[i].intValue()*-1 + "*X" + i+1 + " + ");
+           }
+           else {
+               zvit1.append(c[i].intValue()*-1 + "*X" + i+1);
+           }
+           }
+           zvit1.append("=>min\n");
+       }
+        else { for (int i = 0; i <c.length; i++)
+       {        if(i != n) {
+           zvit1.append(c[i].intValue() + "*X" + i+1 + " + ");
+       }
+       else {
+           zvit1.append(c[i].intValue() + "*X" + i+1);
+       }
+       }
+           zvit1.append("=>max\n"); };
 
         zvit1.append("Вектора ограничений:\n");
         usl.append("Вектора ограничений:\n");
@@ -236,9 +246,15 @@ public class MMethod
             }
            // System.out.println(" = " + newA[i][0]);
             usl.append(" = " + newA[i][0].intValue() + "\n");
+            zvit1.append(" = " + newA[i][0].intValue() + "\n");
         }                                                                                       ////////fin
         //System.out.println("М-задача");                                               //////Start
-        usl.append("\nМ-задача:"+"\nЦелевая функция М-задачи:\n"+ usl1 + " - M*(");
+        usl.append("\nМ-задача"+
+                "\n\n Целевая функция М-задачи:\n"+
+                usl1 + " - M*(");
+        zvit1.append("\r\t\t\t\t\tМ-задача:"+
+                "\nЦелевая функция М-задачи:\n"+
+                usl1 + " - M*(");
         for (int i = n+1; i < n+m+1 ; i++) {
                 if(i != (n+m)){
                     usl.append("X"+i+" + ");
@@ -253,37 +269,54 @@ public class MMethod
         usl.append(")");
         zvit1.append(")");
          usl.append("->max\n");
-        zvit1.append("->max\n");
+        zvit1.append("=>max\nВектора ограничений М-задачи:\n");
 
         for (int i = 0; i < m; i++)
         {
             for (int j = 1; j <n+m+1 ; j++)
             {
-                if(j!= (n+i+1)){
-                    if(!(compareTwoFraction(newA[i][j],new BigFraction(0))==0))
-
-                        usl.append(newA[i][j].intValue()+"*X" + j+ " + ");
+                if(j < (n+i+1)){
+                    if(!(compareTwoFraction(newA[i][j],new BigFraction(0))==0)){
+                         usl.append(newA[i][j].intValue()+"*X" + j+ " + ");
+                        zvit1.append(newA[i][j].intValue()+"*X" + j+ " + ");
+                    }
                 }
                 else{
-                    if(!(compareTwoFraction(new BigFraction(0),newA[i][j])==0))
+                    if(!(compareTwoFraction(new BigFraction(0),newA[i][j])==0)){
                     usl.append(newA[i][j].intValue()+"*X" + j);
+                     zvit1.append(newA[i][j].intValue()+"*X" + j);
+                    }
                 }
             }
-            // System.out.println(" = " + newA[i][0]);
+
             usl.append(" = " + newA[i][0].intValue() + "\n");
+            zvit1.append(" = " + newA[i][0].intValue() + "\n");
+        }
+            zvit1.append("\n\nНачальный опорный план и базис:\nFs0 = {");
+        for (int i = 0; i < Fs.length; i++) {
+            if (i != Fs.length-1){
+             zvit1.append("A"+Fs[i] + " ; ");
+            }
+            else{
+                zvit1.append("A"+Fs[i] + " }\n X0 ={");
+            }
+        }
+        for (int i = 0; i <n+m+1 ; i++) {
+            if (i  < n){
+                zvit1.append(" 0.0 ;");
+            }
+                else if (i < (n+m-1)){
+                zvit1.append(new BigDecimal(startB[(i-(n))].doubleValue()).setScale(1, BigDecimal.ROUND_FLOOR)+ " ; ");
+                            }
+                else if (i == (n+m)){
+                zvit1.append(new BigDecimal(startB[startB.length-1].doubleValue()).setScale(1, BigDecimal.ROUND_FLOOR)+ "}\r");
+            }
         }
 
         usl.append("\nНАЧАЛО ИТЕРАЦИОННОГО ПРОЦЕССА\n");
         int count = 0;
         k = minimumK(alfa,betta);
-        for (int i = 0; i < m+2; i++)
-        {
-            for (int j = 0; j <n+m+1; j++)
-            {
-                System.out.print(newA[i][j].doubleValue()  + " | ");
-            }
-            System.out.println();
-        }
+
         listAnswer.add(usl);
         iteratAlfa.add(alfa[0].doubleValue());
         if (min){
@@ -295,9 +328,7 @@ public class MMethod
         while( ((alfa[k].multiply(1000000000).add(betta[k])).compareTo(new BigFraction(0))) < 0) //////////////////////////////////////////////////////////////////////
         {
             StringBuilder iterat = new StringBuilder();
-            System.out.println(count+ " -я итерация");
             iterat.append(count+"-я итерация\n");
-            System.out.println("Номер направляющего столбца K = "+ (k));
             boolean check = false;
             BigFraction tetaMas[] = new BigFraction[m];
             for (int j = 0;j < n+m+1; j++) {
@@ -312,7 +343,6 @@ public class MMethod
             if (check){
                 iterat.append("Внимание! Введенная система является неограниченной.");
                 listAnswer.add(iterat);
-                System.out.println("СИСТЕМА НЕОГРАНИЧЕННА");
                 return;
             }
             else {
@@ -330,34 +360,16 @@ public class MMethod
                     }
                 }
             }
-            for (BigFraction x: tetaMas  ) {
-                System.out.print(x + " ");
-            }
-            System.out.println();
-
 
             TableM raschet = new TableM(alfa,betta,c,tetaMas,newA,k,r,Fs);
             iterat.append(raschet.toString());
             iterat.append("\nТак как, существуют Δj <0 и все Ωj≠∅, имеет место ситуация 3 \nНаправляющий столбец: " + k +"-ый\nНаправляющая строка: " + (r+1)+"-ая\n\n");
-            System.out.println("Номер направляющей строки R = "+ (r+1));
             iterat.append("Fs ->A" +Fs[r]+"\nA"+k+"->Fs\n\n");
             Fs[r] = k;                         ////// Замена условия в базисе
             CsI[r] = CjI[k] ;                      ////// Замена С's
             CsII[r] = CjII[k];                     ////// Замена С''s
 
             newA = findMatrix(newA,k,r,m,n);
-            for (int i = 0; i < m+2; i++)
-            {
-
-                for (int j = 0; j <n+m+1; j++)
-                {
-                    System.out.print(newA[i][j].doubleValue()  + " | ");
-
-                }
-                System.out.println();
-            }
-
-
             for (int i = 0; i < n+m+1 ; i++)
             {
                 alfa[i]= alfabetta(CsI,newA,CjI[i],i);                /////////// Alfa
@@ -366,44 +378,10 @@ public class MMethod
             for (int i = 0; i < n+m+1 ; i++)
             {
                 betta[i] = alfabetta(CsII, newA, CjII[i], i);                /////////// Betta
-
             }
-
             k = minimumK(alfa,betta);
-            System.out.println("Вектор Сs':");
-            for (BigFraction x:CsI )
-            {
-                System.out.print(x.doubleValue() + " | ");
-            }
-            System.out.println();
-            System.out.println("Вектор Cs'':");
-            for (BigFraction x:CsII )
-            {
-                System.out.print(x.doubleValue()  + " | ");
-            }
-            System.out.println();
             count++;
-
-            System.out.println("Вектор alfa':");
-            for (BigFraction x:alfa )
-            {
-                System.out.print(x.doubleValue()  + " | ");
-            }
-            System.out.println();
-            System.out.println("Вектор betta':");
-            for (BigFraction x:betta )
-            {
-                System.out.print(x.doubleValue()  + " | ");
-            }
-            System.out.println("Вектор базиса:");
-            for (int x:Fs )
-            {
-                System.out.print("A"+x + " | ");
-            }
-
-            System.out.println();
             k = minimumK(alfa,betta);
-            System.out.println(k+"--------------------");
             iteratAlfa.add(alfa[0].doubleValue());
             if(min){
                 iteratBetta.add(betta[0].doubleValue() * (-1));
@@ -421,6 +399,7 @@ public class MMethod
 
         for (int i = 0; i < Fs.length ; i++) {
             if(Fs[i] > n && newA[i][0].doubleValue() != 0){
+                zvit1.append("\n Так как в базисе присудствую исскуственные переменные отличные от нуля задача не имеет решения");
                 ab.append("\n Так как в базисе присудствую исскуственные переменные отличные от нуля задача не имеет решения");
                 listAnswer.add(ab);
                 return;
@@ -439,7 +418,6 @@ public class MMethod
                    Fs[i] = a;
             }
         }
-        System.out.println(" " + finaloo(c,xOptimalniy(Fs,newA),min).doubleValue() );
         ab.append("Так как,все Δj >0 , имеет место ситуация 1\nФормируем решение:\n");
         ab.append("Fs* = {");
 
@@ -448,13 +426,19 @@ public class MMethod
         }
         ab.append("}\n");
         ab.append("X* = {");
-        for (BigFraction x:xOptimalniy(Fs,newA)) {
-           // System.out.println(x);
-            ab.append(new BigDecimal(x.doubleValue()).setScale(6,BigDecimal.ROUND_FLOOR)+" ; ");
+        zvit1.append("\n\nРешение\nX* = {");
+        for (int x = 0 ; x < xOptimalniy(Fs,newA).length ; x++) {
+            if (x != xOptimalniy(Fs, newA).length-1) {
+                zvit1.append(new BigDecimal(xOptimalniy(Fs, newA)[x].doubleValue()).setScale(6, BigDecimal.ROUND_FLOOR) + " ; ");
+                ab.append(new BigDecimal(xOptimalniy(Fs, newA)[x].doubleValue()).setScale(6, BigDecimal.ROUND_FLOOR) + " ; ");
+            }
+            else{
+                zvit1.append(new BigDecimal(xOptimalniy(Fs, newA)[x].doubleValue()).setScale(6, BigDecimal.ROUND_FLOOR));
+                ab.append(new BigDecimal(xOptimalniy(Fs, newA)[x].doubleValue()).setScale(6, BigDecimal.ROUND_FLOOR));
+            }
         }
-        ab.append("}\nОптимальное значение функции при заданных ограничениях равно: " + new BigDecimal(finaloo(c,xOptimalniy(Fs,newA),min).doubleValue()).setScale(6,BigDecimal.ROUND_FLOOR));
-
-
+        ab.append("}\nL*: " + new BigDecimal(finaloo(c,xOptimalniy(Fs,newA),min).doubleValue()).setScale(6,BigDecimal.ROUND_FLOOR));
+        zvit1.append(("}\nL*= " + new BigDecimal(finaloo(c,xOptimalniy(Fs,newA),min).doubleValue()).setScale(6,BigDecimal.ROUND_FLOOR)));
         listAnswer.add(ab);
     }
 

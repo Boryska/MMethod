@@ -1,5 +1,6 @@
 package сontroller;
-import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.*;
+import com.itextpdf.text.pdf.BaseFont;
 import exceptions.EmptyException;
 import exceptions.IncorrectData;
 import exceptions.MyMessageException;
@@ -24,18 +25,16 @@ import main.Table;
 import math.Graphics;
 import math.MMethod;
 import math.Validation;
-import com.itextpdf.text.Document;
 import com.itextpdf.text.pdf.PdfWriter;
 
 
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.util.ArrayList;
 
 import org.apache.commons.lang.math.NumberUtils;
 import parser.JaxbParser;
+import sun.nio.cs.UTF_32;
+import sun.text.normalizer.UTF16;
 
 import javax.imageio.ImageIO;
 import javax.xml.bind.JAXBException;
@@ -137,6 +136,7 @@ public class Controller {
     private File file;
     private FileChooser.ExtensionFilter extFilter;
     private MMethod method;
+    private Validation val;
     XYChart.Series<Number, Number> iterAlfa, iterBetta;
 
     private void initLoader() {
@@ -265,26 +265,29 @@ public class Controller {
                     file = fileChooser.showSaveDialog(mainStage);//Указываем текущую сцену CodeNote.mainStage
                     if (file != null) { //Save
                         file.getParentFile().mkdirs();
-                        File graphAlpha = new File(file.getAbsolutePath().replaceAll(".pdf", "Alpha.png").replaceAll("\\\\", "/"));
-                        File graphBetta = new File(file.getAbsolutePath().replaceAll(".pdf", "Betta.png").replaceAll("\\\\", "/"));
-                        AlfaLineChart.setAnimated(false);
-                        WritableImage snapShotAlpha = AlfaLineChart.snapshot(null, null);
+                        File graphAlpha = new File("Alfa.png");
+                        File graphBetta = new File("Betta.png");
+                        WritableImage snapShotAlpha = AlfaLineChart.snapshot(null,null);
                         ImageIO.write(SwingFXUtils.fromFXImage(snapShotAlpha, null), "png", graphAlpha);
-                        BettaLineChart.setAnimated(false);
+                        Image a = Image.getInstance("Alfa.png");
                         WritableImage snapShotBeta = BettaLineChart.snapshot(null, null);
                         ImageIO.write(SwingFXUtils.fromFXImage(snapShotBeta, null), "png", graphBetta);
-                        String k = "<br/><h2 align='center'>Графики линейной формы по итерациям</h2>" +
-                                " <img border='0' src='" + file.getAbsolutePath().replaceAll(".pdf", "Alpha.png").replaceAll("\\\\", "/") + "' alt='name' />" +
-                                " <img border='0' src='" + file.getAbsolutePath().replaceAll(".pdf", "Betta.png").replaceAll("\\\\", "/") + "' alt='name' />";
                         OutputStream files = new FileOutputStream(file);
+                        Image b = Image.getInstance("Betta.png");
                         Document document = new Document();
                         PdfWriter writer = PdfWriter.getInstance(document,files);
+                        BaseFont times = BaseFont.createFont("c:/windows/fonts/times.ttf","cp1251",BaseFont.EMBEDDED);
                         document.open();
-                    StringBuilder sb = new StringBuilder();
-                    sb.append(method.getAnswer().get(0));
-//                    sb.append(mMethod.getHtmlDataToCheck());
-                    sb.append(k);
-                    document.add(new Paragraph(sb.toString()));
+                        StringBuilder sb = new StringBuilder();
+                        sb.append(method.getZvit1());
+                        a.scaleAbsolute(500f,250f);
+                        b.scaleAbsolute(500f,250f);
+                        a.setAlignment(Element.ALIGN_MIDDLE);
+                        b.setAlignment(Element.ALIGN_MIDDLE);
+
+                        document.add(new Paragraph(sb.toString(), new Font(times,12)));
+                        document.add(a);
+                        document.add(b);
                     graphAlpha.delete();
                     graphBetta.delete();
                     document.close();
@@ -476,7 +479,7 @@ public class Controller {
                 checkTab.setDisable(false);
                 findTab.setDisable(false);
                 initDeltaComboBoxes();
-                Validation val = new Validation();
+                val = new Validation();
                 val.OpornoCheck();
                 val.DopustimostCheck();
                 val.OptimalityCheck();

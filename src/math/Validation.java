@@ -219,9 +219,6 @@ public class Validation {
         AFs = getAFs();
         det = findDeterminant(AFs);
         listCheck.append("AFs*\n");
-               for (int x: finalFs) {
-            System.out.print("A"+x + " ");
-        }
 
         StringBuilder format = new StringBuilder();
         Object [][] AfS = new Object[AFs.length+1][finalFs.length];
