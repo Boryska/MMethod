@@ -16,6 +16,7 @@ public class Validation {
     private BigFraction[] startB, startL, XI;
     private boolean check;
     private StringBuilder listCheck = new StringBuilder();
+    private StringBuilder validStr = new StringBuilder();
 
     public Validation() {
         this.finalFs = MMethod.getFs();
@@ -30,6 +31,14 @@ public class Validation {
         for(int i = 0; i < finalFs.length; i++){
             XI[finalFs[i]-1]= finalA[i][0];
         }
+    }
+
+    public StringBuilder getListCheck() {
+        return listCheck;
+    }
+
+    public StringBuilder getValidStr() {
+        return validStr;
     }
 
     public static BigFraction[][] getObrAFs() {
@@ -67,20 +76,14 @@ public class Validation {
                         }
                 }
                 if ((i+j)%2 == 0) {
-                    //result[j][i] = new BigFraction(findDet(sss)).divide(new BigFraction(det));
                     result[j][i] = findDeterminant(sss).divide(det);
                 }
                 else  {
-                    //result[j][i] =   new BigFraction(findDet(sss)).divide(new BigFraction(det)).multiply(new BigFraction(-1));
                     result[j][i] = findDeterminant(sss).divide(det).multiply(new BigFraction(-1));
                 }
             }
         }
         return result;
-    }
-
-    public StringBuilder getListCheck() {
-        return listCheck;
     }
 
     public static BigFraction[] vectorMatrix(BigFraction[][] matrix, BigFraction[] vector){
@@ -113,7 +116,6 @@ public class Validation {
         if(check){
             return;
         }
-
         BigFraction[][] AfsObr = findAfsObr(AFs, det);
         BigFraction [] Cs = new BigFraction[finalFs.length];
         for (int i = 0; i < finalFs.length ; i++) {
@@ -123,10 +125,12 @@ public class Validation {
         BigFraction deltaJ[] = new BigFraction[startA[0].length];
         BigFraction YI [] = vectorMatrix(AfsObr,Cs);
         listCheck.append("\n\nПроверка допустимости решения\n");
-
+        validStr.append("\n\nПроверка допустимости решения\n");
         listCheck.append("X* ={");
+        validStr.append("\nX* ={");
         for (BigFraction x : XI) {
             if (MMethod.compareTwoFraction(x,new BigFraction(0)) == -1){
+                validStr.append("\nПроверка на неотрицательность не пройдена!\n");
                 listCheck.append("Проверка на неотрицательность не пройдена!\n");
                 check = false;
                 return;
@@ -135,9 +139,11 @@ public class Validation {
 
         for (BigFraction x: XI) {
             listCheck.append(new BigDecimal(x.doubleValue()).setScale(6,BigDecimal.ROUND_FLOOR) + " ; ");
+            validStr.append(new BigDecimal(x.doubleValue()).setScale(6,BigDecimal.ROUND_FLOOR) + " ; ");
         }
 
         listCheck.append("}\nПроверка на неотрицательность пройдена.\nОпределение Δi\n");
+        validStr.append("}\nПроверка на неотрицательность пройдена.\nОпределение дельта i\n");
         for (int i = 0; i < startA.length; i++) {
             BigFraction sum = new BigFraction(0);
             StringBuilder sbi = new StringBuilder();
@@ -150,13 +156,16 @@ public class Validation {
              deltaI[i] = startB[i].subtract(sum);
             sbi.append(" )= " +deltaI[i].doubleValue() );
             listCheck.append(sbi +"\n");
+            validStr.append(sbi +"\n");
         }
         BigFraction maxI = new BigFraction(-1);
         for (BigFraction x: deltaI) {
             if(MMethod.compareTwoFraction(x,maxI) == 1 )
              maxI = x;
         }
+        validStr.append("Максимальное бетта i = " + maxI.doubleValue());
         listCheck.append("\nmaxδi = " + maxI.doubleValue());
+        validStr.append("\nОпределение бетта j\nДля определения оптимального плана двойственной задачи умножим вектор Cs на обратную к Afs* матрицу\n");
         listCheck.append("\nОпределение δj\n Для определения оптимального плана двойственной задачи умножим вектор Cs на обратную к Afs* матрицу\n Обратная матрица:\n");
         StringBuilder format = new StringBuilder();
         BigDecimal doubleAfsObr [][] = new BigDecimal[AfsObr.length][AfsObr[0].length];
@@ -170,19 +179,27 @@ public class Validation {
         }
         for (int i = 0; i < AfsObr.length ; i++) {
             listCheck.append(String.format(format.toString(), doubleAfsObr[i]));
+            //validStr.append(String.format(format.toString(), doubleAfsObr[i]));
             listCheck.append("\n");
+            //validStr.append("\n");
         }
         listCheck.append("\nCs ={");
+        validStr.append("Cs ={");
         for (BigFraction x: Cs) {
             listCheck.append(x.intValue() + " ; ");
+            validStr.append(x.intValue() + " ; ");
         }
 
         listCheck.append("}\n\nY* ={");
+        validStr.append("}\nY* ={");
         for (BigFraction x: YI) {
             listCheck.append(new BigDecimal(x.doubleValue()).setScale(6,BigDecimal.ROUND_FLOOR)+ " ; ");
+            validStr.append(new BigDecimal(x.doubleValue()).setScale(6,BigDecimal.ROUND_FLOOR)+ " ; ");
         }
         listCheck.append("}");
+        validStr.append("}");
         if(MMethod.compareTwoFraction(new BigFraction(0.0000001),maxI.abs()) == -1){
+            validStr.append("\nПроверка допустимости не пройдена");
             listCheck.append("\nПроверка допустимости не пройдена");
             check = false;
             return;
@@ -198,8 +215,9 @@ public class Validation {
                 sbj.append((startA[j][i].intValue() + " * "+ new BigDecimal( YI[j].doubleValue()).setScale(6,BigDecimal.ROUND_FLOOR)+" + "));
             }
             deltaJ[i] = startL[i].subtract(sum);
-            sbj.append(") = " +new BigDecimal( deltaJ[i].doubleValue()).setScale(6,BigDecimal.ROUND_FLOOR) );
-            listCheck.append(sbj+"\n");
+            sbj.append(") = " + new BigDecimal( deltaJ[i].doubleValue()).setScale(6,BigDecimal.ROUND_FLOOR) );
+            listCheck.append(sbj + "\n");
+            validStr.append(sbj + "\n");
         }
         BigFraction maxJ = new BigFraction(-1);
         for (BigFraction x: deltaJ) {
@@ -207,18 +225,24 @@ public class Validation {
                 maxJ = x;
         }
         listCheck.append("\nmaxδj = " + new BigDecimal( maxJ.doubleValue()).setScale(6,BigDecimal.ROUND_FLOOR));
+        validStr.append("Максимальное дельта j = " + new BigDecimal( maxJ.doubleValue()).setScale(6,BigDecimal.ROUND_FLOOR));
         if(MMethod.compareTwoFraction(new BigFraction(0.0000001),maxJ.abs()) == -1){
             listCheck.append("\nПроверка допустимости не пройдена");
+            validStr.append("\nПроверка допустимости не пройдена");
             check = false;
             return;
         }
     }
 
     public void OpornoCheck(){
-       listCheck.append("Проверка опорности решения\n");
+        //validStr.append("\n\n                                                               Проверка достоверности\n");
+        listCheck.append("Проверка опорности решения\n");
+        validStr.append("\nПроверка опорности решения\n\n");
+
         AFs = getAFs();
         det = findDeterminant(AFs);
         listCheck.append("AFs*\n");
+        //validStr.append("AFs*\n");
 
         StringBuilder format = new StringBuilder();
         Object [][] AfS = new Object[AFs.length+1][finalFs.length];
@@ -237,14 +261,20 @@ public class Validation {
         }
         for (int i = 0; i < AfS.length ; i++) {
             listCheck.append(String.format(format.toString(), AfS[i]));
+            //validStr.append(String.format(format.toString(), AfS[i]));
             listCheck.append("\n");
+            //validStr.append("\n");
         }
 
-        if(MMethod.compareTwoFraction(det,new BigFraction(0)) != 0)
+        if(MMethod.compareTwoFraction(det,new BigFraction(0)) != 0) {
             listCheck.append("\nТак как определитель матрицы AFs* равен " + det.doubleValue()+ " и отличен от 0, то вектора условий соответствующие базисным компонентам линейно независимы.");
+            validStr.append("Так как определитель матрицы AFs* равен " + det.doubleValue()+ " и отличен от 0, то вектора условий соответствующие базисным компонентам линейно независимы.");
+        }
         else{
             listCheck.append("\nТак как определитель матрицы AFs* равен " + det.doubleValue()+ ", то вектора условий соответствующие базисным компонентам линейно зависимы.");
+            validStr.append("\nТак как определитель матрицы AFs* равен " + det.doubleValue()+ ", то вектора условий соответствующие базисным компонентам линейно зависимы.");
             listCheck.append("\nПроверка решения не пройдена!");
+            validStr.append("\nПроверка решения не пройдена!");
             check = true;
         }
     }
@@ -254,6 +284,7 @@ public class Validation {
             return;
         }
         listCheck.append("\n\nПроверка оптимальности решения");
+        validStr.append("\n\nПроверка оптимальности решения\n");
         det = findDeterminant(AFs);
         obrAFs = findAfsObr(AFs, det);
 
@@ -264,6 +295,7 @@ public class Validation {
         BigFraction YI [] = vectorMatrix(obrAFs,Cs);
 
         listCheck.append("\nОптимальное значение прямой задачи:\nL1* = ");
+        validStr.append("\nОптимальное значение прямой задачи:\nL1* = ");
         BigFraction l1 = new BigFraction(0);
         String l11 ="";
         String l22 ="";
@@ -272,35 +304,50 @@ public class Validation {
             l11 += (XI[i].doubleValue() +" * "+ startL[i].doubleValue()+" + ");
         }
         listCheck.append( l11 + " = ");
+        validStr.append( l11 + " = ");
         listCheck.append(new BigDecimal( l1.doubleValue()).setScale(6,BigDecimal.ROUND_FLOOR));
+        validStr.append(new BigDecimal( l1.doubleValue()).setScale(6,BigDecimal.ROUND_FLOOR));
         listCheck.append("\nОптимальное значение двойственной задачи:\nL2* = ");
+        validStr.append("\nОптимальное значение двойственной задачи:\nL2* = ");
         BigFraction l2 = new BigFraction(0);
         for (int i = 0; i < startA.length ; i++) {
             l2 = l2.add(YI[i].multiply(startB[i]));
             l22 += (YI[i].doubleValue() +" * "+ startB[i].doubleValue()+" + ");
         }
         listCheck.append( l22 + " = ");
-        listCheck.append(new BigDecimal( l2.doubleValue()).setScale(6,BigDecimal.ROUND_FLOOR));;
+        validStr.append( l22 + " = ");
+        listCheck.append(new BigDecimal( l2.doubleValue()).setScale(6,BigDecimal.ROUND_FLOOR));
+        validStr.append(new BigDecimal( l2.doubleValue()).setScale(6,BigDecimal.ROUND_FLOOR));
+        validStr.append("\nОптимальное значение через Бетта 0:\nL3* = ");
         listCheck.append("\nОптимальное значение через Бетта 0:\nL3* = ");
         BigFraction l3 = finalA[finalA.length-1][0];
         listCheck.append(new BigDecimal( l3.doubleValue()).setScale(6,BigDecimal.ROUND_FLOOR));
+        validStr.append(new BigDecimal( l3.doubleValue()).setScale(6,BigDecimal.ROUND_FLOOR));
         if(finalA[finalA.length-1][0].signum() < 0){
             listCheck.append("\nТак как функция минимизируется, имеем:");
+            validStr.append("\nТак как функция минимизируется, имеем:");
             l1 = l1.multiply(new BigFraction(-1));
             listCheck.append("\nL1* = " + new BigDecimal( l1.doubleValue()).setScale(6,BigDecimal.ROUND_FLOOR));
+            validStr.append("\nL1* = " + new BigDecimal( l1.doubleValue()).setScale(6,BigDecimal.ROUND_FLOOR));
             l2 = l2.multiply(new BigFraction(-1));
             listCheck.append("\nL2* = "+new BigDecimal( l2.doubleValue()).setScale(6,BigDecimal.ROUND_FLOOR));
+            validStr.append("\nL2* = "+new BigDecimal( l2.doubleValue()).setScale(6,BigDecimal.ROUND_FLOOR));
             l3 = l3.multiply(new BigFraction(-1));
             listCheck.append("\nL3* = "+new BigDecimal( l3.doubleValue()).setScale(6,BigDecimal.ROUND_FLOOR));
+            validStr.append("\nL3* = "+new BigDecimal( l3.doubleValue()).setScale(6,BigDecimal.ROUND_FLOOR));
         }
 
 
         listCheck.append("\nСреднее оптимальное значение:\nLср* = (" + new BigDecimal( l3.doubleValue()).setScale(6,BigDecimal.ROUND_FLOOR) + " + "+ new BigDecimal( l1.doubleValue()).setScale(6,BigDecimal.ROUND_FLOOR) + " + "+ new BigDecimal( l2.doubleValue()).setScale(6,BigDecimal.ROUND_FLOOR) + ")\\3 = ");
+        validStr.append("\nСреднее оптимальное значение:\nLср* = (" + new BigDecimal( l3.doubleValue()).setScale(6,BigDecimal.ROUND_FLOOR) + " + "+ new BigDecimal( l1.doubleValue()).setScale(6,BigDecimal.ROUND_FLOOR) + " + "+ new BigDecimal( l2.doubleValue()).setScale(6,BigDecimal.ROUND_FLOOR) + ")\\3 = ");
         BigFraction avgl = l1.add(l2.add(l3)).divide(new BigFraction(3));
         listCheck.append(new BigDecimal( avgl.doubleValue()).setScale(6,BigDecimal.ROUND_FLOOR));
+        validStr.append(new BigDecimal( avgl.doubleValue()).setScale(6,BigDecimal.ROUND_FLOOR));
         listCheck.append(l1.subtract(avgl).doubleValue() < 0.0000001 ? "\nL1* - Lср* = " + new BigDecimal( l1.doubleValue()).setScale(6,BigDecimal.ROUND_FLOOR) + " - " +new BigDecimal( avgl.doubleValue()).setScale(6,BigDecimal.ROUND_FLOOR) + " = 0.0" + " < 0.0000001" : "L1* - Lср* = " + l1.doubleValue() + " - " + avgl.doubleValue() + " = " + l1.subtract(avgl).doubleValue() + " >= 0.0000001");
+        validStr.append(l1.subtract(avgl).doubleValue() < 0.0000001 ? "\nL1* - Lср* = " + new BigDecimal( l1.doubleValue()).setScale(6,BigDecimal.ROUND_FLOOR) + " - " +new BigDecimal( avgl.doubleValue()).setScale(6,BigDecimal.ROUND_FLOOR) + " = 0.0" + " < 0.0000001" : "L1* - Lср* = " + l1.doubleValue() + " - " + avgl.doubleValue() + " = " + l1.subtract(avgl).doubleValue() + " >= 0.0000001");
         listCheck.append(l2.subtract(avgl).doubleValue() < 0.0000001 ? "\nL2* - Lср* = " + new BigDecimal( l2.doubleValue()).setScale(6,BigDecimal.ROUND_FLOOR) + " - " + new BigDecimal( avgl.doubleValue()).setScale(6,BigDecimal.ROUND_FLOOR) + " = 0.0" + " < 0.0000001" : "L2* - Lср* = " + l2.doubleValue() + " - " + avgl.doubleValue() + " = " + l2.subtract(avgl).doubleValue() + " >= 0.0000001");
+        validStr.append(l2.subtract(avgl).doubleValue() < 0.0000001 ? "\nL2* - Lср* = " + new BigDecimal( l2.doubleValue()).setScale(6,BigDecimal.ROUND_FLOOR) + " - " + new BigDecimal( avgl.doubleValue()).setScale(6,BigDecimal.ROUND_FLOOR) + " = 0.0" + " < 0.0000001" : "L2* - Lср* = " + l2.doubleValue() + " - " + avgl.doubleValue() + " = " + l2.subtract(avgl).doubleValue() + " >= 0.0000001");
         listCheck.append(l3.subtract(avgl).doubleValue() < 0.0000001 ? "\nL3* - Lср* = " +new BigDecimal( l3.doubleValue()).setScale(6,BigDecimal.ROUND_FLOOR) + " - " + new BigDecimal( avgl.doubleValue()).setScale(6,BigDecimal.ROUND_FLOOR) + " = 0.0" + " < 0.0000001" : "L3* - Lср* = " + l3.doubleValue() + " - " + avgl.doubleValue() + " = " + l3.subtract(avgl).doubleValue() + " >= 0.0000001");
-
+        validStr.append(l3.subtract(avgl).doubleValue() < 0.0000001 ? "\nL3* - Lср* = " +new BigDecimal( l3.doubleValue()).setScale(6,BigDecimal.ROUND_FLOOR) + " - " + new BigDecimal( avgl.doubleValue()).setScale(6,BigDecimal.ROUND_FLOOR) + " = 0.0" + " < 0.0000001" : "L3* - Lср* = " + l3.doubleValue() + " - " + avgl.doubleValue() + " = " + l3.subtract(avgl).doubleValue() + " >= 0.0000001");
    }
 }

@@ -170,11 +170,11 @@ public class MMethod
         }
         for (int i = 0; i < m; i++)
         {
-            CsI[i] = new BigFraction(-1);                                       ////////////   C's      тут первая строчка идет как нулевая в матрице
+            CsI[i] = new BigFraction(-1);        ////////////   C's      тут первая строчка идет как нулевая в матрице
         }
         for (int i = 0; i < m; i++)
         {
-            CsII[i] = new BigFraction(0);                                      ////////////   C''s       тут первая строчка идет как нулевая в матрице
+            CsII[i] = new BigFraction(0);       ///////////   C''s       тут первая строчка идет как нулевая в матрице
         }
 
         for (int i = 0; i < (n+m+1) ; i++)
@@ -191,7 +191,7 @@ public class MMethod
 
 
         usl.append("Условия исходной задачи:\n");
-        usl.append("Целевая функиця:\nL = ");
+        usl.append("Целевая функция:\nL = ");
         StringBuilder usl1 = new StringBuilder();
         for (int i = 1; i <n+1; i++)
         {        if(i != n) {
@@ -204,8 +204,8 @@ public class MMethod
         usl.append(usl1);
             usl.append("->max\n");                                                                                            /////
 
-        zvit1.append("                                                                 Условия исходной задачи\n\n");
-        zvit1.append("Целевая функиця:\nL = ");
+        //zvit1.append("                                                                 Условия исходной задачи\n\n");
+        zvit1.append("\nЦелевая функция:\nL = ");
        if (min){
            for (int i = 0; i <c.length; i++)
            {        if(i != n) {
@@ -229,7 +229,7 @@ public class MMethod
 
         zvit1.append("Вектора ограничений:\n");
         usl.append("Вектора ограничений:\n");
-        for (int i = 0; i < m; i++)                                                              //////
+        for (int i = 0; i < m; i++)
         {
             for (int j = 1; j <n+1 ; j++)
             {
@@ -247,7 +247,7 @@ public class MMethod
            // System.out.println(" = " + newA[i][0]);
             usl.append(" = " + newA[i][0].intValue() + "\n");
             zvit1.append(" = " + newA[i][0].intValue() + "\n");
-        }                                                                                       ////////fin
+        }                                                                    ////////fin
         //System.out.println("М-задача");                                               //////Start
         usl.append("\nМ-задача"+
                 "\n\n Целевая функция М-задачи:\n"+

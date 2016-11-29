@@ -8,11 +8,8 @@ import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
-import javafx.event.Event;
 import javafx.event.EventHandler;
-import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.LineChart;
-import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.image.WritableImage;
 import javafx.scene.input.MouseEvent;
@@ -26,16 +23,10 @@ import math.Graphics;
 import math.MMethod;
 import math.Validation;
 import com.itextpdf.text.pdf.PdfWriter;
-
-
 import java.io.*;
 import java.util.ArrayList;
-
 import org.apache.commons.lang.math.NumberUtils;
 import parser.JaxbParser;
-import sun.nio.cs.UTF_32;
-import sun.text.normalizer.UTF16;
-
 import javax.imageio.ImageIO;
 import javax.xml.bind.JAXBException;
 
@@ -121,7 +112,7 @@ public class Controller {
             checkTab.setDisable(true);
             graphicTab.setDisable(true);
             showEquationTabPane.setDisable(true);
-            menuReport.setDisable(false);
+            menuReport.setDisable(true);
             drawclick = false;
         }
     }
@@ -284,14 +275,21 @@ public class Controller {
                         b.scaleAbsolute(500f,250f);
                         a.setAlignment(Element.ALIGN_MIDDLE);
                         b.setAlignment(Element.ALIGN_MIDDLE);
-
-                        document.add(new Paragraph(sb.toString(), new Font(times,12)));
+                        Paragraph first = new Paragraph("Условия исходной задачи\n", new Font(times,14));
+                        first.setAlignment(Element.ALIGN_CENTER);
+                        Paragraph second = new Paragraph("\nПроверка достоверности\n", new Font(times,14));
+                        second.setAlignment(Element.ALIGN_CENTER);
+                        document.add(first);
+                        document.add(new Paragraph(sb.toString(), new Font(times,10)));
+                        sb.setLength(0);
+                        sb.append(val.getValidStr());
+                        document.add(second);
+                        document.add(new Paragraph(sb.toString(), new Font(times,10)));
                         document.add(a);
                         document.add(b);
-                    graphAlpha.delete();
-                    graphBetta.delete();
-                    document.close();
-
+                        graphAlpha.delete();
+                        graphBetta.delete();
+                        document.close();
                     }
                 }  catch (Exception ex) {
                     Alert alrt = new Alert(Alert.AlertType.INFORMATION);
@@ -299,9 +297,7 @@ public class Controller {
                     alrt.setContentText(ex.getStackTrace().toString());
                     alrt.showAndWait();
                 }
-                    break;
-
-
+                break;
         }
     }
 
@@ -487,6 +483,7 @@ public class Controller {
                 textAreaCheck.setText(val.getListCheck().toString());
                 textAreaCheck.setEditable(false);
                 tabPane.getSelectionModel().select(checkTab);
+                menuReport.setDisable(false);
                 break;
             case "buttonDraw":
                 try {
