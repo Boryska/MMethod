@@ -85,7 +85,6 @@ public class Table {
         ObservableList table = (ObservableList) tableC.getItems().get(0);
         for (int j=0;j<cols;j++){
             C[j] = new BigFraction(table.get(j).toString());
-            //C[j]= Double.parseDouble(table.get(j).toString());
         }
         return C;
     }
