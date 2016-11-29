@@ -22,6 +22,7 @@ public class Table {
                         "X" + (i+1)
                 );
                 column.setStyle("-fx-alignment: CENTER;");
+                column.setSortable(false);
                 if (name =="A") {
                     Controller.setArrayTableAColumn(column);
                 }
@@ -31,6 +32,7 @@ public class Table {
                         "B"
                 );
                 column.setStyle("-fx-alignment: CENTER;");
+                column.setSortable(false);
                 Controller.setArrayTableBColumn(column);
             }
             if(name == "C") {
@@ -38,6 +40,7 @@ public class Table {
                         "C" + (i+1)
                 );
                 column.setStyle("-fx-alignment: CENTER;");
+                column.setSortable(false);
                 Controller.setArrayTableCColumn(column);
             }
             column.setCellValueFactory(param ->
