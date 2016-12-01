@@ -503,6 +503,7 @@ public class Controller {
                     }
                     Graphics gr = new Graphics(Integer.parseInt(comboBoxDeltaB1.getSelectionModel().getSelectedItem().toString()),Integer.parseInt(comboBoxDeltaB2.getSelectionModel().getSelectedItem().toString()));
                     gr.OblastUstoichevosti();
+                    equationTextArea.setText(gr.getUst().toString());
                     drawclick = true;
                 }
                 catch (EmptyException ex) {

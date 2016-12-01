@@ -421,6 +421,7 @@ public class MMethod
         ab.append("X* = {");
         zvit1.append("\n\nРешение\nX* = {");
         for (int x = 0 ; x < xOptimalniy(Fs,newA).length ; x++) {
+
             if (x != xOptimalniy(Fs, newA).length-1) {
                 zvit1.append(new BigDecimal(xOptimalniy(Fs, newA)[x].doubleValue()).setScale(6, BigDecimal.ROUND_FLOOR) + " ; ");
                 ab.append(new BigDecimal(xOptimalniy(Fs, newA)[x].doubleValue()).setScale(6, BigDecimal.ROUND_FLOOR) + " ; ");
