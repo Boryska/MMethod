@@ -1,29 +1,40 @@
 package сontroller;
 import com.itextpdf.text.*;
+import com.itextpdf.text.Font;
 import com.itextpdf.text.pdf.BaseFont;
 import exceptions.EmptyException;
 import exceptions.IncorrectData;
 import exceptions.MyMessageException;
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.image.WritableImage;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.paint.Color;
+import javafx.scene.text.*;
+import javafx.scene.transform.Affine;
+import javafx.scene.transform.Transform;
+import javafx.scene.web.WebEngine;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.TextFieldTableCell;
 import main.Table;
-import math.Graphics;
-import math.MMethod;
-import math.Validation;
+import math.*;
 import com.itextpdf.text.pdf.PdfWriter;
 import java.io.*;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import org.apache.commons.lang.math.NumberUtils;
 import parser.JaxbParser;
@@ -87,7 +98,12 @@ public class Controller {
     private ComboBox comboBoxDeltaB1;
     @FXML
     private ComboBox comboBoxDeltaB2;
-
+    @FXML
+    private Canvas graph;
+    @FXML
+    private AnchorPane paneGraph;
+    private double Width, Height, scale = 40, maxX, maxY, minX, minY;
+    //private FindPolygonPoints polygonPoints;
     @FXML
     private void initialize() {
         if (check == false) {
@@ -128,6 +144,7 @@ public class Controller {
     private FileChooser.ExtensionFilter extFilter;
     private MMethod method;
     private Validation val;
+    private Graphics gr;
     XYChart.Series<Number, Number> iterAlfa, iterBetta;
 
     private void initLoader() {
@@ -403,7 +420,6 @@ public class Controller {
                 for(int i=0;i<method.getAnswer().size();i++) {
                     textArea.setText(textArea.getText()+method.getAnswer().get(i).toString());
                 }
-                textArea.setEditable(false);
                 solutionTab.setDisable(false);
                 AlfaLineChart.getData().clear();
                 BettaLineChart.getData().clear();
@@ -501,9 +517,40 @@ public class Controller {
                         arrayErrors.add(firstComponentLabel.getText() + " и " + secondComponentLabel.getText() + " не должны совпадать ");
                         throw new IncorrectData(arrayErrors);
                     }
-                    Graphics gr = new Graphics(Integer.parseInt(comboBoxDeltaB1.getSelectionModel().getSelectedItem().toString()),Integer.parseInt(comboBoxDeltaB2.getSelectionModel().getSelectedItem().toString()));
-                    gr.OblastUstoichevosti();
-                    equationTextArea.setText(gr.getUst().toString());
+                    if(paneGraph.getChildren().size()!=0){
+                        paneGraph.getChildren().remove(graph);
+                        graph = new Canvas(Width, Height);
+                    }
+                    gr = new Graphics(Integer.parseInt(comboBoxDeltaB1.getSelectionModel().getSelectedItem().toString()),Integer.parseInt(comboBoxDeltaB2.getSelectionModel().getSelectedItem().toString()));
+                    gr.DoIt();
+                    calcDataToCanvas();
+                    Width = paneGraph.getWidth();
+                    Height = paneGraph.getHeight();
+                    graph.setWidth(Width);
+                    graph.setHeight(Height);
+                    GraphicsContext gc = graph.getGraphicsContext2D();
+                    drawShapes(gc);
+                    paneGraph.getChildren().add(graph);
+                    paneGraph.getScene().widthProperty().addListener(new ChangeListener<Number>() {
+                        @Override public void changed(ObservableValue<? extends Number> observableValue, Number oldSceneWidth, Number newSceneWidth) {
+                            paneGraph.getChildren().remove(graph);
+                            Width = newSceneWidth.doubleValue();
+                            graph = new Canvas(Width, Height);
+                            GraphicsContext gc = graph.getGraphicsContext2D();
+                            drawShapes(gc);
+                            paneGraph.getChildren().add(graph);
+                        }
+                    });
+                    paneGraph.getScene().heightProperty().addListener(new ChangeListener<Number>() {
+                        @Override public void changed(ObservableValue<? extends Number> observableValue, Number oldSceneHeight, Number newSceneHeight) {
+                            paneGraph.getChildren().remove(graph);
+                            Height = newSceneHeight.doubleValue();
+                            graph = new Canvas(Width, Height);
+                            GraphicsContext gc = graph.getGraphicsContext2D();
+                            drawShapes(gc);
+                            paneGraph.getChildren().add(graph);
+                        }
+                    });
                     drawclick = true;
                 }
                 catch (EmptyException ex) {
@@ -524,9 +571,7 @@ public class Controller {
                         throw new MyMessageException("Сперва постройте график!");
                     }
                     showEquationTabPane.setDisable(true);
-                    equationTextArea.setEditable(false);
-                    //Тут код записи уравнений в equationTextArea
-                    //
+                    equationTextArea.setText(gr.getUst().toString());
                     tabPaneGraphic.getSelectionModel().select(showEquationTabPane);
                 }
                 catch (MyMessageException ex) {
@@ -585,6 +630,124 @@ public class Controller {
                     }
                 }
         );
+    }
+
+    private void drawShapes(GraphicsContext gc) {
+        gc.setStroke(Color.BLUE);
+        gc.setLineWidth(1.0);//толщина линий
+        double stepX = Double.valueOf(maxX / ((Width/2)/scale)).intValue();
+        double stepY = Double.valueOf(maxY / ((Height/2)/scale)).intValue();
+//        for(int i=0;i<polygonPoints.getSourceArray().length;i++){
+//            if(i<polygonPoints.getSourceArray().length-2) {
+//                double startX = minX;
+//                double endX = maxX;
+//                double startY = (polygonPoints.getSourceArray()[i][2].subtract(polygonPoints.getSourceArray()[i][0]
+//                        .multiply(new BigFraction(startX)))).divide(polygonPoints.getSourceArray()[i][1]).doubleValue();
+//                double endY = (polygonPoints.getSourceArray()[i][2].subtract(polygonPoints.getSourceArray()[i][0]
+//                        .multiply(new BigFraction(endX)))).divide(polygonPoints.getSourceArray()[i][1]).doubleValue();
+//                gc.strokeLine(Width/2 +startX/stepX*scale, Height/2 -startY/stepY*scale, Width/2 +endX/stepX*scale, Height/2 -endY/stepY*scale);
+//            }else{
+//                gc.setStroke(Color.GREEN);
+//                if(polygonPoints.getSourceArray()[i][0].signum()==0){
+//                    double startX = minX;
+//                    double endX = maxX;
+//                    double startY = polygonPoints.getSourceArray()[i][2].doubleValue();
+//                    double endY = polygonPoints.getSourceArray()[i][2].doubleValue();
+//                    gc.strokeLine(Width/2 +startX/stepX*scale, Height/2 -startY/stepY*scale, Width/2 +endX/stepX*scale, Height/2 -endY/stepY*scale);
+//                }else{
+//                    double startX = polygonPoints.getSourceArray()[i][2].doubleValue();
+//                    double endX = polygonPoints.getSourceArray()[i][2].doubleValue();
+//                    double startY = minY;
+//                    double endY = maxY;
+//                    gc.strokeLine(Width/2 +startX/stepX*scale, Height/2 -startY/stepY*scale, Width/2 +endX/stepX*scale, Height/2 -endY/stepY*scale);
+//                }
+//            }
+//        }
+        gc.setFill(Color.YELLOW);
+        double[] x = new double[gr.getListPoint().size()],y = new double[gr.getListPoint().size()];
+        for (Point point : gr.getListPoint()){
+            x[gr.getListPoint().indexOf(point)] = Width/2 + (point.getX().doubleValue()/stepX)*scale;
+            y[gr.getListPoint().indexOf(point)] = Height/2 - (point.getY().doubleValue()/stepY)*scale;
+        }
+        gc.fillPolygon(x, y, x.length);
+        gc.setStroke(Color.BLACK);
+        gc.setLineWidth(0.2);//толщина линий
+        for (double i=Height/2;i<Height;i+=scale){
+            gc.strokeLine(0, i, Width-10, i);//линии X Down
+        }
+
+        for (double i=Height/2;i>10;i-=scale){
+            gc.strokeLine(0, i, Width-10, i);//линии X Up
+        }
+
+        for (double i=Width/2;i<Width-10;i+=scale){
+            gc.strokeLine(i,Height,i,10);//линии Y ->
+        }
+
+        for (double i=Width/2;i>0;i-=scale){
+            gc.strokeLine(i,Height,i,10);//линии Y <-
+        }
+
+        gc.setLineWidth(1);//толщина Осей
+        drawArrow(gc,0, Height/2, Width-10, Height/2);//ОсьХ startX, startY, endX, endY
+        gc.fillText("y",((Width-10)/2),-((Height-11)/2));
+        gc.fillText("x",Width-10,0);
+        gc.setFont(new javafx.scene.text.Font("Arial",8)); //Шрифт и размер. Нужна какая-та зависимость размера шрифта от масщтаба scale
+        int k=0;
+        int step = 0;
+        if(40%scale==0) {
+            step = Double.valueOf(40 / scale).intValue();
+        }else{
+            step = Double.valueOf(40 / scale).intValue()+1;
+        }
+        int z=0;
+        for (double i=(Width/2);i<Width-scale;i+=scale,k++,z++){// По оси х 0 1 2 3
+            if((z+1)%(step)==0||z==0) {
+                gc.fillText("" + z*Double.valueOf(maxX / ((Width/2-scale)/scale)).intValue(), i, 10);
+            }
+        }
+        k=1;
+        z=1;
+        for (double i=(Width/2)-scale-5;i>0;i-=scale,k++,z++){// По оси х -1 -2 -3
+            if(z%(step)==0)
+                gc.fillText("-"+z*Double.valueOf(minX / ((Width/2-scale)/scale)).intValue(),i,10);
+        }
+        z=1;
+        k=1;
+        for (double i=scale+10;i<Height/2;i+=scale,k++,z++){// По оси у -1 -2 -3
+            if(z%(step)==0)
+                gc.fillText("-"+z*Double.valueOf(minY / ((Width/2-scale)/scale)).intValue(),Width/2,i);
+        }
+        k=1;
+        z=1;
+        for (double i=-scale+3;i>-(Height/2)+scale+10;i-=scale,k++,z++){// По оси у 1 2 3
+            if(z%(step)==0)
+                gc.fillText(""+z*Double.valueOf(maxY / ((Width/2-scale)/scale)).intValue(),Width/2,i);
+        }
+        drawArrow(gc, Width / 2, Height, Width / 2, 10);//ОсьY
+    }
+
+    void drawArrow(GraphicsContext gc, double x1, double y1, double x2, double y2) { //Метод отрисовки осей
+        gc.setFill(Color.BLACK);
+        double ARR_SIZE = 5;
+        double dx = x2 - x1, dy = y2 - y1;
+        double angle = Math.atan2(dy, dx);
+        int len = (int) Math.sqrt(dx * dx + dy * dy);
+
+        Transform transform = Transform.translate(x1, y1);
+        transform = transform.createConcatenation(Transform.rotate(Math.toDegrees(angle), 0, 0));
+        gc.setTransform(new Affine(transform));
+
+        gc.strokeLine(0, 0, len, 0);
+        gc.fillPolygon(new double[]{len, len - ARR_SIZE, len - ARR_SIZE, len}, new double[]{0, -ARR_SIZE, ARR_SIZE, 0},
+                4);
+    }
+
+    private void calcDataToCanvas(){
+        maxX = gr.getMaxX().doubleValue();
+        minX = gr.getMaxX().doubleValue()*(-1);
+        minY = gr.getMaxY().doubleValue()*(-1);
+        maxY = gr.getMaxY().doubleValue();
     }
 
     public static ArrayList<TableColumn> getArrayTableAColumn() {

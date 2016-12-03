@@ -2,25 +2,63 @@ package math;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-
+import java.util.Collections;
+import java.util.Comparator;
 
 public class Graphics {
     private int firstdbetta;
     private int seconddbetta;
     private BigFraction[] startB;
     private BigFraction[][] obrAFs;
+
+
     private ArrayList<Point> listPoint = new ArrayList();
+    private BigFraction maxX = new BigFraction(Double.MIN_VALUE);
+    private BigFraction maxY = new BigFraction(Double.MIN_VALUE);
     StringBuilder ust = new StringBuilder();
 
     public StringBuilder getUst() {
         return ust;
     }
 
+    public ArrayList<Point> getListPoint() {
+        return listPoint;
+    }
+
+    public BigFraction getMaxX() {
+        return maxX;
+    }
+
+    public BigFraction getMaxY() {
+        return maxY;
+    }
+
     public Graphics(int firstBetta, int secondBetta){
-      this.firstdbetta = firstBetta;
+        this.firstdbetta = firstBetta;
         this.seconddbetta = secondBetta;
         this.startB = MMethod.getStartB();
         this.obrAFs = Validation.getObrAFs();
+    }
+
+    public void DoIt (){
+        OblastUstoichevosti();
+        findMinAndMaxValue();
+        sortPoints();
+    }
+
+    private void sortPoints(){
+        Comparator<Point> comparator = new Comparator<Point>() {
+            public int compare(Point lhs, Point rhs) {
+                double lhsAngle = Math.atan2(lhs.getY().doubleValue(), lhs.getX().doubleValue());
+                double rhsAngle = Math.atan2(rhs.getY().doubleValue(), rhs.getX().doubleValue());
+
+                if (lhsAngle < rhsAngle) return -1;
+                if (lhsAngle > rhsAngle) return 1;
+
+                return 0;
+            }
+        };
+        Collections.sort(listPoint, comparator);
     }
 
     public void OblastUstoichevosti(){
@@ -105,6 +143,34 @@ public class Graphics {
         }
         return cheking;
     }
+
+    private void findMinAndMaxValue(){
+        for (Point x : listPoint){
+            if(compareTwoFraction(x.getX().abs(), maxX) == 1){
+                maxX = (x.getX().abs());
+            }
+            if(compareTwoFraction(x.getY().abs(), maxY) == 1){
+                maxY = (x.getY().abs());
+            }
+        }
+        maxX = maxX.multiply(new BigFraction(5));
+        maxY = maxY.multiply(new BigFraction(5));
+    }
+
+    private int compareTwoFraction(BigFraction fr1, BigFraction fr2){
+        if(fr1.signum()>fr2.signum()){
+            return 1;
+        }else if(fr1.signum()<fr2.signum()){
+            return -1;
+        }else{
+            if(fr1.getDenominator()==fr2.getDenominator()){
+                return fr1.getNumerator().compareTo(fr2.getNumerator());
+            }else{
+                return (fr1.getNumerator().multiply(fr2.getDenominator())).compareTo((fr2.getNumerator().multiply(fr1.getDenominator())));
+            }
+        }
+    }
+
     public static Point Gaus(BigFraction[] f, BigFraction[] s) { /// не ставить в Ф уравнение типа (0 + б9 > -1910)
         if(s[1].doubleValue() == 0){
             BigFraction [] change = f;
