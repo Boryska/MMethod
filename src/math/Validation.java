@@ -2,8 +2,6 @@ package math;
 
 import Jama.LUDecomposition;
 import Jama.Matrix;
-import com.sun.media.sound.AudioFileSoundbankReader;
-
 import java.math.BigDecimal;
 
 public class Validation {
@@ -121,7 +119,7 @@ public class Validation {
         for (int i = 0; i < finalFs.length ; i++) {
                Cs[i] = startL[finalFs[i]-1];
         }
-        BigFraction deltaI[] = new BigFraction[startA.length];
+        BigDecimal deltaI[] = new BigDecimal[startA.length];
         BigFraction deltaJ[] = new BigFraction[startA[0].length];
         BigFraction YI [] = vectorMatrix(AfsObr,Cs);
         listCheck.append("\n\nПроверка допустимости решения\n");
@@ -145,27 +143,29 @@ public class Validation {
         listCheck.append("}\nПроверка на неотрицательность пройдена.\nОпределение Δi\n");
         validStr.append("}\nПроверка на неотрицательность пройдена.\nОпределение дельта i\n");
         for (int i = 0; i < startA.length; i++) {
-            BigFraction sum = new BigFraction(0);
+            BigDecimal sum = new BigDecimal(0);
             StringBuilder sbi = new StringBuilder();
             sbi.append("δ"+(i+1)+" = " + startB[i].intValue()+" - (");
             for (int j = 0; j <startA[0].length; j++) {
-                sum = sum.add(startA[i][j].multiply(XI[j]));
+                sum = sum.add(startA[i][j].toBigDecimal().multiply(XI[j].toBigDecimal().setScale(8, BigDecimal.ROUND_HALF_UP)));
                 if(!( startA[i][j].doubleValue() == 0 || XI[j].doubleValue()== 0))
-               sbi.append( startA[i][j].intValue() + " * "+ new BigDecimal(XI[j].doubleValue()).setScale(6,BigDecimal.ROUND_FLOOR)+" + ");
+               sbi.append( startA[i][j].intValue() + " * "+ new BigDecimal(XI[j].doubleValue()).setScale(8, BigDecimal.ROUND_FLOOR)+" + ");
             }
-             deltaI[i] = startB[i].subtract(sum);
+             deltaI[i] = startB[i].toBigDecimal().subtract(sum);
             sbi.append(" )= " +deltaI[i].doubleValue() );
             listCheck.append(sbi +"\n");
             validStr.append(sbi +"\n");
         }
-        BigFraction maxI = new BigFraction(-1);
-        for (BigFraction x: deltaI) {
-            if(MMethod.compareTwoFraction(x,maxI) == 1 )
-             maxI = x;
+        BigDecimal maxI = new BigDecimal(-1);
+        for (BigDecimal x: deltaI) {
+            //if(MMethod.compareTwoFraction(x,maxI) == 1 )
+            if(x.doubleValue() > maxI.doubleValue()) {
+                maxI = x;
+            }
         }
-        validStr.append("Максимальное бетта i = " + maxI.doubleValue());
-        listCheck.append("\nmaxδi = " + maxI.doubleValue());
-        validStr.append("\nОпределение бетта j\nДля определения оптимального плана двойственной задачи умножим вектор Cs на обратную к Afs* матрицу\n");
+        validStr.append("Максимальное дельта i = " + maxI.doubleValue());
+        listCheck.append("\nmaxΔi = " + maxI.doubleValue());
+        validStr.append("\nОпределение дельта j\nДля определения оптимального плана двойственной задачи умножим вектор Cs на обратную к Afs* матрицу\n");
         listCheck.append("\nОпределение δj\n Для определения оптимального плана двойственной задачи умножим вектор Cs на обратную к Afs* матрицу\n Обратная матрица:\n");
         StringBuilder format = new StringBuilder();
         BigDecimal doubleAfsObr [][] = new BigDecimal[AfsObr.length][AfsObr[0].length];
@@ -198,7 +198,7 @@ public class Validation {
         }
         listCheck.append("}");
         validStr.append("}");
-        if(MMethod.compareTwoFraction(new BigFraction(0.0000001),maxI.abs()) == -1){
+        if(MMethod.compareTwoFraction(new BigFraction(0.0000001), new BigFraction(maxI.abs())) == -1){
             validStr.append("\nПроверка допустимости не пройдена");
             listCheck.append("\nПроверка допустимости не пройдена");
             check = false;
@@ -224,7 +224,7 @@ public class Validation {
             if(MMethod.compareTwoFraction(x,maxJ) == 1 )
                 maxJ = x;
         }
-        listCheck.append("\nmaxδj = " + new BigDecimal( maxJ.doubleValue()).setScale(6,BigDecimal.ROUND_FLOOR));
+        listCheck.append("\nmaxΔj = " + new BigDecimal( maxJ.doubleValue()).setScale(6,BigDecimal.ROUND_FLOOR));
         validStr.append("Максимальное дельта j = " + new BigDecimal( maxJ.doubleValue()).setScale(6,BigDecimal.ROUND_FLOOR));
         if(MMethod.compareTwoFraction(new BigFraction(0.0000001),maxJ.abs()) == -1){
             listCheck.append("\nПроверка допустимости не пройдена");

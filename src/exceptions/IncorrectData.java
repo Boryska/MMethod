@@ -2,8 +2,6 @@ package exceptions;
 import javafx.collections.ObservableList;
 import javafx.scene.control.TableView;
 import org.apache.commons.lang.math.NumberUtils;
-
-
 import java.util.ArrayList;
 
 public class IncorrectData extends Exception{

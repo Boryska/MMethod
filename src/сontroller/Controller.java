@@ -698,12 +698,11 @@ public class Controller {
         }
 
         gc.setLineWidth(1);//толщина Осей
-        drawArrow(gc,0, Height/2, Width-10, Height/2);//ОсьХ startX, startY, endX, endY
+        drawArrow(gc, 0, Height/2, Width-10, Height/2);//ОсьХ startX, startY, endX, endY
         gc.fillText("y",((Width-10)/2),-((Height-11)/2));
         gc.fillText("x",Width-10,0);
         gc.setFont(new javafx.scene.text.Font("Arial",8)); //Шрифт и размер. Нужна какая-та зависимость размера шрифта от масщтаба scale
-        int k=0;
-        int step = 0;
+        int step, k=0;
         if(40%scale==0) {
             step = Double.valueOf(40 / scale).intValue();
         }else{
@@ -725,13 +724,13 @@ public class Controller {
         k=1;
         for (double i=scale+10;i<Height/2;i+=scale,k++,z++){// По оси у -1 -2 -3
             if(z%(step)==0)
-                gc.fillText("-"+z*Double.valueOf(minY / ((Width/2-scale)/scale)).intValue(),Width/2,i);
+                gc.fillText("-"+z*Double.valueOf(minY / ((Height/2-scale)/scale)).intValue(),Width/2,i);
         }
         k=1;
         z=1;
         for (double i=-scale+3;i>-(Height/2)+scale+10;i-=scale,k++,z++){// По оси у 1 2 3
             if(z%(step)==0)
-                gc.fillText(""+z*Double.valueOf(maxY / ((Width/2-scale)/scale)).intValue(),Width/2,i);
+                gc.fillText(""+z*Double.valueOf(maxY / ((Height/2-scale)/scale)).intValue(),Width/2,i);
         }
         drawArrow(gc, Width / 2, Height, Width / 2, 10);//ОсьY
     }
