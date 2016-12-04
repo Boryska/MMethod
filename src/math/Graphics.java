@@ -67,7 +67,6 @@ public class Graphics {
     }
 
     public void OblastUstoichevosti(){
-        //ust.append("Исследование устойчивости\n\n");
         ust.append("DΔb ={");
         Ddb = new BigFraction[obrAFs.length+2][3];
         for (int i = 0; i < Ddb.length; i++) {
@@ -88,7 +87,7 @@ public class Graphics {
             }
                 else if(i == Ddb.length-2){
                     if(j == 2){
-                        Ddb[i][j] = startB[firstdbetta].multiply(new BigFraction(-1));
+                        Ddb[i][j] = startB[firstdbetta-1].multiply(new BigFraction(-1));
                     }
                     else if(j == 0) {
                         Ddb[i][j] =  new BigFraction(1);
@@ -99,7 +98,7 @@ public class Graphics {
                 }
                 else if(i == Ddb.length-1){
                     if(j == 2){
-                        Ddb[i][j] = startB[seconddbetta].multiply(new BigFraction(-1));
+                        Ddb[i][j] = startB[seconddbetta-1].multiply(new BigFraction(-1));
                     }
                     else if(j == 0) {
                         Ddb[i][j] = new BigFraction(0);
@@ -126,7 +125,6 @@ public class Graphics {
         }
         ust.append("}\n В данной области найденный план сохраняет свою оптимальность.");
     }
-
     public boolean checktochek(Point tochka ,  BigFraction[][] uslovia){
         boolean cheking = true;
         for (int i = 0; i < uslovia.length ; i++) {
@@ -141,30 +139,15 @@ public class Graphics {
 
     private void findMinAndMaxValue(){
         for (Point x : listPoint){
-            if(compareTwoFraction(x.getX().abs(), maxX) == 1){
+            if(MMethod.compareTwoFraction(x.getX().abs(), maxX) == 1){
                 maxX = (x.getX().abs());
             }
-            if(compareTwoFraction(x.getY().abs(), maxY) == 1){
+            if(MMethod.compareTwoFraction(x.getY().abs(), maxY) == 1){
                 maxY = (x.getY().abs());
             }
         }
         maxX = maxX.multiply(new BigFraction(5));
-        maxY = maxY.multiply(new BigFraction(5));
-    }
-
-    private int compareTwoFraction(BigFraction fr1, BigFraction fr2){
-        if(fr1.signum()>fr2.signum()){
-            return 1;
-        }else if(fr1.signum()<fr2.signum()){
-            return -1;
-        }else{
-            if(fr1.getDenominator()==fr2.getDenominator()){
-                return fr1.getNumerator().compareTo(fr2.getNumerator());
-            }else{
-                return (fr1.getNumerator().multiply(fr2.getDenominator())).compareTo((fr2.getNumerator().multiply(fr1.getDenominator())));
-            }
-        }
-    }
+        maxY = maxY.multiply(new BigFraction(5));   }
 
     public static Point Gaus(BigFraction[] f, BigFraction[] s) { /// не ставить в Ф уравнение типа (0 + б9 > -1910)
         if(s[1].doubleValue() == 0){

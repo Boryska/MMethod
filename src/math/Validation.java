@@ -140,7 +140,7 @@ public class Validation {
             validStr.append(new BigDecimal(x.doubleValue()).setScale(6,BigDecimal.ROUND_FLOOR) + " ; ");
         }
 
-        listCheck.append("}\nПроверка на неотрицательность пройдена.\nОпределение Δi\n");
+        listCheck.append("}\nПроверка на неотрицательность пройдена.\nОпределение δi\n");
         validStr.append("}\nПроверка на неотрицательность пройдена.\nОпределение дельта i\n");
         for (int i = 0; i < startA.length; i++) {
             BigDecimal sum = new BigDecimal(0);
@@ -166,7 +166,7 @@ public class Validation {
         validStr.append("Максимальное дельта i = " + maxI.doubleValue());
         listCheck.append("\nmaxδi = " + maxI.doubleValue());
         validStr.append("\nОпределение дельта j\nДля определения оптимального плана двойственной задачи умножим вектор Cs на обратную к Afs* матрицу\n");
-        listCheck.append("\nОпределение δj\n Для определения оптимального плана двойственной задачи умножим вектор Cs на обратную к Afs* матрицу\n Обратная матрица:\n");
+        listCheck.append("\nОпределение дельта j\n"/*+"Для определения оптимального плана двойственной задачи умножим вектор Cs на обратную к Afs* матрицу\n"*/);
         StringBuilder format = new StringBuilder();
         BigDecimal doubleAfsObr [][] = new BigDecimal[AfsObr.length][AfsObr[0].length];
         for (int i = 0; i < AfsObr.length; i++) {
@@ -177,23 +177,23 @@ public class Validation {
         for(int i=0;i<finalFs.length;i++){
             format.append("%"+(i+1)+"$"+14+"."+(14)+"s |");
         }
-        for (int i = 0; i < AfsObr.length ; i++) {
-            listCheck.append(String.format(format.toString(), doubleAfsObr[i]));
-            //validStr.append(String.format(format.toString(), doubleAfsObr[i]));
-            listCheck.append("\n");
-            //validStr.append("\n");
-        }
-        listCheck.append("\nCs ={");
+//        for (int i = 0; i < AfsObr.length ; i++) {
+//            listCheck.append(String.format(format.toString(), doubleAfsObr[i]));
+//            //validStr.append(String.format(format.toString(), doubleAfsObr[i]));
+//            listCheck.append("\n");
+//            //validStr.append("\n");
+//        }
+       // listCheck.append("\nCs ={");
         validStr.append("Cs ={");
         for (BigFraction x: Cs) {
-            listCheck.append(x.intValue() + " ; ");
+         //   listCheck.append(x.intValue() + " ; ");
             validStr.append(x.intValue() + " ; ");
         }
 
-        listCheck.append("}\n\nY* ={");
+       // listCheck.append("}\n\nY* ={");
         validStr.append("}\nY* ={");
         for (BigFraction x: YI) {
-            listCheck.append(new BigDecimal(x.doubleValue()).setScale(6,BigDecimal.ROUND_FLOOR)+ " ; ");
+            //listCheck.append(new BigDecimal(x.doubleValue()).setScale(6,BigDecimal.ROUND_FLOOR)+ " ; ");
             validStr.append(new BigDecimal(x.doubleValue()).setScale(6,BigDecimal.ROUND_FLOOR)+ " ; ");
         }
         listCheck.append("}");
@@ -327,27 +327,27 @@ public class Validation {
             listCheck.append("\nТак как функция минимизируется, имеем:");
             validStr.append("\nТак как функция минимизируется, имеем:");
             l1 = l1.multiply(new BigFraction(-1));
-            listCheck.append("\nL1* = " + new BigDecimal( l1.doubleValue()).setScale(6,BigDecimal.ROUND_FLOOR));
-            validStr.append("\nL1* = " + new BigDecimal( l1.doubleValue()).setScale(6,BigDecimal.ROUND_FLOOR));
+            listCheck.append("\nL1* = " + new BigDecimal( l1.doubleValue()).setScale(6,BigDecimal.ROUND_HALF_UP));
+            validStr.append("\nL1* = " + new BigDecimal( l1.doubleValue()).setScale(6,BigDecimal.ROUND_HALF_UP));
             l2 = l2.multiply(new BigFraction(-1));
-            listCheck.append("\nL2* = "+new BigDecimal( l2.doubleValue()).setScale(6,BigDecimal.ROUND_FLOOR));
-            validStr.append("\nL2* = "+new BigDecimal( l2.doubleValue()).setScale(6,BigDecimal.ROUND_FLOOR));
+            listCheck.append("\nL2* = "+new BigDecimal( l2.doubleValue()).setScale(6,BigDecimal.ROUND_HALF_UP));
+            validStr.append("\nL2* = "+new BigDecimal( l2.doubleValue()).setScale(6,BigDecimal.ROUND_HALF_UP));
             l3 = l3.multiply(new BigFraction(-1));
-            listCheck.append("\nL3* = "+new BigDecimal( l3.doubleValue()).setScale(6,BigDecimal.ROUND_FLOOR));
-            validStr.append("\nL3* = "+new BigDecimal( l3.doubleValue()).setScale(6,BigDecimal.ROUND_FLOOR));
+            listCheck.append("\nL3* = "+new BigDecimal( l3.doubleValue()).setScale(6,BigDecimal.ROUND_HALF_UP));
+            validStr.append("\nL3* = "+new BigDecimal( l3.doubleValue()).setScale(6,BigDecimal.ROUND_HALF_UP));
         }
 
 
-        listCheck.append("\nСреднее оптимальное значение:\nLср* = (" + new BigDecimal( l3.doubleValue()).setScale(6,BigDecimal.ROUND_FLOOR) + " + "+ new BigDecimal( l1.doubleValue()).setScale(6,BigDecimal.ROUND_FLOOR) + " + "+ new BigDecimal( l2.doubleValue()).setScale(6,BigDecimal.ROUND_FLOOR) + ")\\3 = ");
-        validStr.append("\nСреднее оптимальное значение:\nLср* = (" + new BigDecimal( l3.doubleValue()).setScale(6,BigDecimal.ROUND_FLOOR) + " + "+ new BigDecimal( l1.doubleValue()).setScale(6,BigDecimal.ROUND_FLOOR) + " + "+ new BigDecimal( l2.doubleValue()).setScale(6,BigDecimal.ROUND_FLOOR) + ")\\3 = ");
+        listCheck.append("\nСреднее оптимальное значение:\nLср* = (" + new BigDecimal( l3.doubleValue()).setScale(6,BigDecimal.ROUND_HALF_UP) + " + "+ new BigDecimal( l1.doubleValue()).setScale(6,BigDecimal.ROUND_HALF_UP) + " + "+ new BigDecimal( l2.doubleValue()).setScale(6,BigDecimal.ROUND_HALF_UP) + ")\\3 = ");
+        validStr.append("\nСреднее оптимальное значение:\nLср* = (" + new BigDecimal( l3.doubleValue()).setScale(6,BigDecimal.ROUND_HALF_UP) + " + "+ new BigDecimal( l1.doubleValue()).setScale(6,BigDecimal.ROUND_HALF_UP) + " + "+ new BigDecimal( l2.doubleValue()).setScale(6,BigDecimal.ROUND_HALF_UP) + ")\\3 = ");
         BigFraction avgl = l1.add(l2.add(l3)).divide(new BigFraction(3));
-        listCheck.append(new BigDecimal( avgl.doubleValue()).setScale(6,BigDecimal.ROUND_FLOOR));
-        validStr.append(new BigDecimal( avgl.doubleValue()).setScale(6,BigDecimal.ROUND_FLOOR));
-        listCheck.append(l1.subtract(avgl).doubleValue() < 0.0000001 ? "\nL1* - Lср* = " + new BigDecimal( l1.doubleValue()).setScale(6,BigDecimal.ROUND_FLOOR) + " - " +new BigDecimal( avgl.doubleValue()).setScale(6,BigDecimal.ROUND_FLOOR) + " = 0.0" + " < 0.0000001" : "L1* - Lср* = " + l1.doubleValue() + " - " + avgl.doubleValue() + " = " + l1.subtract(avgl).doubleValue() + " >= 0.0000001");
-        validStr.append(l1.subtract(avgl).doubleValue() < 0.0000001 ? "\nL1* - Lср* = " + new BigDecimal( l1.doubleValue()).setScale(6,BigDecimal.ROUND_FLOOR) + " - " +new BigDecimal( avgl.doubleValue()).setScale(6,BigDecimal.ROUND_FLOOR) + " = 0.0" + " < 0.0000001" : "L1* - Lср* = " + l1.doubleValue() + " - " + avgl.doubleValue() + " = " + l1.subtract(avgl).doubleValue() + " >= 0.0000001");
-        listCheck.append(l2.subtract(avgl).doubleValue() < 0.0000001 ? "\nL2* - Lср* = " + new BigDecimal( l2.doubleValue()).setScale(6,BigDecimal.ROUND_FLOOR) + " - " + new BigDecimal( avgl.doubleValue()).setScale(6,BigDecimal.ROUND_FLOOR) + " = 0.0" + " < 0.0000001" : "L2* - Lср* = " + l2.doubleValue() + " - " + avgl.doubleValue() + " = " + l2.subtract(avgl).doubleValue() + " >= 0.0000001");
-        validStr.append(l2.subtract(avgl).doubleValue() < 0.0000001 ? "\nL2* - Lср* = " + new BigDecimal( l2.doubleValue()).setScale(6,BigDecimal.ROUND_FLOOR) + " - " + new BigDecimal( avgl.doubleValue()).setScale(6,BigDecimal.ROUND_FLOOR) + " = 0.0" + " < 0.0000001" : "L2* - Lср* = " + l2.doubleValue() + " - " + avgl.doubleValue() + " = " + l2.subtract(avgl).doubleValue() + " >= 0.0000001");
-        listCheck.append(l3.subtract(avgl).doubleValue() < 0.0000001 ? "\nL3* - Lср* = " +new BigDecimal( l3.doubleValue()).setScale(6,BigDecimal.ROUND_FLOOR) + " - " + new BigDecimal( avgl.doubleValue()).setScale(6,BigDecimal.ROUND_FLOOR) + " = 0.0" + " < 0.0000001" : "L3* - Lср* = " + l3.doubleValue() + " - " + avgl.doubleValue() + " = " + l3.subtract(avgl).doubleValue() + " >= 0.0000001");
-        validStr.append(l3.subtract(avgl).doubleValue() < 0.0000001 ? "\nL3* - Lср* = " +new BigDecimal( l3.doubleValue()).setScale(6,BigDecimal.ROUND_FLOOR) + " - " + new BigDecimal( avgl.doubleValue()).setScale(6,BigDecimal.ROUND_FLOOR) + " = 0.0" + " < 0.0000001" : "L3* - Lср* = " + l3.doubleValue() + " - " + avgl.doubleValue() + " = " + l3.subtract(avgl).doubleValue() + " >= 0.0000001");
+        listCheck.append(new BigDecimal( avgl.doubleValue()).setScale(6,BigDecimal.ROUND_HALF_UP));
+        validStr.append(new BigDecimal( avgl.doubleValue()).setScale(6,BigDecimal.ROUND_HALF_UP));
+        listCheck.append(l1.subtract(avgl).doubleValue() < 0.0000001 ? "\nL1* - Lср* = " + new BigDecimal( l1.doubleValue()).setScale(6,BigDecimal.ROUND_HALF_UP) + " - " +new BigDecimal( avgl.doubleValue()).setScale(6,BigDecimal.ROUND_HALF_UP) + " = 0.0" + " < 0.0000001" : "L1* - Lср* = " + l1.doubleValue() + " - " + avgl.doubleValue() + " = " + l1.subtract(avgl).doubleValue() + " >= 0.0000001");
+        validStr.append(l1.subtract(avgl).doubleValue() < 0.0000001 ? "\nL1* - Lср* = " + new BigDecimal( l1.doubleValue()).setScale(6,BigDecimal.ROUND_HALF_UP) + " - " +new BigDecimal( avgl.doubleValue()).setScale(6,BigDecimal.ROUND_HALF_UP) + " = 0.0" + " < 0.0000001" : "L1* - Lср* = " + l1.doubleValue() + " - " + avgl.doubleValue() + " = " + l1.subtract(avgl).doubleValue() + " >= 0.0000001");
+        listCheck.append(l2.subtract(avgl).doubleValue() < 0.0000001 ? "\nL2* - Lср* = " + new BigDecimal( l2.doubleValue()).setScale(6,BigDecimal.ROUND_HALF_UP) + " - " + new BigDecimal( avgl.doubleValue()).setScale(6,BigDecimal.ROUND_HALF_UP) + " = 0.0" + " < 0.0000001" : "L2* - Lср* = " + l2.doubleValue() + " - " + avgl.doubleValue() + " = " + l2.subtract(avgl).doubleValue() + " >= 0.0000001");
+        validStr.append(l2.subtract(avgl).doubleValue() < 0.0000001 ? "\nL2* - Lср* = " + new BigDecimal( l2.doubleValue()).setScale(6,BigDecimal.ROUND_HALF_UP) + " - " + new BigDecimal( avgl.doubleValue()).setScale(6,BigDecimal.ROUND_HALF_UP) + " = 0.0" + " < 0.0000001" : "L2* - Lср* = " + l2.doubleValue() + " - " + avgl.doubleValue() + " = " + l2.subtract(avgl).doubleValue() + " >= 0.0000001");
+        listCheck.append(l3.subtract(avgl).doubleValue() < 0.0000001 ? "\nL3* - Lср* = " +new BigDecimal( l3.doubleValue()).setScale(6,BigDecimal.ROUND_HALF_UP) + " - " + new BigDecimal( avgl.doubleValue()).setScale(6,BigDecimal.ROUND_HALF_UP) + " = 0.0" + " < 0.0000001" : "L3* - Lср* = " + l3.doubleValue() + " - " + avgl.doubleValue() + " = " + l3.subtract(avgl).doubleValue() + " >= 0.0000001");
+        validStr.append(l3.subtract(avgl).doubleValue() < 0.0000001 ? "\nL3* - Lср* = " +new BigDecimal( l3.doubleValue()).setScale(6,BigDecimal.ROUND_HALF_UP) + " - " + new BigDecimal( avgl.doubleValue()).setScale(6,BigDecimal.ROUND_HALF_UP) + " = 0.0" + " < 0.0000001" : "L3* - Lср* = " + l3.doubleValue() + " - " + avgl.doubleValue() + " = " + l3.subtract(avgl).doubleValue() + " >= 0.0000001");
    }
 }

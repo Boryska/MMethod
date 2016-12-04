@@ -195,10 +195,10 @@ public class MMethod
         StringBuilder usl1 = new StringBuilder();
         for (int i = 1; i <n+1; i++)
         {        if(i != n) {
-            usl1.append(L[i].intValue() + "*X" + i + " + ");
+            usl1.append(L[i].intValue() + "*X" + (i) + " + ");
         }
         else {
-            usl1.append(L[i].intValue() + "*X" + i);
+            usl1.append(L[i].intValue() + "*X" + (i));
         }
         }
         usl.append(usl1);
@@ -209,20 +209,20 @@ public class MMethod
        if (min){
            for (int i = 0; i <c.length; i++)
            {        if(i != n) {
-               zvit1.append(c[i].intValue()*-1 + "*X" + i+1 + " + ");
+               zvit1.append(c[i].intValue()*-1 + "*X" + (i+1) + " + ");
            }
            else {
-               zvit1.append(c[i].intValue()*-1 + "*X" + i+1);
+               zvit1.append(c[i].intValue()*-1 + "*X" + (i+1));
            }
            }
            zvit1.append("=>min\n");
        }
         else { for (int i = 0; i <c.length; i++)
        {        if(i != n) {
-           zvit1.append(c[i].intValue() + "*X" + i+1 + " + ");
+           zvit1.append(c[i].intValue() + "*X" + (i+1) + " + ");
        }
        else {
-           zvit1.append(c[i].intValue() + "*X" + i+1);
+           zvit1.append(c[i].intValue() + "*X" + (i+1));
        }
        }
            zvit1.append("=>max\n"); };
@@ -244,11 +244,11 @@ public class MMethod
                         usl.append(newA[i][j].intValue()+"*X" + j);
                 }
             }
-           // System.out.println(" = " + newA[i][0]);
+
             usl.append(" = " + newA[i][0].intValue() + "\n");
             zvit1.append(" = " + newA[i][0].intValue() + "\n");
         }                                                                    ////////fin
-        //System.out.println("М-задача");                                               //////Start
+                                                      //////Start
         usl.append("\nМ-задача"+
                 "\n\n Целевая функция М-задачи:\n"+
                 usl1 + " - M*(");
@@ -298,7 +298,7 @@ public class MMethod
              zvit1.append("A"+Fs[i] + " ; ");
             }
             else{
-                zvit1.append("A"+Fs[i] + " }\n X0 ={");
+                zvit1.append("A"+Fs[i] + " }\n X0 =(");
             }
         }
         for (int i = 0; i <n+m+1 ; i++) {
@@ -309,7 +309,7 @@ public class MMethod
                 zvit1.append(new BigDecimal(startB[(i-(n))].doubleValue()).setScale(1, BigDecimal.ROUND_FLOOR)+ " ; ");
                             }
                 else if (i == (n+m)){
-                zvit1.append(new BigDecimal(startB[startB.length-1].doubleValue()).setScale(1, BigDecimal.ROUND_FLOOR)+ "}\r");
+                zvit1.append(new BigDecimal(startB[startB.length-1].doubleValue()).setScale(1, BigDecimal.ROUND_FLOOR)+ ")\r");
             }
         }
 
@@ -412,14 +412,16 @@ public class MMethod
             }
         }
         ab.append("Так как,все Δj >0 , имеет место ситуация 1\nФормируем решение:\n");
-        ab.append("Fs* = {");
-
+        ab.append("Fs* = (");
+        zvit1.append("Fs* = (");
         for (int x: Fs ) {
+            zvit1.append("A"+x+" ; ");
             ab.append("A"+x+" ; ");
         }
-        ab.append("}\n");
-        ab.append("X* = {");
-        zvit1.append("\n\nРешение\nX* = {");
+        zvit1.append(")\n");
+        ab.append(")\n");
+        ab.append("X* = (");
+        zvit1.append("\n\nРешение\nX* = (");
         for (int x = 0 ; x < xOptimalniy(Fs,newA).length ; x++) {
 
             if (x != xOptimalniy(Fs, newA).length-1) {
@@ -431,8 +433,8 @@ public class MMethod
                 ab.append(new BigDecimal(xOptimalniy(Fs, newA)[x].doubleValue()).setScale(6, BigDecimal.ROUND_FLOOR));
             }
         }
-        ab.append("}\nL*: " + new BigDecimal(finaloo(c,xOptimalniy(Fs,newA),min).doubleValue()).setScale(6,BigDecimal.ROUND_FLOOR));
-        zvit1.append(("}\nL*= " + new BigDecimal(finaloo(c,xOptimalniy(Fs,newA),min).doubleValue()).setScale(6,BigDecimal.ROUND_FLOOR)));
+        ab.append(")\nL*: " + new BigDecimal(finaloo(c,xOptimalniy(Fs,newA),min).doubleValue()).setScale(6,BigDecimal.ROUND_FLOOR));
+        zvit1.append((")\nL*= " + new BigDecimal(finaloo(c,xOptimalniy(Fs,newA),min).doubleValue()).setScale(6,BigDecimal.ROUND_FLOOR)));
         listAnswer.add(ab);
     }
 

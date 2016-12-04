@@ -286,8 +286,7 @@ public class Controller {
                         document.open();
                         StringBuilder sb = new StringBuilder();
                         sb.append(method.getZvit1());
-                        a.scaleAbsolute(500f,250f);
-                        b.scaleAbsolute(500f,250f);
+
                         c.scaleAbsolute(500f,400f);
                         a.setAlignment(Element.ALIGN_MIDDLE);
                         b.setAlignment(Element.ALIGN_MIDDLE);
@@ -309,6 +308,9 @@ public class Controller {
                         document.add(third);
                         document.add(new Paragraph(sb.toString(), new Font(times,10)));
                         document.add(c);
+                        document.add(new Paragraph("\n\n\n\n\n\n\n"));
+                        a.scaleAbsolute(500f,250f);
+                        b.scaleAbsolute(500f,250f);
                         document.add(a);
                         document.add(b);
                         graphAlpha.delete();
@@ -654,10 +656,11 @@ public class Controller {
                         .multiply(new BigFraction(startX)))).divide(gr.getDdb()[i][1]).doubleValue();
                 double endY = (gr.getDdb()[i][2].subtract(gr.getDdb()[i][0]
                         .multiply(new BigFraction(endX)))).divide(gr.getDdb()[i][1]).doubleValue();
-                gc.strokeLine(Width/2 +startX/stepX*scale, Height/2 -startY/stepY*scale, Width/2 +endX/stepX*scale, Height/2 -endY/stepY*scale);
-            }else{
+                gc.strokeLine(Width/2 +startX/stepX*scale,Height/2 -startY/stepY*scale, Width/2 +endX/stepX*scale, Height/2 -endY/stepY*scale);
+            }
+            else{
                 gc.setStroke(Color.RED);
-                if(gr.getDdb()[i][0].signum()==0){
+                if(gr.getDdb()[i][0].doubleValue() == 0){
                     double startX = minX;
                     double endX = maxX;
                     double startY = gr.getDdb()[i][2].doubleValue();
