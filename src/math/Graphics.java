@@ -10,6 +10,7 @@ public class Graphics {
     private int seconddbetta;
     private BigFraction[] startB;
     private BigFraction[][] obrAFs;
+    private BigFraction [][] Ddb;
 
 
     private ArrayList<Point> listPoint = new ArrayList();
@@ -19,6 +20,10 @@ public class Graphics {
 
     public StringBuilder getUst() {
         return ust;
+    }
+
+    public BigFraction[][] getDdb() {
+        return Ddb;
     }
 
     public ArrayList<Point> getListPoint() {
@@ -62,10 +67,9 @@ public class Graphics {
     }
 
     public void OblastUstoichevosti(){
-        ust.append("Исследование устойчивости\n\n");
+        //ust.append("Исследование устойчивости\n\n");
         ust.append("DΔb ={");
-        BigFraction [][] Ddb = new BigFraction[obrAFs.length+2][3];
-        System.out.println();
+        Ddb = new BigFraction[obrAFs.length+2][3];
         for (int i = 0; i < Ddb.length; i++) {
             for (int j = 0; j < 3; j++) {
                 if(i <Ddb.length-2){
@@ -85,51 +89,42 @@ public class Graphics {
                 else if(i == Ddb.length-2){
                     if(j == 2){
                         Ddb[i][j] = startB[firstdbetta].multiply(new BigFraction(-1));
-                        System.out.print(new BigDecimal(Ddb[i][j].doubleValue()).setScale(7,BigDecimal.ROUND_FLOOR) + " ");
                     }
                     else if(j == 0) {
                         Ddb[i][j] =  new BigFraction(1);
-                        System.out.print(new BigDecimal(Ddb[i][j].doubleValue()).setScale(7,BigDecimal.ROUND_FLOOR) + " ");
                     }
                     else if( j == 1){
                         Ddb[i][j] =  new BigFraction(0);
-                        System.out.print(new BigDecimal(Ddb[i][j].doubleValue()).setScale(7,BigDecimal.ROUND_FLOOR) + " ");
                     }
                 }
                 else if(i == Ddb.length-1){
                     if(j == 2){
                         Ddb[i][j] = startB[seconddbetta].multiply(new BigFraction(-1));
-                        System.out.print(new BigDecimal(Ddb[i][j].doubleValue()).setScale(7,BigDecimal.ROUND_FLOOR) + " ");
                     }
                     else if(j == 0) {
                         Ddb[i][j] = new BigFraction(0);
-                        System.out.print(new BigDecimal(Ddb[i][j].doubleValue()).setScale(7,BigDecimal.ROUND_FLOOR) + " ");
                     }
                     else if( j == 1){
                         Ddb[i][j] =  new BigFraction(1);
-                        System.out.print(new BigDecimal(Ddb[i][j].doubleValue()).setScale(7,BigDecimal.ROUND_FLOOR) + " ");
                     }
                 }
             }
         }
-        ust.append("}\n\nDb = {" + "Δb"+firstdbetta+" ≧ " + (startB[firstdbetta-1].doubleValue()*-1)+";\n,    Δb"+seconddbetta+" ≧ " + (startB[seconddbetta-1].doubleValue()*-1)+"}\n" );
+        ust.append("}\n\nDb = {" + "Δb"+firstdbetta+" ≧ " + (startB[firstdbetta-1].doubleValue()*-1)+";  Δb"+seconddbetta+" ≧ " + (startB[seconddbetta-1].doubleValue()*-1)+"}\n" );
 
         for (int i = 0; i < Ddb.length-1; i++) {
             for (int j = i+1; j < Ddb.length; j++) {
                 if(checktochek(Gaus(Ddb[i].clone() , Ddb[j].clone()),Ddb)){
                     listPoint.add(Gaus(Ddb[i].clone() , Ddb[j].clone()));
-                    System.out.println((i+1) +" n " +(j+1));
                 }
             }
         }
         ust.append("Область устойчивости:\n Db∩DΔb = {");
 
         for (Point x : listPoint){
-            ust.append("("+x.getX().doubleValue() +"    ;   "+ x.getY().doubleValue()+")\n");
+            ust.append("("+x.getX().doubleValue() +";  "+ x.getY().doubleValue()+")\n");
         }
         ust.append("}\n В данной области найденный план сохраняет свою оптимальность.");
-
-        System.out.println(ust.toString());
     }
 
     public boolean checktochek(Point tochka ,  BigFraction[][] uslovia){
@@ -194,14 +189,6 @@ public class Graphics {
         x = x.divide(f[0]);
         return new Point(x,y);
     }
-
-
-//    public static void main(String[] args) {
-//
-//        BigFraction[] test1 = {new BigFraction(0.0279656),new BigFraction(0.010635),new BigFraction(-17.598298)};
-//        BigFraction[] test2 = {new BigFraction(0.007633),new BigFraction(0.0176601),new BigFraction(-14.767295)};
-//        System.out.print(Gaus(test1,test2).getX().doubleValue() + " ;   "+ Gaus(test1,test2).getY().doubleValue() );
-//    }
 
     public BigFraction []MV( BigFraction [][] Matrix, BigFraction[]Vector ){
         BigFraction[] result = new BigFraction[Matrix.length];

@@ -20,10 +20,8 @@ import javafx.scene.image.WritableImage;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
-import javafx.scene.text.*;
 import javafx.scene.transform.Affine;
 import javafx.scene.transform.Transform;
-import javafx.scene.web.WebEngine;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.fxml.FXML;
@@ -33,8 +31,6 @@ import main.Table;
 import math.*;
 import com.itextpdf.text.pdf.PdfWriter;
 import java.io.*;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.ArrayList;
 import org.apache.commons.lang.math.NumberUtils;
 import parser.JaxbParser;
@@ -81,8 +77,6 @@ public class Controller {
     @FXML
     private Tab showEquationTabPane;
     @FXML
-    private Tab buildGraphicTabPane;
-    @FXML
     private TextArea textArea;
     @FXML
     private TextArea textAreaCheck;
@@ -102,8 +96,7 @@ public class Controller {
     private Canvas graph;
     @FXML
     private AnchorPane paneGraph;
-    private double Width, Height, scale = 40, maxX, maxY, minX, minY;
-    //private FindPolygonPoints polygonPoints;
+
     @FXML
     private void initialize() {
         if (check == false) {
@@ -145,7 +138,8 @@ public class Controller {
     private MMethod method;
     private Validation val;
     private Graphics gr;
-    XYChart.Series<Number, Number> iterAlfa, iterBetta;
+    private XYChart.Series<Number, Number> iterAlfa, iterBetta;
+    private double Width, Height, scale = 40, maxX, maxY, minX, minY;
 
     private void initLoader() {
         setMainStage(mainStage);
@@ -275,13 +269,17 @@ public class Controller {
                         file.getParentFile().mkdirs();
                         File graphAlpha = new File("Alfa.png");
                         File graphBetta = new File("Betta.png");
+                        File graphStability = new File("Stability.png");
                         WritableImage snapShotAlpha = AlfaLineChart.snapshot(null,null);
                         ImageIO.write(SwingFXUtils.fromFXImage(snapShotAlpha, null), "png", graphAlpha);
                         Image a = Image.getInstance("Alfa.png");
                         WritableImage snapShotBeta = BettaLineChart.snapshot(null, null);
                         ImageIO.write(SwingFXUtils.fromFXImage(snapShotBeta, null), "png", graphBetta);
-                        OutputStream files = new FileOutputStream(file);
                         Image b = Image.getInstance("Betta.png");
+                        WritableImage snapShotStability = graph.snapshot(null,null);
+                        ImageIO.write(SwingFXUtils.fromFXImage(snapShotStability, null), "png", graphStability);
+                        Image c = Image.getInstance("Stability.png");
+                        OutputStream files = new FileOutputStream(file);
                         Document document = new Document();
                         PdfWriter writer = PdfWriter.getInstance(document,files);
                         BaseFont times = BaseFont.createFont("c:/windows/fonts/times.ttf","cp1251",BaseFont.EMBEDDED);
@@ -290,22 +288,32 @@ public class Controller {
                         sb.append(method.getZvit1());
                         a.scaleAbsolute(500f,250f);
                         b.scaleAbsolute(500f,250f);
+                        c.scaleAbsolute(500f,400f);
                         a.setAlignment(Element.ALIGN_MIDDLE);
                         b.setAlignment(Element.ALIGN_MIDDLE);
+                        c.setAlignment(Element.ALIGN_MIDDLE);
                         Paragraph first = new Paragraph("Условия исходной задачи\n", new Font(times,14));
                         first.setAlignment(Element.ALIGN_CENTER);
                         Paragraph second = new Paragraph("\nПроверка достоверности\n", new Font(times,14));
                         second.setAlignment(Element.ALIGN_CENTER);
+                        Paragraph third = new Paragraph("\nИсследование устойчивости\n\n", new Font(times,14));
+                        third.setAlignment(Element.ALIGN_CENTER);
                         document.add(first);
                         document.add(new Paragraph(sb.toString(), new Font(times,10)));
                         sb.setLength(0);
                         sb.append(val.getValidStr());
                         document.add(second);
                         document.add(new Paragraph(sb.toString(), new Font(times,10)));
+                        sb.setLength(0);
+                        sb.append(gr.getUst());
+                        document.add(third);
+                        document.add(new Paragraph(sb.toString(), new Font(times,10)));
+                        document.add(c);
                         document.add(a);
                         document.add(b);
                         graphAlpha.delete();
                         graphBetta.delete();
+                        graphStability.delete();
                         document.close();
                     }
                 }  catch (Exception ex) {
@@ -499,7 +507,7 @@ public class Controller {
                 textAreaCheck.setText(val.getListCheck().toString());
                 textAreaCheck.setEditable(false);
                 tabPane.getSelectionModel().select(checkTab);
-                menuReport.setDisable(false);
+                //menuReport.setDisable(false);
                 break;
             case "buttonDraw":
                 try {
@@ -552,6 +560,7 @@ public class Controller {
                         }
                     });
                     drawclick = true;
+                    menuReport.setDisable(false);
                 }
                 catch (EmptyException ex) {
                     Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -570,14 +579,14 @@ public class Controller {
                     if(!drawclick){
                         throw new MyMessageException("Сперва постройте график!");
                     }
-                    showEquationTabPane.setDisable(true);
+                    showEquationTabPane.setDisable(false);
                     equationTextArea.setText(gr.getUst().toString());
                     tabPaneGraphic.getSelectionModel().select(showEquationTabPane);
                 }
                 catch (MyMessageException ex) {
                     Alert alert = new Alert(Alert.AlertType.INFORMATION);
                     alert.setTitle("Ошибка");
-                    alert.setContentText(ex.getStackTrace().toString());
+                    alert.setContentText("Исследование устойчивости\n\n" + ex.getStackTrace().toString());
                     alert.setHeaderText(ex.getMessage());
                     ex.printStackTrace();
                     alert.showAndWait();
@@ -637,33 +646,33 @@ public class Controller {
         gc.setLineWidth(1.0);//толщина линий
         double stepX = Double.valueOf(maxX / ((Width/2)/scale)).intValue();
         double stepY = Double.valueOf(maxY / ((Height/2)/scale)).intValue();
-//        for(int i=0;i<polygonPoints.getSourceArray().length;i++){
-//            if(i<polygonPoints.getSourceArray().length-2) {
-//                double startX = minX;
-//                double endX = maxX;
-//                double startY = (polygonPoints.getSourceArray()[i][2].subtract(polygonPoints.getSourceArray()[i][0]
-//                        .multiply(new BigFraction(startX)))).divide(polygonPoints.getSourceArray()[i][1]).doubleValue();
-//                double endY = (polygonPoints.getSourceArray()[i][2].subtract(polygonPoints.getSourceArray()[i][0]
-//                        .multiply(new BigFraction(endX)))).divide(polygonPoints.getSourceArray()[i][1]).doubleValue();
-//                gc.strokeLine(Width/2 +startX/stepX*scale, Height/2 -startY/stepY*scale, Width/2 +endX/stepX*scale, Height/2 -endY/stepY*scale);
-//            }else{
-//                gc.setStroke(Color.GREEN);
-//                if(polygonPoints.getSourceArray()[i][0].signum()==0){
-//                    double startX = minX;
-//                    double endX = maxX;
-//                    double startY = polygonPoints.getSourceArray()[i][2].doubleValue();
-//                    double endY = polygonPoints.getSourceArray()[i][2].doubleValue();
-//                    gc.strokeLine(Width/2 +startX/stepX*scale, Height/2 -startY/stepY*scale, Width/2 +endX/stepX*scale, Height/2 -endY/stepY*scale);
-//                }else{
-//                    double startX = polygonPoints.getSourceArray()[i][2].doubleValue();
-//                    double endX = polygonPoints.getSourceArray()[i][2].doubleValue();
-//                    double startY = minY;
-//                    double endY = maxY;
-//                    gc.strokeLine(Width/2 +startX/stepX*scale, Height/2 -startY/stepY*scale, Width/2 +endX/stepX*scale, Height/2 -endY/stepY*scale);
-//                }
-//            }
-//        }
-        gc.setFill(Color.YELLOW);
+        for(int i=0;i<gr.getDdb().length;i++){
+            if(i<gr.getDdb().length-2) {
+                double startX = minX;
+                double endX = maxX;
+                double startY = (gr.getDdb()[i][2].subtract(gr.getDdb()[i][0]
+                        .multiply(new BigFraction(startX)))).divide(gr.getDdb()[i][1]).doubleValue();
+                double endY = (gr.getDdb()[i][2].subtract(gr.getDdb()[i][0]
+                        .multiply(new BigFraction(endX)))).divide(gr.getDdb()[i][1]).doubleValue();
+                gc.strokeLine(Width/2 +startX/stepX*scale, Height/2 -startY/stepY*scale, Width/2 +endX/stepX*scale, Height/2 -endY/stepY*scale);
+            }else{
+                gc.setStroke(Color.RED);
+                if(gr.getDdb()[i][0].signum()==0){
+                    double startX = minX;
+                    double endX = maxX;
+                    double startY = gr.getDdb()[i][2].doubleValue();
+                    double endY = gr.getDdb()[i][2].doubleValue();
+                    gc.strokeLine(Width/2 +startX/stepX*scale, Height/2 -startY/stepY*scale, Width/2 +endX/stepX*scale, Height/2 -endY/stepY*scale);
+                }else{
+                    double startX = gr.getDdb()[i][2].doubleValue();
+                    double endX = gr.getDdb()[i][2].doubleValue();
+                    double startY = minY;
+                    double endY = maxY;
+                    gc.strokeLine(Width/2 +startX/stepX*scale, Height/2 -startY/stepY*scale, Width/2 +endX/stepX*scale, Height/2 -endY/stepY*scale);
+                }
+            }
+        }
+        gc.setFill(Color.CYAN);
         double[] x = new double[gr.getListPoint().size()],y = new double[gr.getListPoint().size()];
         for (Point point : gr.getListPoint()){
             x[gr.getListPoint().indexOf(point)] = Width/2 + (point.getX().doubleValue()/stepX)*scale;
