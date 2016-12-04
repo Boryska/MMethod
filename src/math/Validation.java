@@ -164,7 +164,7 @@ public class Validation {
             }
         }
         validStr.append("Максимальное дельта i = " + maxI.doubleValue());
-        listCheck.append("\nmaxΔi = " + maxI.doubleValue());
+        listCheck.append("\nmaxδi = " + maxI.doubleValue());
         validStr.append("\nОпределение дельта j\nДля определения оптимального плана двойственной задачи умножим вектор Cs на обратную к Afs* матрицу\n");
         listCheck.append("\nОпределение δj\n Для определения оптимального плана двойственной задачи умножим вектор Cs на обратную к Afs* матрицу\n Обратная матрица:\n");
         StringBuilder format = new StringBuilder();
@@ -198,7 +198,7 @@ public class Validation {
         }
         listCheck.append("}");
         validStr.append("}");
-        if(MMethod.compareTwoFraction(new BigFraction(0.0000001), new BigFraction(maxI.abs())) == -1){
+        if(MMethod.compareTwoFraction(new BigFraction(0.000001), new BigFraction(maxI.abs())) == -1){
             validStr.append("\nПроверка допустимости не пройдена");
             listCheck.append("\nПроверка допустимости не пройдена");
             check = false;
@@ -224,7 +224,7 @@ public class Validation {
             if(MMethod.compareTwoFraction(x,maxJ) == 1 )
                 maxJ = x;
         }
-        listCheck.append("\nmaxΔj = " + new BigDecimal( maxJ.doubleValue()).setScale(6,BigDecimal.ROUND_FLOOR));
+        listCheck.append("\nmaxδj = " + new BigDecimal( maxJ.doubleValue()).setScale(6,BigDecimal.ROUND_FLOOR));
         validStr.append("Максимальное дельта j = " + new BigDecimal( maxJ.doubleValue()).setScale(6,BigDecimal.ROUND_FLOOR));
         if(MMethod.compareTwoFraction(new BigFraction(0.0000001),maxJ.abs()) == -1){
             listCheck.append("\nПроверка допустимости не пройдена");
