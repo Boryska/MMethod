@@ -321,7 +321,7 @@ public class MMethod
         iteratAlfa.add(alfa[0].doubleValue());
         iteratBetta.add(betta[0].doubleValue());
 
-        while( ((alfa[k].multiply(1000000000).add(betta[k])).compareTo(new BigFraction(0))) < 0) //////////////////////////////////////////////////////////////////////
+        while( ((alfa[k].multiply(1000000000).add(betta[k])).compareTo(new BigFraction(0))) < 0)
         {
             StringBuilder iterat = new StringBuilder();
             iterat.append(count+"-я итерация\n");
@@ -337,7 +337,7 @@ public class MMethod
                 if(check) break;
             }
             if (check){
-                iterat.append("Внимание! Введенная система является неограниченной.");
+                iterat.append("Имеет место ситуация 2!");////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                 listAnswer.add(iterat);
                 return;
             }
@@ -358,7 +358,16 @@ public class MMethod
             }
 
             TableM raschet = new TableM(alfa,betta,c,tetaMas,newA,k,r,Fs);
-            iterat.append(raschet.toString());
+            iterat.append( raschet.toString()+"\n");
+            if(count!=0){iterat.append("\nПроверка погрешности");
+
+            for (int i = 0; i < alfa.length ; i++) {
+                iterat.append("\nαtable - α' = " + newA[newA.length-2][i].doubleValue() + " - " + alfa[i].doubleValue() + " = " + newA[newA.length-2][i].subtract(alfa[i]).doubleValue());
+            }
+            for (int i = 0; i < betta.length; i++) {
+                iterat.append("\nβtable - β' = " + newA[newA.length-1][i].doubleValue() + " - " + betta[i].doubleValue() + " = " + newA[newA.length-1][i].subtract(betta[i]).doubleValue());
+
+            }}
             iterat.append("\nТак как, существуют Δj <0 и все Ωj≠∅, имеет место ситуация 3 \nНаправляющий столбец: " + k +"-ый\nНаправляющая строка: " + (r+1)+"-ая\n\n");
             iterat.append("Fs ->A" +Fs[r]+"\nA"+k+"->Fs\n\n");
             Fs[r] = k;                         ////// Замена условия в базисе
