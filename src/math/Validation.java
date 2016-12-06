@@ -55,6 +55,10 @@ public class Validation {
 
     public BigFraction [][] findAfsObr(BigFraction [][] aMatrix , BigFraction det){
         BigFraction[][] result = new BigFraction [aMatrix.length][aMatrix[0].length];
+        if (aMatrix.length == 1){
+           result[0][0] = aMatrix[0][0].pow(-1);
+       }
+        else{
         BigFraction[][] sss = new BigFraction [aMatrix.length-1][aMatrix[0].length-1];
         for (int i = 0; i < aMatrix.length ; i++) {/////Строки
             for (int j = 0; j < aMatrix[0].length; j++) {//////Столбцы
@@ -81,6 +85,7 @@ public class Validation {
                 }
             }
         }
+        }
         return result;
     }
 
@@ -104,9 +109,13 @@ public class Validation {
                 A[i][j] = m[i][j].doubleValue();
             }
         }
-        Matrix matrix = new Matrix(A);
-        LUDecomposition dec = new LUDecomposition(matrix);
-        det =  new BigFraction(dec.det());
+        if(m.length == 1){
+            det = new BigFraction(A[0][0]);
+        }else{
+            Matrix matrix = new Matrix(A);
+            LUDecomposition dec = new LUDecomposition(matrix);
+            det =  new BigFraction(dec.det());
+        }
         return det;
     }
 

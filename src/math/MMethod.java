@@ -135,9 +135,9 @@ public class MMethod
         }
         for(int i=0;i<b.length;i++){
             if(b[i].signum()==-1){ //b[i]<0
-                b[i].multiply(new BigFraction(-1)); //b[i]*=-1;
+               b[i]= b[i].multiply(new BigFraction(-1)); //b[i]*=-1;
                 for(int j=0;j<A[i].length;j++)
-                    A[i][j].multiply(new BigFraction(-1)); //A[i][j]*=-1;
+                  A[i][j]=  A[i][j].multiply(new BigFraction(-1)); //A[i][j]*=-1;
             }
         }
         newA = MainTable(A,b);
@@ -410,6 +410,11 @@ public class MMethod
                 zvit1.append("\n Так как в базисе присудствую исскуственные переменные отличные от нуля задача не имеет решения");
                 ab.append("\n Так как в базисе присудствую исскуственные переменные отличные от нуля задача не имеет решения");
                 listAnswer.add(ab);
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("Информация о решении");
+                alert.setHeaderText("Информация о решении");
+                alert.setContentText("Так как в базисе присудствую исскуственные переменные\n отличные от нуля задача не имеет решения!");//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                alert.showAndWait();
                 return;
             }
         }
@@ -454,8 +459,8 @@ public class MMethod
     }
 
     public BigFraction[] xOptimalniy(int[] fs,BigFraction[][] a){
-        BigFraction[] xToReturn = new BigFraction[n];
-        for(int i = 0; i < n; i++) {
+        BigFraction[] xToReturn = new BigFraction[n+m+1];
+        for(int i = 0; i < xToReturn.length; i++) {
             xToReturn[i] = new BigFraction("0");
         }
         for(int i = 0; i < fs.length; i++){

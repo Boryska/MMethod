@@ -10,13 +10,12 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception{
-        Parent root = FXMLLoader.load(getClass().getResource("../fxml/main.fxml"));
+        Parent root = FXMLLoader.load(getClass().getResource("/fxml/main.fxml"));
         primaryStage.setTitle("М - метод");
         primaryStage.setScene(new Scene(root, 900, 500));
         primaryStage.show();
         primaryStage.setMinWidth(900);
         primaryStage.setMinHeight(500);
-
     }
 
     public static void main(String[] args) {
