@@ -11,8 +11,6 @@ public class Graphics {
     private BigFraction[] startB;
     private BigFraction[][] obrAFs;
     private BigFraction [][] Ddb;
-
-
     private ArrayList<Point> listPoint = new ArrayList();
     private BigFraction maxX = new BigFraction(Double.MIN_VALUE);
     private BigFraction maxY = new BigFraction(Double.MIN_VALUE);

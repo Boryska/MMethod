@@ -1,5 +1,7 @@
 package math;
 
+import javafx.scene.control.Alert;
+
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
@@ -27,17 +29,6 @@ public class MMethod
     private StringBuilder zvit1 = new StringBuilder();
     private static ArrayList<Double> iteratAlfa, iteratBetta;
 
-    public static ArrayList<Double> getIteratAlfa() {
-        return iteratAlfa;
-    }
-
-    public static ArrayList<Double> getIteratBetta() {
-        return iteratBetta;
-
-    }
-    public StringBuilder getZvit1() {
-        return zvit1;
-    }
     public MMethod(){}
 
     public MMethod(BigFraction[] c, BigFraction A[][], BigFraction b[], boolean extr){
@@ -73,6 +64,18 @@ public class MMethod
         return A;
     }
 
+    public static ArrayList<Double> getIteratAlfa() {
+        return iteratAlfa;
+    }
+
+    public static ArrayList<Double> getIteratBetta() {
+        return iteratBetta;
+    }
+
+    public StringBuilder getZvit1() {
+        return zvit1;
+    }
+
     @XmlElement
     public void setA(BigFraction[][] a) {
         A = a;
@@ -84,7 +87,6 @@ public class MMethod
     }
 
     public BigFraction[] getC() {
-
         return c;
     }
 
@@ -268,7 +270,7 @@ public class MMethod
         }
         usl.append(")");
         zvit1.append(")");
-         usl.append("->max\n");
+        usl.append("->max\n");
         zvit1.append("=>max\nВектора ограничений М-задачи:\n");
 
         for (int i = 0; i < m; i++)
@@ -337,7 +339,11 @@ public class MMethod
                 if(check) break;
             }
             if (check){
-                iterat.append("Имеет место ситуация 2!");////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("Информация о решении");
+                alert.setHeaderText("Информация о решении");
+                alert.setContentText("Имеет место ситуация 2!");//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                alert.showAndWait();
                 listAnswer.add(iterat);
                 return;
             }

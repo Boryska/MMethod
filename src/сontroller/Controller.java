@@ -159,7 +159,7 @@ public class Controller {
             case "openMenuItem":
                 JaxbParser jaxbParser = new JaxbParser();
                 fileChooser = new FileChooser();//Класс работы с диалогом выборки и сохранения
-                fileChooser.setTitle("Открытие документа");//Заголовок диалога
+                fileChooser.setTitle("Открытие XML документа");//Заголовок диалога
                 extFilter =  new FileChooser.ExtensionFilter("XML files (*.xml)", "*.xml");//Расширение
                 fileChooser.getExtensionFilters().add(extFilter);
                 file = fileChooser.showOpenDialog(mainStage);//Указываем текущую сцену
@@ -219,8 +219,21 @@ public class Controller {
                         }
                         throw new EmptyException(arrayErrors);
                     }
+                    else if (IncorrectData.incorrectTable(tableA) || IncorrectData.incorrectTable(tableB) || IncorrectData.incorrectTable(tableC)) {
+                        arrayErrors = new ArrayList<>();
+                        if (IncorrectData.incorrectTable(tableA)) {
+                            arrayErrors.add("Матрица А");
+                        }
+                        if (IncorrectData.incorrectTable(tableC)) {
+                            arrayErrors.add("Вектор ограничений");
+                        }
+                        if (IncorrectData.incorrectTable(tableC)) {
+                            arrayErrors.add("Целевая функция");
+                        }
+                        throw new IncorrectData(arrayErrors);
+                    }
                     fileChooser = new FileChooser();//Класс работы с диалогом выборки и сохранения
-                    fileChooser.setTitle("Сохранение документа");//Заголовок диалога
+                    fileChooser.setTitle("Сохранение XML документа");//Заголовок диалога
                     extFilter =  new FileChooser.ExtensionFilter("XML files (*.xml)", "*.xml");//Расширение
                     fileChooser.getExtensionFilters().add(extFilter);
                     file = fileChooser.showSaveDialog(mainStage);//Указываем текущую сцену CodeNote.mainStage
@@ -231,6 +244,12 @@ public class Controller {
 
                         jaxbParser = new JaxbParser();
                         jaxbParser.saveObject(file,myMethod);
+                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                        alert.setTitle("Отчет о сохранении");
+                        alert.setHeaderText("Сохранение выполнено успешно!");
+                        alert.setContentText("Файл \"" + file.getName() + "\"  успешно сохранен по следующему " +
+                                "адресу:\n\"" + file.getAbsolutePath()+"\"");
+                        alert.showAndWait();
                     }
                 }
                 catch (MyMessageException ex) {
@@ -238,6 +257,14 @@ public class Controller {
                     alert.setTitle("Ошибка");
                     alert.setContentText(ex.getStackTrace().toString());
                     alert.setHeaderText(ex.getMessage());
+                    alert.showAndWait();
+                }
+                catch (IncorrectData ex) {
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setTitle("Ошибка");
+                    alert.setContentText(ex.getStackTrace().toString());
+                    alert.setHeaderText(ex.getMessageTables());
+                    ex.printStackTrace();
                     alert.showAndWait();
                 }
                 catch (EmptyException ex) {
@@ -254,8 +281,16 @@ public class Controller {
             case "aboutMenuItem":
                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
                 alert.setTitle("О программе");
-                alert.setHeaderText("Программа для решения задач линейного программирования М-методом(I-агоритм)");
-                alert.setContentText("Выполнили студенты группы КН-34б:\nКондратьев Виталий, Ворона Борис, Кущ Алина");
+                alert.setHeaderText(null);
+                alert.setHeaderText("Программная реализация для решения задач линейного программирования. \n" +
+                        "Нахождение оптимального плана с помощью М-метода (первый алгоритм).");
+                alert.setContentText("Программная реализация создана в рамках курсовой работы по \n" +
+                        "предмету \"Математические методы исследования операций\"" +
+                        "\nстудентами группы КН-34б.\n Члены бригады:\n" +
+                        "   - Кондратьев Виталий (бригадир).\n" +
+                        "   - Ворона Борис.\n" +
+                        "   - Кущ Алина.");
+                alert.setResizable(false);
                 alert.showAndWait();
                 break;
             case "reportMenuItem":
@@ -286,7 +321,6 @@ public class Controller {
                         document.open();
                         StringBuilder sb = new StringBuilder();
                         sb.append(method.getZvit1());
-
                         c.scaleAbsolute(500f,400f);
                         a.setAlignment(Element.ALIGN_MIDDLE);
                         b.setAlignment(Element.ALIGN_MIDDLE);
@@ -317,12 +351,18 @@ public class Controller {
                         graphBetta.delete();
                         graphStability.delete();
                         document.close();
+                        Alert saveAlert = new Alert(Alert.AlertType.INFORMATION);
+                        saveAlert.setTitle("Отчет о сохранении");
+                        saveAlert.setHeaderText("Отчет сохранен успешно!");
+                        saveAlert.setContentText("Отчет с названием " + file.getName() + " был успешно сформирован и сохранен по следующему пути:\n"
+                                + file.getAbsolutePath());
+                        saveAlert.showAndWait();
                     }
                 }  catch (Exception ex) {
-                    Alert alrt = new Alert(Alert.AlertType.INFORMATION);
-                    alrt.setTitle("Ошибка");
-                    alrt.setContentText(ex.getStackTrace().toString());
-                    alrt.showAndWait();
+                    Alert repErrorAlert = new Alert(Alert.AlertType.ERROR);
+                    repErrorAlert.setTitle("Ошибка сохранения отчета");
+                    repErrorAlert.setHeaderText(ex.getMessage());
+                    repErrorAlert.showAndWait();
                 }
                 break;
         }
