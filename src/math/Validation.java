@@ -192,21 +192,15 @@ public class Validation {
 //            listCheck.append("\n");
 //            //validStr.append("\n");
 //        }
-       // listCheck.append("\nCs ={");
-        validStr.append("Cs ={");
-        for (BigFraction x: Cs) {
-         //   listCheck.append(x.intValue() + " ; ");
-            validStr.append(x.intValue() + " ; ");
-        }
 
-       // listCheck.append("}\n\nY* ={");
-        validStr.append("}\nY* ={");
+        listCheck.append("\nY* =(");
+        validStr.append("\nY* =(");
         for (BigFraction x: YI) {
-            //listCheck.append(new BigDecimal(x.doubleValue()).setScale(6,BigDecimal.ROUND_FLOOR)+ " ; ");
+            listCheck.append(new BigDecimal(x.doubleValue()).setScale(6,BigDecimal.ROUND_FLOOR)+ " ; ");
             validStr.append(new BigDecimal(x.doubleValue()).setScale(6,BigDecimal.ROUND_FLOOR)+ " ; ");
         }
-        listCheck.append("}");
-        validStr.append("}");
+        listCheck.append(")\n");
+        validStr.append(")\n");
         if(MMethod.compareTwoFraction(new BigFraction(0.000001), new BigFraction(maxI.abs())) == -1){
             validStr.append("\nПроверка допустимости не пройдена");
             listCheck.append("\nПроверка допустимости не пройдена");

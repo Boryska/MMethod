@@ -130,26 +130,26 @@ public class MMethod
 
         if(min){
             for(int i=0;i<c.length;i++){
-                c[i]=c[i].multiply(new BigFraction(-1)); //c[i]*=-1;
+                c[i]=c[i].multiply(new BigFraction(-1));
             }
         }
         for(int i=0;i<b.length;i++){
-            if(b[i].signum()==-1){ //b[i]<0
-               b[i]= b[i].multiply(new BigFraction(-1)); //b[i]*=-1;
+            if(b[i].signum()==-1){
+               b[i]= b[i].multiply(new BigFraction(-1));
                 for(int j=0;j<A[i].length;j++)
-                  A[i][j]=  A[i][j].multiply(new BigFraction(-1)); //A[i][j]*=-1;
+                  A[i][j]=  A[i][j].multiply(new BigFraction(-1));
             }
         }
         newA = MainTable(A,b);
 
         for (int i = 0; i < Fs.length ; i++)
         {
-            Fs[i] = i+2+ newA[0].length - newA.length;                          //////Fs
+            Fs[i] = i+2+ newA[0].length - newA.length;
         }
         for (int i = 0; i < (n+m+1); i++)
         {
             if(i<=n) {
-                CjI[i] = new BigFraction(0);               ////////////   C'j
+                CjI[i] = new BigFraction(0);
             }
             else {
                 CjI[i] = new BigFraction(-1);
@@ -166,17 +166,17 @@ public class MMethod
         for (int i = 0; i < (n+m+1); i++)
         {
             if(i>=n+1 || i==0) {
-                CjII[i] = new BigFraction(0);  ////////////   C''j
+                CjII[i] = new BigFraction(0);
             }
             else{  CjII[i] = L[i];}
         }
         for (int i = 0; i < m; i++)
         {
-            CsI[i] = new BigFraction(-1);        ////////////   C's      тут первая строчка идет как нулевая в матрице
+            CsI[i] = new BigFraction(-1);
         }
         for (int i = 0; i < m; i++)
         {
-            CsII[i] = new BigFraction(0);       ///////////   C''s       тут первая строчка идет как нулевая в матрице
+            CsII[i] = new BigFraction(0);
         }
 
         for (int i = 0; i < (n+m+1) ; i++)
@@ -187,7 +187,7 @@ public class MMethod
 
         for (int i = 0; i < n+m+1 ; i++)
         {
-            betta[i]= alfabetta(CsII,newA,CjII[i],i);                /////////// Betta
+            betta[i]= alfabetta(CsII,newA,CjII[i],i);
             newA[m+1][i]  = betta[i] ;
         }
 
@@ -204,9 +204,9 @@ public class MMethod
         }
         }
         usl.append(usl1);
-            usl.append("->max\n");                                                                                            /////
+            usl.append("->max\n");
 
-        //zvit1.append("                                                                 Условия исходной задачи\n\n");
+
         zvit1.append("\nЦелевая функция:\nL = ");
        if (min){
            for (int i = 0; i <c.length; i++)
@@ -249,8 +249,8 @@ public class MMethod
 
             usl.append(" = " + newA[i][0].intValue() + "\n");
             zvit1.append(" = " + newA[i][0].intValue() + "\n");
-        }                                                                    ////////fin
-                                                      //////Start
+        }
+
         usl.append("\nМ-задача"+
                 "\n\n Целевая функция М-задачи:\n"+
                 usl1 + " - M*(");
@@ -294,7 +294,7 @@ public class MMethod
             usl.append(" = " + newA[i][0].intValue() + "\n");
             zvit1.append(" = " + newA[i][0].intValue() + "\n");
         }
-            zvit1.append("\n\nНачальный опорный план и базис:\nFs0 = {");
+            zvit1.append("\n\nНачальный опорный план и базис:\nFs0 = (");
         for (int i = 0; i < Fs.length; i++) {
             if (i != Fs.length-1){
              zvit1.append("A"+Fs[i] + " ; ");
@@ -342,7 +342,7 @@ public class MMethod
                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
                 alert.setTitle("Информация о решении");
                 alert.setHeaderText("Информация о решении");
-                alert.setContentText("Имеет место ситуация 2!");//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                alert.setContentText("Имеет место ситуация 2!");
                 alert.showAndWait();
                 listAnswer.add(iterat);
                 return;
@@ -376,19 +376,19 @@ public class MMethod
             }}
             iterat.append("\nТак как, существуют Δj <0 и все Ωj≠∅, имеет место ситуация 3 \nНаправляющий столбец: " + k +"-ый\nНаправляющая строка: " + (r+1)+"-ая\n\n");
             iterat.append("Fs ->A" +Fs[r]+"\nA"+k+"->Fs\n\n");
-            Fs[r] = k;                         ////// Замена условия в базисе
-            CsI[r] = CjI[k] ;                      ////// Замена С's
-            CsII[r] = CjII[k];                     ////// Замена С''s
+            Fs[r] = k;
+            CsI[r] = CjI[k] ;
+            CsII[r] = CjII[k];
 
             newA = findMatrix(newA,k,r,m,n);
             for (int i = 0; i < n+m+1 ; i++)
             {
-                alfa[i]= alfabetta(CsI,newA,CjI[i],i);                /////////// Alfa
+                alfa[i]= alfabetta(CsI,newA,CjI[i],i);
 
             }
             for (int i = 0; i < n+m+1 ; i++)
             {
-                betta[i] = alfabetta(CsII, newA, CjII[i], i);                /////////// Betta
+                betta[i] = alfabetta(CsII, newA, CjII[i], i);
             }
             k = minimumK(alfa,betta);
             count++;
@@ -413,7 +413,7 @@ public class MMethod
                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
                 alert.setTitle("Информация о решении");
                 alert.setHeaderText("Информация о решении");
-                alert.setContentText("Так как в базисе присудствую исскуственные переменные\n отличные от нуля задача не имеет решения!");//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                alert.setContentText("Так как в базисе присудствую исскуственные переменные\n отличные от нуля задача не имеет решения!");
                 alert.showAndWait();
                 return;
             }
@@ -431,31 +431,44 @@ public class MMethod
                    Fs[i] = a;
             }
         }
+        StringBuilder ale = new StringBuilder();
         ab.append("Так как,все Δj >0 , имеет место ситуация 1\nФормируем решение:\n");
+        ale.append("Fs* = (");
         ab.append("Fs* = (");
         zvit1.append("Fs* = (");
         for (int x: Fs ) {
+            ale.append("A"+x+" ; ");
             zvit1.append("A"+x+" ; ");
             ab.append("A"+x+" ; ");
         }
         zvit1.append(")\n");
+        ale.append(")\n");
         ab.append(")\n");
         ab.append("X* = (");
+        ale.append("X* = (");
         zvit1.append("\n\nРешение\nX* = (");
         for (int x = 0 ; x < xOptimalniy(Fs,newA).length ; x++) {
 
             if (x != xOptimalniy(Fs, newA).length-1) {
+                ale.append(new BigDecimal(xOptimalniy(Fs, newA)[x].doubleValue()).setScale(6, BigDecimal.ROUND_FLOOR) + " ; ");
                 zvit1.append(new BigDecimal(xOptimalniy(Fs, newA)[x].doubleValue()).setScale(6, BigDecimal.ROUND_FLOOR) + " ; ");
                 ab.append(new BigDecimal(xOptimalniy(Fs, newA)[x].doubleValue()).setScale(6, BigDecimal.ROUND_FLOOR) + " ; ");
             }
             else{
+                ale.append(new BigDecimal(xOptimalniy(Fs, newA)[x].doubleValue()).setScale(6, BigDecimal.ROUND_FLOOR));
                 zvit1.append(new BigDecimal(xOptimalniy(Fs, newA)[x].doubleValue()).setScale(6, BigDecimal.ROUND_FLOOR));
                 ab.append(new BigDecimal(xOptimalniy(Fs, newA)[x].doubleValue()).setScale(6, BigDecimal.ROUND_FLOOR));
             }
         }
+        ale.append(")");
         ab.append(")\nL*: " + new BigDecimal(finaloo(c,xOptimalniy(Fs,newA),min).doubleValue()).setScale(6,BigDecimal.ROUND_FLOOR));
         zvit1.append((")\nL*= " + new BigDecimal(finaloo(c,xOptimalniy(Fs,newA),min).doubleValue()).setScale(6,BigDecimal.ROUND_FLOOR)));
         listAnswer.add(ab);
+        Alert result = new Alert(Alert.AlertType.INFORMATION);
+        result.setTitle("Информация о решении");
+        result.setHeaderText("Задача решена!");
+        result.setContentText(ale.toString());
+        result.showAndWait();
     }
 
     public BigFraction[] xOptimalniy(int[] fs,BigFraction[][] a){
@@ -526,7 +539,7 @@ public class MMethod
         BigFraction ma = a[1];
         for (int i = 1; i < a.length ; i++)
         {
-            if(compareTwoFraction(ma,a[i])==1 && compareTwoFraction(new BigFraction(0),a[i]) == 1)                          /////Нахождение минимального альфа
+            if(compareTwoFraction(ma,a[i])==1 && compareTwoFraction(new BigFraction(0),a[i]) == 1)
                 ma = a[i];
         }
         ArrayList<Integer> mas = new ArrayList<Integer>();
@@ -534,7 +547,7 @@ public class MMethod
         {
             if (compareTwoFraction(ma,a[i])==0)
             {
-                mas.add(i);             ////////Если несколько одинаковых альфа то сравниваем эти альфа по бетте
+                mas.add(i);
             }
         }
         if((mas.size() > 1) || mas.size() == 0 ) {
@@ -542,7 +555,7 @@ public class MMethod
             BigFraction mb = b[mas.get(0)];
             for (int i = 0; i < mas.size() ; i++)
             {
-                if (compareTwoFraction(mb , b[mas.get(i)]) == 1){                   ////////Нахождение минимального бетта
+                if (compareTwoFraction(mb , b[mas.get(i)]) == 1){
                     mb = b[mas.get(i)];
                     numb = mas.get(i);
                 }
@@ -559,14 +572,14 @@ public class MMethod
     for (int i = 0; i < m+2 ; i++) {
         for (int j = 0; j < m+n+1 ; j++) {
             if( j == (i + n+1))
-                l[i][j] = new BigFraction(1);                           ///////////Заполнение ед матрицой
+                l[i][j] = new BigFraction(1);
             else
                 l[i][j] = new BigFraction(0);
         }
     }
 
     for (int i = 0; i < m ; i++) {
-        l[i][0] = b[i];                                     //// Vector B
+        l[i][0] = b[i];
     }
 
     for (int i = 0; i < m ; i++) {
