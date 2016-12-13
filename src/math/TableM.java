@@ -106,7 +106,7 @@ public class TableM {
             }
         }
         for (int i = 0; i < A[0].length + A.length; i++) {
-            if (i <(A[0].length - A.length)) {
+            if (i <(c.length)) {
                 CjI[i] = new BigFraction(0);
                 CjII[i] = c[i];
             }
@@ -138,8 +138,8 @@ public class TableM {
                 mainTable[1][i] = "C``j";
             }
             else if(i > 4){
-                mainTable[0][i]=CjI[i-4].intValue();
-                mainTable[1][i]=CjII[i-4].intValue();
+                mainTable[0][i]=CjI[i-5].intValue();
+                mainTable[1][i]=CjII[i-5].intValue();
             }
         }
         Object [] ogl = new Object[mainTable[0].length ];

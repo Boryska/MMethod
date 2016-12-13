@@ -392,7 +392,6 @@ public class MMethod
             }
             k = minimumK(alfa,betta);
             count++;
-            k = minimumK(alfa,betta);
             iteratAlfa.add(alfa[0].doubleValue());
             iteratBetta.add(betta[0].doubleValue());
 
