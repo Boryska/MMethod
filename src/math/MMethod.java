@@ -327,16 +327,19 @@ public class MMethod
         {
             StringBuilder iterat = new StringBuilder();
             iterat.append(count+"-я итерация\n");
-            boolean check = false;
+            boolean check = true;
             BigFraction tetaMas[] = new BigFraction[m];
-            for (int j = 0;j < n+m+1; j++) {
+            for (int j = 1;j < n+m+1; j++) {
+                check = true;
                 if(alfa[j].signum() == -1 || alfa[j].signum() == 0 && betta[j].signum() == -1)
                 for (int i = 0; i < m; i++) {
-                    if (!(compareTwoFraction(newA[i][j], new BigFraction(0)) == 0)) {
+                    if (compareTwoFraction(newA[i][j], new BigFraction(0)) == 1) {
                         check = false;
+                        System.out.print(newA[i][j].doubleValue() +  "   ") ;
                     }
                 }
-                if(check) break;
+                System.out.println();
+                if(check == false) break;
             }
             if (check){
                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -463,6 +466,7 @@ public class MMethod
         ab.append(")\nL*: " + new BigDecimal(finaloo(c,xOptimalniy(Fs,newA),min).doubleValue()).setScale(6,BigDecimal.ROUND_FLOOR));
         zvit1.append((")\nL*= " + new BigDecimal(finaloo(c,xOptimalniy(Fs,newA),min).doubleValue()).setScale(6,BigDecimal.ROUND_FLOOR)));
         listAnswer.add(ab);
+        ale.append((")\nL*= " + new BigDecimal(finaloo(c,xOptimalniy(Fs,newA),min).doubleValue()).setScale(6,BigDecimal.ROUND_FLOOR)));
         Alert result = new Alert(Alert.AlertType.INFORMATION);
         result.setTitle("Информация о решении");
         result.setHeaderText("Задача решена!");
