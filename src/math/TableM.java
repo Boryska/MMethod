@@ -232,7 +232,7 @@ public class TableM {
         for (int j = 1; j <A[0].length; j++) {
             if ((alfa[j].signum() == -1) || (alfa[j].signum() == 0 && betta[j].signum() == -1)) {
                 mas.append("Ω"+j+"={");
-                for (int i = 0; i < A.length; i++) {
+                for (int i = 0; i < A.length-2; i++) {
                     if (A[i][j].signum() == 1) {
                         mas.append(new BigDecimal(A[i][j].doubleValue()).setScale(4,BigDecimal.ROUND_FLOOR)+" ; ");
                     }

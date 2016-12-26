@@ -315,91 +315,84 @@ public class MMethod
             }
         }
 
-        usl.append("\nНАЧАЛО ИТЕРАЦИОННОГО ПРОЦЕССА\n");
+
         int count = 0;
         k = minimumK(alfa,betta);
 
-        listAnswer.add(usl);
+
         iteratAlfa.add(alfa[0].doubleValue());
         iteratBetta.add(betta[0].doubleValue());
+        boolean govno = false;
+        while( ((alfa[k].multiply(1000000000).add(betta[k])).compareTo(new BigFraction(0))) < 0) {
 
-        while( ((alfa[k].multiply(1000000000).add(betta[k])).compareTo(new BigFraction(0))) < 0)
-        {
-            StringBuilder iterat = new StringBuilder();
-            iterat.append(count+"-я итерация\n");
-            boolean check = true;
-            BigFraction tetaMas[] = new BigFraction[m];
-            for (int j = 1;j < n+m+1; j++) {
-                check = true;
-                if(alfa[j].signum() == -1 || alfa[j].signum() == 0 && betta[j].signum() == -1)
-                for (int i = 0; i < m; i++) {
-                    if (compareTwoFraction(newA[i][j], new BigFraction(0)) == 1) {
-                        check = false;
-                        System.out.print(newA[i][j].doubleValue() +  "   ") ;
-                    }
-                }
-                System.out.println();
-                if(check == false) break;
-            }
-            if (check){
+
+            BigFraction[] a = alfa;
+            BigFraction[] b = betta;
+            int check = sit2(a, b);
+
+            if (check == 0) {
+                govno = true;
                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
                 alert.setTitle("Информация о решении");
                 alert.setHeaderText("Информация о решении");
                 alert.setContentText("Имеет место ситуация 2!");
                 alert.showAndWait();
-                listAnswer.add(iterat);
-                return;
-            }
-            else {
-                BigFraction teta = new BigFraction(10000000);
+                break;
+            } else {
+                if (count == 0) {
+                    usl.append("\nНАЧАЛО ИТЕРАЦИОННОГО ПРОЦЕССА\n");
+                    listAnswer.add(usl);
+                }
+                StringBuilder iterat = new StringBuilder();
+                iterat.append(count + "-я итерация\n");
+                BigFraction tetaMas[] = new BigFraction[m];
 
-                for (int i = 0; i < m; i++)
-                {
-                    if( compareTwoFraction(new BigFraction(0),newA[i][k]) ==-1 ){
+
+                BigFraction teta = new BigFraction(10000000);
+                for (int i = 0; i < m; i++) {
+                    if (compareTwoFraction(new BigFraction(0), newA[i][k]) == -1) {
                         tetaMas[i] = newA[i][0].divide(newA[i][k]);
                     }
-                    if ((compareTwoFraction(newA[i][k],new BigFraction(0)) ==1) && ( compareTwoFraction(teta,newA[i][0].divide(newA[i][k])) ==1) )
-                    {
+                    if ((compareTwoFraction(newA[i][k], new BigFraction(0)) == 1) && (compareTwoFraction(teta, newA[i][0].divide(newA[i][k])) == 1)) {
                         teta = newA[i][0].divide(newA[i][k]);
                         r = i;
                     }
                 }
+                TableM raschet = new TableM(alfa, betta, c, tetaMas, newA, k, r, Fs);
+                iterat.append(raschet.toString() + "\n");
+                if (count != 0) {
+                    iterat.append("\nПроверка погрешности");
+
+                    for (int i = 0; i < alfa.length; i++) {
+                        iterat.append("\nαtable - α' = " + newA[newA.length - 2][i].doubleValue() + " - " + alfa[i].doubleValue() + " = " + newA[newA.length - 2][i].subtract(alfa[i]).doubleValue());
+                    }
+                    for (int i = 0; i < betta.length; i++) {
+                        iterat.append("\nβtable - β' = " + newA[newA.length - 1][i].doubleValue() + " - " + betta[i].doubleValue() + " = " + newA[newA.length - 1][i].subtract(betta[i]).doubleValue());
+
+                    }
+                }
+                iterat.append("\nТак как, существуют Δj <0 и все Ωj≠∅, имеет место ситуация 3 \nНаправляющий столбец: " + k + "-ый\nНаправляющая строка: " + (r + 1) + "-ая\n\n");
+                iterat.append("Fs ->A" + Fs[r] + "\nA" + k + "->Fs\n\n");
+                Fs[r] = k;
+                CsI[r] = CjI[k];
+                CsII[r] = CjII[k];
+
+                newA = findMatrix(newA, k, r, m, n);
+                for (int i = 0; i < n + m + 1; i++) {
+                    alfa[i] = alfabetta(CsI, newA, CjI[i], i);
+
+                }
+                for (int i = 0; i < n + m + 1; i++) {
+                    betta[i] = alfabetta(CsII, newA, CjII[i], i);
+                }
+                k = minimumK(alfa, betta);
+                count++;
+                iteratAlfa.add(alfa[0].doubleValue());
+                iteratBetta.add(betta[0].doubleValue());
+
+
+                listAnswer.add(iterat);
             }
-
-            TableM raschet = new TableM(alfa,betta,c,tetaMas,newA,k,r,Fs);
-            iterat.append( raschet.toString()+"\n");
-            if(count!=0){iterat.append("\nПроверка погрешности");
-
-            for (int i = 0; i < alfa.length ; i++) {
-                iterat.append("\nαtable - α' = " + newA[newA.length-2][i].doubleValue() + " - " + alfa[i].doubleValue() + " = " + newA[newA.length-2][i].subtract(alfa[i]).doubleValue());
-            }
-            for (int i = 0; i < betta.length; i++) {
-                iterat.append("\nβtable - β' = " + newA[newA.length-1][i].doubleValue() + " - " + betta[i].doubleValue() + " = " + newA[newA.length-1][i].subtract(betta[i]).doubleValue());
-
-            }}
-            iterat.append("\nТак как, существуют Δj <0 и все Ωj≠∅, имеет место ситуация 3 \nНаправляющий столбец: " + k +"-ый\nНаправляющая строка: " + (r+1)+"-ая\n\n");
-            iterat.append("Fs ->A" +Fs[r]+"\nA"+k+"->Fs\n\n");
-            Fs[r] = k;
-            CsI[r] = CjI[k] ;
-            CsII[r] = CjII[k];
-
-            newA = findMatrix(newA,k,r,m,n);
-            for (int i = 0; i < n+m+1 ; i++)
-            {
-                alfa[i]= alfabetta(CsI,newA,CjI[i],i);
-
-            }
-            for (int i = 0; i < n+m+1 ; i++)
-            {
-                betta[i] = alfabetta(CsII, newA, CjII[i], i);
-            }
-            k = minimumK(alfa,betta);
-            count++;
-            iteratAlfa.add(alfa[0].doubleValue());
-            iteratBetta.add(betta[0].doubleValue());
-
-
-            listAnswer.add(iterat);
         }
         StringBuilder ab = new StringBuilder();
         ab.append("Конечная таблица М-метода:\n");
@@ -592,4 +585,22 @@ public class MMethod
     }
     return l;
 }
+    public int sit2(  BigFraction [] a , BigFraction[] b){
+        boolean c = true;
+        for (int j = 1;j < n+m+1; j++) {
+             c = true;
+            if(a[j].signum() == -1 || a[j].signum() == 0 && b[j].signum() == -1)
+                for (int i = 0; i < m; i++) {
+                    if (compareTwoFraction(newA[i][j], new BigFraction(0)) == 1) {
+                        c = false;
+                    }
+                }
+            if(c == false) break;
+        }
+
+        if(c == true) {
+         return 0;
+        }
+        else { return 1;}
+            }
 }
