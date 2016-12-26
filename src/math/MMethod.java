@@ -318,100 +318,100 @@ public class MMethod
 
         int count = 0;
         k = minimumK(alfa,betta);
-
-
+        boolean  check = true; // false значит не прошел проверку сит 2
         iteratAlfa.add(alfa[0].doubleValue());
         iteratBetta.add(betta[0].doubleValue());
-        boolean govno = false;
         while( ((alfa[k].multiply(1000000000).add(betta[k])).compareTo(new BigFraction(0))) < 0) {
-
-
-            BigFraction[] a = alfa;
-            BigFraction[] b = betta;
-            int check = sit2(a, b);
-
-            if (check == 0) {
-                govno = true;
-                Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                alert.setTitle("Информация о решении");
-                alert.setHeaderText("Информация о решении");
-                alert.setContentText("Имеет место ситуация 2!");
-                alert.showAndWait();
-                break;
-            } else {
-                if (count == 0) {
-                    usl.append("\nНАЧАЛО ИТЕРАЦИОННОГО ПРОЦЕССА\n");
-                    listAnswer.add(usl);
-                }
-                StringBuilder iterat = new StringBuilder();
-                iterat.append(count + "-я итерация\n");
-                BigFraction tetaMas[] = new BigFraction[m];
-
-
-                BigFraction teta = new BigFraction(10000000);
-                for (int i = 0; i < m; i++) {
-                    if (compareTwoFraction(new BigFraction(0), newA[i][k]) == -1) {
-                        tetaMas[i] = newA[i][0].divide(newA[i][k]);
-                    }
-                    if ((compareTwoFraction(newA[i][k], new BigFraction(0)) == 1) && (compareTwoFraction(teta, newA[i][0].divide(newA[i][k])) == 1)) {
-                        teta = newA[i][0].divide(newA[i][k]);
-                        r = i;
-                    }
-                }
-                TableM raschet = new TableM(alfa, betta, c, tetaMas, newA, k, r, Fs);
-                iterat.append(raschet.toString() + "\n");
-                if (count != 0) {
-                    iterat.append("\nПроверка погрешности");
-
-                    for (int i = 0; i < alfa.length; i++) {
-                        iterat.append("\nαtable - α' = " + newA[newA.length - 2][i].doubleValue() + " - " + alfa[i].doubleValue() + " = " + newA[newA.length - 2][i].subtract(alfa[i]).doubleValue());
-                    }
-                    for (int i = 0; i < betta.length; i++) {
-                        iterat.append("\nβtable - β' = " + newA[newA.length - 1][i].doubleValue() + " - " + betta[i].doubleValue() + " = " + newA[newA.length - 1][i].subtract(betta[i]).doubleValue());
-
-                    }
-                }
-                iterat.append("\nТак как, существуют Δj <0 и все Ωj≠∅, имеет место ситуация 3 \nНаправляющий столбец: " + k + "-ый\nНаправляющая строка: " + (r + 1) + "-ая\n\n");
-                iterat.append("Fs ->A" + Fs[r] + "\nA" + k + "->Fs\n\n");
-                Fs[r] = k;
-                CsI[r] = CjI[k];
-                CsII[r] = CjII[k];
-
-                newA = findMatrix(newA, k, r, m, n);
-                for (int i = 0; i < n + m + 1; i++) {
-                    alfa[i] = alfabetta(CsI, newA, CjI[i], i);
-
-                }
-                for (int i = 0; i < n + m + 1; i++) {
-                    betta[i] = alfabetta(CsII, newA, CjII[i], i);
-                }
-                k = minimumK(alfa, betta);
-                count++;
-                iteratAlfa.add(alfa[0].doubleValue());
-                iteratBetta.add(betta[0].doubleValue());
-
-
-                listAnswer.add(iterat);
-            }
+                check = sit2(alfa, betta,newA);
+        if (!check) {
+            break;
         }
+       else {
+            if (count == 0) {
+                usl.append("\nНАЧАЛО ИТЕРАЦИОННОГО ПРОЦЕССА\n");
+                listAnswer.add(usl);
+            }
+            StringBuilder iterat = new StringBuilder();
+            iterat.append(count + "-я итерация\n");
+            BigFraction tetaMas[] = new BigFraction[m];
+
+
+            BigFraction teta = new BigFraction(10000000);
+            for (int i = 0; i < m; i++) {
+                if (compareTwoFraction(new BigFraction(0), newA[i][k]) == -1) {
+                    tetaMas[i] = newA[i][0].divide(newA[i][k]);
+                }
+                if ((compareTwoFraction(newA[i][k], new BigFraction(0)) == 1) && (compareTwoFraction(teta, newA[i][0].divide(newA[i][k])) == 1)) {
+                    teta = newA[i][0].divide(newA[i][k]);
+                    r = i;
+                }
+            }
+            TableM raschet = new TableM(alfa, betta, c, tetaMas, newA, k, r, Fs);
+            iterat.append(raschet.toString() + "\n");
+            if (count != 0) {
+                iterat.append("\nПроверка погрешности");
+
+                for (int i = 0; i < alfa.length; i++) {
+                    iterat.append("\nαtable - α' = " + newA[newA.length - 2][i].doubleValue() + " - " + alfa[i].doubleValue() + " = " + newA[newA.length - 2][i].subtract(alfa[i]).doubleValue());
+                }
+                for (int i = 0; i < betta.length; i++) {
+                    iterat.append("\nβtable - β' = " + newA[newA.length - 1][i].doubleValue() + " - " + betta[i].doubleValue() + " = " + newA[newA.length - 1][i].subtract(betta[i]).doubleValue());
+
+                }
+            }
+            iterat.append("\nТак как, существуют Δj <0 и все Ωj≠∅, имеет место ситуация 3 \nНаправляющий столбец: " + k + "-ый\nНаправляющая строка: " + (r + 1) + "-ая\n\n");
+            iterat.append("Fs ->A" + Fs[r] + "\nA" + k + "->Fs\n\n");
+            Fs[r] = k;
+            CsI[r] = CjI[k];
+            CsII[r] = CjII[k];
+
+            newA = findMatrix(newA, k, r, m, n);
+            for (int i = 0; i < n + m + 1; i++) {
+                alfa[i] = alfabetta(CsI, newA, CjI[i], i);
+
+            }
+            for (int i = 0; i < n + m + 1; i++) {
+                betta[i] = alfabetta(CsII, newA, CjII[i], i);
+            }
+            k = minimumK(alfa, betta);
+            count++;
+            iteratAlfa.add(alfa[0].doubleValue());
+            iteratBetta.add(betta[0].doubleValue());
+
+
+            listAnswer.add(iterat);
+        }
+    }
         StringBuilder ab = new StringBuilder();
         ab.append("Конечная таблица М-метода:\n");
         BigFraction[] tetaMas = new BigFraction[m];
         TableM raschet = new TableM(alfa,betta,c,tetaMas,newA,k,r,Fs);
         ab.append(raschet.toString());
-
-        for (int i = 0; i < Fs.length ; i++) {
-            if(Fs[i] > n && newA[i][0].doubleValue() != 0){
-                zvit1.append("\n Так как в базисе присудствую исскуственные переменные отличные от нуля задача не имеет решения");
-                ab.append("\n Так как в базисе присудствую исскуственные переменные отличные от нуля задача не имеет решения");
-                listAnswer.add(ab);
-                Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                alert.setTitle("Информация о решении");
-                alert.setHeaderText("Информация о решении");
-                alert.setContentText("Так как в базисе присудствую исскуственные переменные\n отличные от нуля задача не имеет решения!");
-                alert.showAndWait();
-                return;
+        if (check) {
+            for (int i = 0; i < Fs.length; i++) {
+                if (Fs[i] > n && newA[i][0].doubleValue() != 0) {
+                    zvit1.append("\n Задача не имеет решения, так как содержит несовместимые условия!");
+                    ab.append("Задача не имеет решения, так как содержит несовместимые условия!\n");
+                    listAnswer.add(ab);
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setTitle("Информация о решении");
+                    alert.setHeaderText("При решении исходной задачи был получен следующий результат:");
+                    alert.setContentText("Задача не имеет решения, так как содержит несовместимые условия!");
+                    alert.showAndWait();
+                    return;
+                }
             }
+        }
+        else {
+            zvit1.append("\nЗадача не имеет решения из-за неограниченности целевой функции сверху!");
+            ab.append("\nЗадача не имеет решения из-за неограниченности целевой функции сверху!");
+            listAnswer.add(ab);
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Информация о решении");
+            alert.setHeaderText("При решении исходной задачи был получен следующий результат:");
+            alert.setContentText("Задача не имеет решения из-за неограниченности целевой функции сверху!");
+            alert.showAndWait();
+            return;
         }
         for (int i = 0; i < Fs.length ; i++) {
             if(Fs[i] > n){
@@ -426,6 +426,7 @@ public class MMethod
                    Fs[i] = a;
             }
         }
+
         StringBuilder ale = new StringBuilder();
         ab.append("Так как,все Δj >0 , имеет место ситуация 1\nФормируем решение:\n");
         ale.append("Fs* = (");
@@ -465,6 +466,7 @@ public class MMethod
         result.setHeaderText("Задача решена!");
         result.setContentText(ale.toString());
         result.showAndWait();
+
     }
 
     public BigFraction[] xOptimalniy(int[] fs,BigFraction[][] a){
@@ -477,6 +479,7 @@ public class MMethod
         }
         return xToReturn;
     }
+
 
     public static BigFraction finaloo (BigFraction c[],BigFraction x[], boolean min){
         BigFraction otvet = new BigFraction(0);
@@ -585,22 +588,19 @@ public class MMethod
     }
     return l;
 }
-    public int sit2(  BigFraction [] a , BigFraction[] b){
-        boolean c = true;
-        for (int j = 1;j < n+m+1; j++) {
-             c = true;
-            if(a[j].signum() == -1 || a[j].signum() == 0 && b[j].signum() == -1)
+    public boolean sit2(  BigFraction [] a , BigFraction[] b , BigFraction[][]checking) {
+        boolean c = false;
+        for (int j = 1; j < n + m + 1; j++) {
+            c = false;
+            if (a[j].signum() == -1 || a[j].signum() == 0 && b[j].signum() == -1)
                 for (int i = 0; i < m; i++) {
-                    if (compareTwoFraction(newA[i][j], new BigFraction(0)) == 1) {
-                        c = false;
+                    if (compareTwoFraction(checking[i][j], new BigFraction(0)) == 1) {
+                       c = true;
                     }
+                    if (c) break;
                 }
-            if(c == false) break;
-        }
 
-        if(c == true) {
-         return 0;
         }
-        else { return 1;}
-            }
+        return c;
+    }
 }
