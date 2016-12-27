@@ -11,6 +11,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -75,6 +76,8 @@ public class Controller {
     @FXML
     private TabPane tabPaneGraphic;
     @FXML
+    private Tab buildGraphicTabPane;
+    @FXML
     private Tab showEquationTabPane;
     @FXML
     private TextArea textArea;
@@ -82,8 +85,6 @@ public class Controller {
     private TextArea textAreaCheck;
     @FXML
     private TextArea equationTextArea;
-    @FXML
-    private  Menu menuReport;
     @FXML
     private LineChart<Number, Number> AlfaLineChart;
     @FXML
@@ -106,23 +107,15 @@ public class Controller {
             tableA.setVisible(false);
             tableB.setVisible(false);
             tableC.setVisible(false);
-            solutionTab.setDisable(true);
-            findTab.setDisable(true);
-            checkTab.setDisable(true);
-            graphicTab.setDisable(true);
-            showEquationTabPane.setDisable(true);
-            menuReport.setDisable(true);
-            drawclick = false;
+            solved = false;
+            valid = false;
+            report = false;
         }
         else {
             initListeners();
-            solutionTab.setDisable(true);
-            findTab.setDisable(true);
-            checkTab.setDisable(true);
-            graphicTab.setDisable(true);
-            showEquationTabPane.setDisable(true);
-            menuReport.setDisable(true);
-            drawclick = false;
+            solved = false;
+            valid = false;
+            report = false;
         }
     }
 
@@ -131,7 +124,7 @@ public class Controller {
     private static Stage mainStage;
     private static ArrayList<TableColumn> arrayTableAColumn, arrayTableBColumn, arrayTableCColumn;
     private ObservableList data;
-    private boolean extr, check = false, drawclick;
+    private boolean extr, check = false, drawclick, solved, valid, report;
     private FileChooser fileChooser;
     private File file;
     private FileChooser.ExtensionFilter extFilter;
@@ -143,6 +136,83 @@ public class Controller {
 
     private void initLoader() {
         setMainStage(mainStage);
+        solutionTab.setOnSelectionChanged(new EventHandler<Event>() {
+            @Override
+            public void handle(Event t) {
+                if (solutionTab.isSelected() && !solved) {
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setTitle("Ошибка");
+                    alert.setHeaderText("Необходимо ввести начальные данные\nнажав на кнопку \"Решить\"");
+                    alert.showAndWait();
+                    tabPane.getSelectionModel().select(enterTab);
+                }
+            }
+        });
+        checkTab.setOnSelectionChanged(new EventHandler<Event>() {
+            @Override
+            public void handle(Event t) {
+                if (checkTab.isSelected() && !valid) {
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    if(!solved){
+                        alert.setTitle("Ошибка");
+                        alert.setHeaderText("Необходимо ввести начальные данные\nнажав на кнопку \"Решить\"");
+                        alert.showAndWait();
+                        tabPane.getSelectionModel().select(enterTab);
+                    }
+                    else {
+                        alert.setTitle("Ошибка");
+                        alert.setHeaderText("Необходимо проверить достоверность нажав \nна кнопку \"Проверить достоверность решения \"");
+                        alert.showAndWait();
+                        tabPane.getSelectionModel().select(solutionTab);
+                    }
+                }
+            }
+        });
+        findTab.setOnSelectionChanged(new EventHandler<Event>() {
+            @Override
+            public void handle(Event t) {
+                if (findTab.isSelected() && !valid) {
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    if(!solved){
+                        alert.setTitle("Ошибка");
+                        alert.setHeaderText("Необходимо ввести начальные данные\nнажав на кнопку \"Решить\"");
+                        alert.showAndWait();
+                        tabPane.getSelectionModel().select(enterTab);
+                    }
+                    else {
+                        alert.setTitle("Ошибка");
+                        alert.setHeaderText("Необходимо проверить достоверность нажав \nна кнопку \"Проверить достоверность решения \"");
+                        alert.showAndWait();
+                        tabPane.getSelectionModel().select(solutionTab);
+                    }
+                }
+            }
+        });
+
+        graphicTab.setOnSelectionChanged(new EventHandler<Event>() {
+            @Override
+            public void handle(Event t) {
+                if (graphicTab.isSelected() && !solved) {
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setTitle("Ошибка");
+                    alert.setHeaderText("Необходимо ввести начальные данные\nнажав на кнопку \"Решить\"");
+                    alert.showAndWait();
+                    tabPane.getSelectionModel().select(enterTab);
+                }
+            }
+        });
+        showEquationTabPane.setOnSelectionChanged(new EventHandler<Event>() {
+            @Override
+            public void handle(Event t) {
+                if (showEquationTabPane.isSelected() && !drawclick) {
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setTitle("Ошибка");
+                    alert.setHeaderText("Необходимо сперва\nпостроить график!\nнажав на кнопку \"Построить\"");
+                    alert.showAndWait();
+                    tabPaneGraphic.getSelectionModel().select(buildGraphicTabPane);
+                }
+            }
+        });
     }
 
     public void setMainStage(Stage mainStage) {
@@ -295,6 +365,9 @@ public class Controller {
                 break;
             case "reportMenuItem":
                 try {
+                    if(!report){
+                        throw new MyMessageException("Необходимо выполнить все операции");
+                    }
                     fileChooser = new FileChooser();//Класс работы с диалогом выборки и сохранения
                     fileChooser.setTitle("Сохранение отчета");//Заголовок диалога
                     extFilter = new FileChooser.ExtensionFilter("PDF files (*.pdf)", "*.PDF", "*.pdf");//Расширение
@@ -358,10 +431,17 @@ public class Controller {
                                 + file.getAbsolutePath());
                         saveAlert.showAndWait();
                     }
-                }  catch (Exception ex) {
+                }
+                catch (MyMessageException ex) {
+                    Alert repAlert = new Alert(Alert.AlertType.INFORMATION);
+                    repAlert.setTitle("Ошибка");
+                    repAlert.setHeaderText(ex.getMessage());
+                    ex.printStackTrace();
+                    repAlert.showAndWait();
+                }
+                catch (Exception ex) {
                     Alert repErrorAlert = new Alert(Alert.AlertType.ERROR);
-                    repErrorAlert.setTitle("Ошибка сохранения отчета");
-                    repErrorAlert.setHeaderText(ex.getMessage());
+                    repErrorAlert.setHeaderText("Ошибка сохранения отчета");
                     repErrorAlert.showAndWait();
                 }
                 break;
@@ -470,9 +550,6 @@ public class Controller {
                 for(int i=0;i<method.getAnswer().size();i++) {
                     textArea.setText(textArea.getText()+method.getAnswer().get(i).toString());
                 }
-                solutionTab.setDisable(false);
-                AlfaLineChart.getData().clear();
-                BettaLineChart.getData().clear();
                 iterAlfa = new XYChart.Series();
                 iterBetta = new XYChart.Series();
                 iterAlfaList = method.getIteratAlfa();
@@ -505,7 +582,7 @@ public class Controller {
                         }
                     });
                 }
-                graphicTab.setDisable(false);
+                solved = true;
                 tabPane.getSelectionModel().select(solutionTab);
             } catch (EmptyException ex) {
                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -538,8 +615,6 @@ public class Controller {
             }
             break;
             case "buttonCheck":
-                checkTab.setDisable(false);
-                findTab.setDisable(false);
                 initDeltaComboBoxes();
                 val = new Validation();
                 val.OpornoCheck();
@@ -548,8 +623,8 @@ public class Controller {
                 textAreaCheck.clear();
                 textAreaCheck.setText(val.getListCheck().toString());
                 textAreaCheck.setEditable(false);
+                valid = true;
                 tabPane.getSelectionModel().select(checkTab);
-                //menuReport.setDisable(false);
                 break;
             case "buttonDraw":
                 try {
@@ -602,7 +677,6 @@ public class Controller {
                         }
                     });
                     drawclick = true;
-                    menuReport.setDisable(false);
                 }
                 catch (EmptyException ex) {
                     Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -619,16 +693,15 @@ public class Controller {
             case "buttonShowEquation":
                 try {
                     if(!drawclick){
-                        throw new MyMessageException("Сперва постройте график!");
+                        throw new MyMessageException("Необходимо сперва\nпостроить график!");
                     }
-                    showEquationTabPane.setDisable(false);
                     equationTextArea.setText(gr.getUst().toString());
                     tabPaneGraphic.getSelectionModel().select(showEquationTabPane);
+                    report = true;
                 }
                 catch (MyMessageException ex) {
                     Alert alert = new Alert(Alert.AlertType.INFORMATION);
                     alert.setTitle("Ошибка");
-                    alert.setContentText("Исследование устойчивости\n\n" + ex.getStackTrace().toString());
                     alert.setHeaderText(ex.getMessage());
                     ex.printStackTrace();
                     alert.showAndWait();
@@ -644,7 +717,10 @@ public class Controller {
         }
     }
 
+
+
     private void initListeners() {
+
         for (int i = 0; i < tableA.getColumns().size(); i++) {
             arrayTableAColumn.get(i).setCellFactory(TextFieldTableCell.forTableColumn());
             arrayTableAColumn.get(i).setOnEditCommit(
