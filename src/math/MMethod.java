@@ -184,7 +184,7 @@ public class MMethod
             betta[i] = alfabetta(CsII, newA, CjII[i], i);
             newA[m + 1][i] = betta[i];
         }
-        System.out.println(check);
+
 
         usl.append("Условия исходной задачи:\n");
         usl.append("Целевая функция:\nL = ");
@@ -369,7 +369,7 @@ public class MMethod
         BigFraction[] tetaMas = new BigFraction[m];
         TableM raschet = new TableM(alfa, betta, c, tetaMas, newA, k, r, Fs);
         ab.append(raschet.toString());
-        System.out.println(check);
+
 
         if (!check) {
             zvit1.append("\nЗадача не имеет решения из-за неограниченности целевой функции сверху!");
@@ -586,7 +586,6 @@ public class MMethod
             else{
                 c = true;
             }
-            System.out.println(j+"  !  "+c);
             if(c == false) break;
         }
         return c;
