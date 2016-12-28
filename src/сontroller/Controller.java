@@ -1,7 +1,7 @@
 package сontroller;
 import com.itextpdf.text.*;
-import com.itextpdf.text.Font;
 import com.itextpdf.text.pdf.BaseFont;
+import com.itextpdf.text.pdf.PdfWriter;
 import exceptions.EmptyException;
 import exceptions.IncorrectData;
 import exceptions.MyMessageException;
@@ -13,10 +13,13 @@ import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
+import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.XYChart;
+import javafx.scene.control.*;
+import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.image.WritableImage;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
@@ -25,18 +28,17 @@ import javafx.scene.transform.Affine;
 import javafx.scene.transform.Transform;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import javafx.fxml.FXML;
-import javafx.scene.control.*;
-import javafx.scene.control.cell.TextFieldTableCell;
 import main.Table;
 import math.*;
-import com.itextpdf.text.pdf.PdfWriter;
-import java.io.*;
-import java.util.ArrayList;
 import org.apache.commons.lang.math.NumberUtils;
 import parser.JaxbParser;
+
 import javax.imageio.ImageIO;
 import javax.xml.bind.JAXBException;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
+import java.util.ArrayList;
 
 public class Controller {
     @FXML
@@ -98,6 +100,8 @@ public class Controller {
     @FXML
     private AnchorPane paneGraph;
 
+    private boolean openCheckAndRestricTab = false;
+
     @FXML
     private void initialize() {
         if (check == false) {
@@ -142,7 +146,7 @@ public class Controller {
                 if (solutionTab.isSelected() && !solved) {
                     Alert alert = new Alert(Alert.AlertType.INFORMATION);
                     alert.setTitle("Ошибка");
-                    alert.setHeaderText("Необходимо ввести начальные данные\nнажав на кнопку \"Решить\"");
+                    alert.setHeaderText("Необходимо ввести начальные данные\nи нажать на кнопку \"Решить\"");
                     alert.showAndWait();
                     tabPane.getSelectionModel().select(enterTab);
                 }
@@ -155,15 +159,17 @@ public class Controller {
                     Alert alert = new Alert(Alert.AlertType.INFORMATION);
                     if(!solved){
                         alert.setTitle("Ошибка");
-                        alert.setHeaderText("Необходимо ввести начальные данные\nнажав на кнопку \"Решить\"");
+                        alert.setHeaderText("Необходимо ввести начальные данные\nи нажать на кнопку \"Решить\"");
                         alert.showAndWait();
                         tabPane.getSelectionModel().select(enterTab);
                     }
                     else {
-                        alert.setTitle("Ошибка");
-                        alert.setHeaderText("Необходимо проверить достоверность нажав \nна кнопку \"Проверить достоверность решения \"");
-                        alert.showAndWait();
-                        tabPane.getSelectionModel().select(solutionTab);
+                        if(!openCheckAndRestricTab) {
+                            alert.setTitle("Ошибка");
+                            alert.setHeaderText("Необходимо проверить достоверность нажав \nна кнопку \"Проверить достоверность решения \"");
+                            alert.showAndWait();
+                            tabPane.getSelectionModel().select(solutionTab);
+                        }
                     }
                 }
             }
@@ -171,31 +177,43 @@ public class Controller {
         findTab.setOnSelectionChanged(new EventHandler<Event>() {
             @Override
             public void handle(Event t) {
-                if (findTab.isSelected() && !valid) {
-                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                    if(!solved){
+                if(check){
+                    if(method.getB().length < 2){
+                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
                         alert.setTitle("Ошибка");
-                        alert.setHeaderText("Необходимо ввести начальные данные\nнажав на кнопку \"Решить\"");
-                        alert.showAndWait();
-                        tabPane.getSelectionModel().select(enterTab);
-                    }
-                    else {
-                        alert.setTitle("Ошибка");
-                        alert.setHeaderText("Необходимо проверить достоверность нажав \nна кнопку \"Проверить достоверность решения \"");
+                        alert.setHeaderText("Построение области не возможно");
+                        alert.setContentText("Построение области устойчивости не возможно для данной задачи, так как количесвто ограничений"+
+                                " задачи равно 1. Для построения области, необходимо как мининмум 2 ограничения!");
                         alert.showAndWait();
                         tabPane.getSelectionModel().select(solutionTab);
                     }
                 }
+                if (findTab.isSelected() && !valid) {
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    if(!solved){
+                        alert.setTitle("Ошибка");
+                        alert.setHeaderText("Необходимо ввести начальные данные\nи нажать на кнопку \"Решить\"");
+                        alert.showAndWait();
+                        tabPane.getSelectionModel().select(enterTab);
+                    }
+                    else {
+                        if(!openCheckAndRestricTab) {
+                            alert.setTitle("Ошибка");
+                            alert.setHeaderText("Необходимо проверить достоверность нажав \nна кнопку \"Проверить достоверность решения \"");
+                            alert.showAndWait();
+                            tabPane.getSelectionModel().select(solutionTab);
+                        }
+                    }
+                }
             }
         });
-
         graphicTab.setOnSelectionChanged(new EventHandler<Event>() {
             @Override
             public void handle(Event t) {
                 if (graphicTab.isSelected() && !solved) {
                     Alert alert = new Alert(Alert.AlertType.INFORMATION);
                     alert.setTitle("Ошибка");
-                    alert.setHeaderText("Необходимо ввести начальные данные\nнажав на кнопку \"Решить\"");
+                    alert.setHeaderText("Необходимо ввести начальные данные\nи нажать на кнопку \"Решить\"");
                     alert.showAndWait();
                     tabPane.getSelectionModel().select(enterTab);
                 }
@@ -366,7 +384,7 @@ public class Controller {
             case "reportMenuItem":
                 try {
                     if(!report){
-                        throw new MyMessageException("Необходимо выполнить все операции");
+                        throw new MyMessageException("Необходимо выполнить решение задачи для создания отчета!");
                     }
                     fileChooser = new FileChooser();//Класс работы с диалогом выборки и сохранения
                     fileChooser.setTitle("Сохранение отчета");//Заголовок диалога
@@ -375,18 +393,22 @@ public class Controller {
                     file = fileChooser.showSaveDialog(mainStage);//Указываем текущую сцену CodeNote.mainStage
                     if (file != null) { //Save
                         file.getParentFile().mkdirs();
-                        File graphAlpha = new File("Alfa.png");
-                        File graphBetta = new File("Betta.png");
-                        File graphStability = new File("Stability.png");
-                        WritableImage snapShotAlpha = AlfaLineChart.snapshot(null,null);
-                        ImageIO.write(SwingFXUtils.fromFXImage(snapShotAlpha, null), "png", graphAlpha);
-                        Image a = Image.getInstance("Alfa.png");
-                        WritableImage snapShotBeta = BettaLineChart.snapshot(null, null);
-                        ImageIO.write(SwingFXUtils.fromFXImage(snapShotBeta, null), "png", graphBetta);
-                        Image b = Image.getInstance("Betta.png");
-                        WritableImage snapShotStability = graph.snapshot(null,null);
-                        ImageIO.write(SwingFXUtils.fromFXImage(snapShotStability, null), "png", graphStability);
-                        Image c = Image.getInstance("Stability.png");
+                        Image a = null, b = null, c =null;
+                        File graphAlpha = null, graphBetta= null, graphStability = null;
+                        if(method.isSolve()) {
+                            graphAlpha = new File("Alfa.png");
+                            graphBetta = new File("Betta.png");
+                            graphStability = new File("Stability.png");
+                            WritableImage snapShotAlpha = AlfaLineChart.snapshot(null, null);
+                            ImageIO.write(SwingFXUtils.fromFXImage(snapShotAlpha, null), "png", graphAlpha);
+                            a = Image.getInstance("Alfa.png");
+                            WritableImage snapShotBeta = BettaLineChart.snapshot(null, null);
+                            ImageIO.write(SwingFXUtils.fromFXImage(snapShotBeta, null), "png", graphBetta);
+                            b = Image.getInstance("Betta.png");
+                            WritableImage snapShotStability = graph.snapshot(null, null);
+                            ImageIO.write(SwingFXUtils.fromFXImage(snapShotStability, null), "png", graphStability);
+                            c = Image.getInstance("Stability.png");
+                        }
                         OutputStream files = new FileOutputStream(file);
                         Document document = new Document();
                         PdfWriter writer = PdfWriter.getInstance(document,files);
@@ -394,35 +416,58 @@ public class Controller {
                         document.open();
                         StringBuilder sb = new StringBuilder();
                         sb.append(method.getZvit1());
-                        c.scaleAbsolute(500f,400f);
-                        a.setAlignment(Element.ALIGN_MIDDLE);
-                        b.setAlignment(Element.ALIGN_MIDDLE);
-                        c.setAlignment(Element.ALIGN_MIDDLE);
-                        Paragraph first = new Paragraph("Условия исходной задачи\n", new Font(times,14));
+                        if(c!=null) {
+                            c.setAlignment(Element.ALIGN_MIDDLE);
+                        }
+                        if(a!=null)
+                            a.setAlignment(Element.ALIGN_MIDDLE);
+
+                        if(b!=null)
+                            b.setAlignment(Element.ALIGN_MIDDLE);
+
+                        Paragraph first = new Paragraph("Условия исходной задачи\n", new Font(times,24));
                         first.setAlignment(Element.ALIGN_CENTER);
-                        Paragraph second = new Paragraph("\nПроверка достоверности\n", new Font(times,14));
-                        second.setAlignment(Element.ALIGN_CENTER);
-                        Paragraph third = new Paragraph("\nИсследование устойчивости\n\n", new Font(times,14));
-                        third.setAlignment(Element.ALIGN_CENTER);
+                        Paragraph second = null, third = null;
+                        if(method.isSolve()) {
+                            third = new Paragraph("\nИсследование устойчивости\n\n", new Font(times, 24));
+                            third.setAlignment(Element.ALIGN_CENTER);
+                        }
                         document.add(first);
                         document.add(new Paragraph(sb.toString(), new Font(times,10)));
                         sb.setLength(0);
-                        sb.append(val.getValidStr());
-                        document.add(second);
-                        document.add(new Paragraph(sb.toString(), new Font(times,10)));
-                        sb.setLength(0);
-                        sb.append(gr.getUst());
-                        document.add(third);
-                        document.add(new Paragraph(sb.toString(), new Font(times,10)));
-                        document.add(c);
-                        document.add(new Paragraph("\n\n\n\n\n\n\n"));
-                        a.scaleAbsolute(500f,250f);
-                        b.scaleAbsolute(500f,250f);
-                        document.add(a);
-                        document.add(b);
-                        graphAlpha.delete();
-                        graphBetta.delete();
-                        graphStability.delete();
+                        if(val != null) {
+                            second = new Paragraph("\nПроверка достоверности\n", new Font(times, 24));
+                            second.setAlignment(Element.ALIGN_CENTER);
+                            sb.append(val.getValidStr());
+                            document.add(second);
+                            document.add(new Paragraph(sb.toString()+"\n\n", new Font(times, 10)));
+                        }
+                        if(third != null && gr != null) {
+                            third = new Paragraph("\nИсследование устойчивости\n\n", new Font(times, 24));
+                            third.setAlignment(Element.ALIGN_CENTER);
+                            c.scaleAbsolute(500f, 250f);
+                            sb.setLength(0);
+                            sb.append(gr.getUst());
+                            document.add(third);
+                            document.add(new Paragraph("\n\n", new Font(times, 14)));
+                            document.add(c);
+                            document.add(new Paragraph("\n\n", new Font(times, 14)));
+                            document.add(new Paragraph(sb.toString(), new Font(times, 10)));
+                        }
+                        if(a != null) {
+                            Paragraph graphLinear = new Paragraph("\n\nГрафики изменения линейной формы по итерациям", new Font(times, 24));
+                            graphLinear.setAlignment(Element.ALIGN_CENTER);
+                            a.scaleAbsolute(500f, 250f);
+                            b.scaleAbsolute(500f, 250f);
+                            document.add(graphLinear);
+                            document.add(a);
+                            document.add(b);
+                        }
+                        if(graphAlpha!= null) {
+                            graphAlpha.delete();
+                            graphBetta.delete();
+                            graphStability.delete();
+                        }
                         document.close();
                         Alert saveAlert = new Alert(Alert.AlertType.INFORMATION);
                         saveAlert.setTitle("Отчет о сохранении");
@@ -435,13 +480,16 @@ public class Controller {
                 catch (MyMessageException ex) {
                     Alert repAlert = new Alert(Alert.AlertType.INFORMATION);
                     repAlert.setTitle("Ошибка");
-                    repAlert.setHeaderText(ex.getMessage());
+                    repAlert.setHeaderText("Ошибка сохранения отчета");
+                    repAlert.setContentText(ex.getMessage());
                     ex.printStackTrace();
                     repAlert.showAndWait();
                 }
                 catch (Exception ex) {
                     Alert repErrorAlert = new Alert(Alert.AlertType.ERROR);
                     repErrorAlert.setHeaderText("Ошибка сохранения отчета");
+                    repErrorAlert.setContentText("Произошла ошибка при сохранении отчета, возможно данный файл открыт в другой программе," +
+                            " для того чтобы сохранить отчет в данный файл, закройте его во всех остальных программах!");
                     repErrorAlert.showAndWait();
                 }
                 break;
@@ -547,9 +595,29 @@ public class Controller {
                         Table.getTableB(tableB, tableB.getItems().size()), extr);
                 method.run();
                 textArea.clear();
+                openCheckAndRestricTab = false;
+                valid = false;
+                if(textAreaCheck.getText()!=null)
+                    textAreaCheck.clear();
+                if(textFieldRestrictions.getText() != null)
+                    textFieldRestrictions.clear();
+                if(equationTextArea.getText() != null){
+                    equationTextArea.clear();
+                }
+                if(AlfaLineChart.getData() != null) {
+                    AlfaLineChart.getData().clear();
+                    BettaLineChart.getData().clear();
+                }
+                drawclick = false;
+                paneGraph.getChildren().clear();
+                solved = true;
+                report = true;
                 for(int i=0;i<method.getAnswer().size();i++) {
                     textArea.setText(textArea.getText()+method.getAnswer().get(i).toString());
                 }
+                tabPane.getSelectionModel().select(solutionTab);
+                if(!method.isSolve())
+                    break;
                 iterAlfa = new XYChart.Series();
                 iterBetta = new XYChart.Series();
                 iterAlfaList = method.getIteratAlfa();
@@ -582,8 +650,6 @@ public class Controller {
                         }
                     });
                 }
-                solved = true;
-                tabPane.getSelectionModel().select(solutionTab);
             } catch (EmptyException ex) {
                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
                 alert.setTitle("Ошибка");
@@ -615,16 +681,25 @@ public class Controller {
             }
             break;
             case "buttonCheck":
-                initDeltaComboBoxes();
-                val = new Validation();
-                val.OpornoCheck();
-                val.DopustimostCheck();
-                val.OptimalityCheck();
-                textAreaCheck.clear();
-                textAreaCheck.setText(val.getListCheck().toString());
-                textAreaCheck.setEditable(false);
-                valid = true;
-                tabPane.getSelectionModel().select(checkTab);
+                if(method.isSolve()) {
+                    initDeltaComboBoxes();
+                    val = new Validation();
+                    val.OpornoCheck();
+                    val.DopustimostCheck();
+                    val.OptimalityCheck();
+                    textAreaCheck.clear();
+                    textAreaCheck.setText(val.getListCheck().toString());
+                    textAreaCheck.setEditable(false);
+                    valid = true;
+                    openCheckAndRestricTab = true;
+                    tabPane.getSelectionModel().select(checkTab);
+                }else{
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setTitle("Ошибка");
+                    alert.setHeaderText("Ошибка при попытке проверки достоверности решения");
+                    alert.setContentText("Невозможно проверить достоверность результатов, исходная задача не имеет решения");
+                    alert.showAndWait();
+                }
                 break;
             case "buttonDraw":
                 try {
@@ -642,10 +717,8 @@ public class Controller {
                         arrayErrors.add(firstComponentLabel.getText() + " и " + secondComponentLabel.getText() + " не должны совпадать ");
                         throw new IncorrectData(arrayErrors);
                     }
-                    if(paneGraph.getChildren().size()!=0){
-                        paneGraph.getChildren().remove(graph);
-                        graph = new Canvas(Width, Height);
-                    }
+                    paneGraph.getChildren().remove(graph);
+                    graph = new Canvas(Width, Height);
                     gr = new Graphics(Integer.parseInt(comboBoxDeltaB1.getSelectionModel().getSelectedItem().toString()),Integer.parseInt(comboBoxDeltaB2.getSelectionModel().getSelectedItem().toString()));
                     gr.DoIt();
                     calcDataToCanvas();
@@ -654,7 +727,7 @@ public class Controller {
                     graph.setWidth(Width);
                     graph.setHeight(Height);
                     GraphicsContext gc = graph.getGraphicsContext2D();
-                    drawShapes(gc);
+                    drawShapes(gc, Integer.parseInt(comboBoxDeltaB1.getSelectionModel().getSelectedItem().toString()),Integer.parseInt(comboBoxDeltaB2.getSelectionModel().getSelectedItem().toString()));
                     paneGraph.getChildren().add(graph);
                     paneGraph.getScene().widthProperty().addListener(new ChangeListener<Number>() {
                         @Override public void changed(ObservableValue<? extends Number> observableValue, Number oldSceneWidth, Number newSceneWidth) {
@@ -662,7 +735,7 @@ public class Controller {
                             Width = newSceneWidth.doubleValue();
                             graph = new Canvas(Width, Height);
                             GraphicsContext gc = graph.getGraphicsContext2D();
-                            drawShapes(gc);
+                            drawShapes(gc, Integer.parseInt(comboBoxDeltaB1.getSelectionModel().getSelectedItem().toString()),Integer.parseInt(comboBoxDeltaB2.getSelectionModel().getSelectedItem().toString()));
                             paneGraph.getChildren().add(graph);
                         }
                     });
@@ -672,7 +745,7 @@ public class Controller {
                             Height = newSceneHeight.doubleValue();
                             graph = new Canvas(Width, Height);
                             GraphicsContext gc = graph.getGraphicsContext2D();
-                            drawShapes(gc);
+                            drawShapes(gc, Integer.parseInt(comboBoxDeltaB1.getSelectionModel().getSelectedItem().toString()),Integer.parseInt(comboBoxDeltaB2.getSelectionModel().getSelectedItem().toString()));
                             paneGraph.getChildren().add(graph);
                         }
                     });
@@ -711,7 +784,9 @@ public class Controller {
     }
 
     private void initDeltaComboBoxes() {
-        for (int i = 0; i < Integer.parseInt(textFieldRestrictions.getText()); i++) {
+        comboBoxDeltaB1.getItems().clear();
+        comboBoxDeltaB2.getItems().clear();
+        for (int i = 0; i < method.getB().length; i++) {
             comboBoxDeltaB1.getItems().add(i+1);
             comboBoxDeltaB2.getItems().add(i+1);
         }
@@ -759,7 +834,7 @@ public class Controller {
         );
     }
 
-    private void drawShapes(GraphicsContext gc) {
+    private void drawShapes(GraphicsContext gc, int indexB1, int indexB2) {
         gc.setStroke(Color.BLUE);
         gc.setLineWidth(1.0);//толщина линий
         double stepX = Double.valueOf(maxX / ((Width/2)/scale)).intValue();
@@ -818,8 +893,8 @@ public class Controller {
 
         gc.setLineWidth(1);//толщина Осей
         drawArrow(gc, 0, Height/2, Width-10, Height/2);//ОсьХ startX, startY, endX, endY
-        gc.fillText("y",((Width-10)/2),-((Height-11)/2));
-        gc.fillText("x",Width-10,0);
+        gc.fillText("Δb"+indexB2,((Width-10)/2)-25,-((Height-11)/2)+20);
+        gc.fillText("Δb"+indexB1,Width-30, 20);
         gc.setFont(new javafx.scene.text.Font("Arial",8)); //Шрифт и размер. Нужна какая-та зависимость размера шрифта от масщтаба scale
         int step, k=0;
         if(40%scale==0) {

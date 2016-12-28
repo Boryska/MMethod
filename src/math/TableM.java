@@ -240,7 +240,7 @@ public class TableM {
                     }
                 }
                 if(wr){
-                mas.append("}≠Ø \n");
+                    mas.append("}≠Ø \n");
                 }
                 else{
                     mas.append("}= Ø \n");

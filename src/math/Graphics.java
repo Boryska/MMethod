@@ -1,9 +1,7 @@
 package math;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
+import java.util.*;
 
 public class Graphics {
     private int firstdbetta;
@@ -45,8 +43,64 @@ public class Graphics {
 
     public void DoIt (){
         OblastUstoichevosti();
+        filterPoints();
         findMinAndMaxValue();
+        if(listPoint.size()<3){
+            Point point1 = new Point(maxX, maxY), point2 = new Point(maxX, maxY.multiply(-1)),
+                    point3 = new Point(maxX.multiply(-1), maxY), point4 = new Point(maxX.multiply(-1), maxY.multiply(-1));
+            listPoint.add(point1);
+            listPoint.add(point2);
+            listPoint.add(point3);
+            listPoint.add(point4);
+            listPoint.add(new Point(maxX, startB[seconddbetta -1].multiply(-1)));
+            listPoint.add(new Point(startB[firstdbetta -1].multiply(-1), maxY));
+            int length = listPoint.size();
+            for(int i=0;i<length;i++){
+                BigFraction startX = listPoint.get(i).getX(), startY = listPoint.get(i).getY(), endX = listPoint.get(i).getX(), endY = maxY;
+                Point start = new Point(startX, startY), end = new Point(endX, endY);
+                listPoint.add(start);
+                listPoint.add(end);
+            }
+            for(int i=0;i<obrAFs.length;i++){
+                BigFraction startX = null, startY = null, endX = null, endY = null;
+                if(obrAFs[i][firstdbetta-1].signum() == 0){
+                    startX = maxX.multiply(new BigFraction(-1));
+                    endX = maxX;
+                    startY = Ddb[i][2].divide(obrAFs[i][seconddbetta -1]);
+                    endY = Ddb[i][2].divide(obrAFs[i][seconddbetta -1]);
+                }else if (obrAFs[i][seconddbetta - 1].signum() == 0) {
+                    startX = Ddb[i][2].divide(obrAFs[i][firstdbetta -1]);
+                    endX = Ddb[i][2].divide(obrAFs[i][firstdbetta -1]);
+                    startY = maxY.multiply(new BigFraction(-1));
+                    endY = maxY;
+                }else {
+                    startX = maxX.multiply(new BigFraction(-1));
+                    endX = maxX;
+                    startY = (Ddb[i][2].subtract(obrAFs[i][firstdbetta-1]
+                            .multiply(startX))).divide(obrAFs[i][seconddbetta - 1]);
+                    endY = (Ddb[i][2].subtract(obrAFs[i][firstdbetta-1]
+                            .multiply(endX))).divide(obrAFs[i][seconddbetta - 1]);
+                }
+                Point start = new Point(startX, startY), end = new Point(endX, endY);
+                listPoint.add(start);
+                listPoint.add(end);
+            }
+            filterPoints();
+        }
         sortPoints();
+        ust.append("DΔb ={");
+        for(int i=0; i < obrAFs.length; i++){
+            ust.append((new BigDecimal(Ddb[i][0].doubleValue()).setScale(7,BigDecimal.ROUND_FLOOR) + "Δb" + firstdbetta + " + "));
+            ust.append((new BigDecimal(Ddb[i][1].doubleValue()).setScale(7,BigDecimal.ROUND_FLOOR) + "Δb"+seconddbetta+" ≧ "));
+            ust.append((new BigDecimal(Ddb[i][2].doubleValue()).setScale(7,BigDecimal.ROUND_FLOOR)+";\n"));
+        }
+        ust.append("}\n\nDb = {" + "Δb"+firstdbetta+" ≧ " + (startB[firstdbetta-1].doubleValue()*-1)+";  Δb"+seconddbetta+" ≧ " + (startB[seconddbetta-1].doubleValue()*-1)+"}\n" );
+        ust.append("\n\nОбласть устойчивости:\n Db∩DΔb = {");
+
+        for (Point x : listPoint){
+            ust.append("("+x.getX().doubleValue() +";  "+ x.getY().doubleValue()+")\n");
+        }
+        ust.append("}\n\nВ данной области найденный план сохраняет свою оптимальность.");
     }
 
     private void sortPoints(){
@@ -65,22 +119,18 @@ public class Graphics {
     }
 
     public void OblastUstoichevosti(){
-        ust.append("DΔb ={");
         Ddb = new BigFraction[obrAFs.length+2][3];
         for (int i = 0; i < Ddb.length; i++) {
             for (int j = 0; j < 3; j++) {
                 if(i <Ddb.length-2){
                     if(j == 2){
                     Ddb[i][j] = MV(obrAFs,startB)[i].multiply(new BigFraction(-1));
-                    ust.append((new BigDecimal(Ddb[i][j].doubleValue()).setScale(7,BigDecimal.ROUND_FLOOR)+";\n"));
                 }
                 else if(j == 0) {
                     Ddb[i][j] = obrAFs[i][firstdbetta-1];
-                        ust.append((new BigDecimal(Ddb[i][j].doubleValue()).setScale(7,BigDecimal.ROUND_FLOOR) + "Δb" + firstdbetta + " + "));
                 }
             else if( j == 1){
                     Ddb[i][j] = obrAFs[i][seconddbetta-1];
-                        ust.append((new BigDecimal(Ddb[i][j].doubleValue()).setScale(7,BigDecimal.ROUND_FLOOR) + "Δb"+seconddbetta+" ≧ "));
                 }
             }
                 else if(i == Ddb.length-2){
@@ -107,8 +157,6 @@ public class Graphics {
                 }
             }
         }
-        ust.append("}\n\nDb = {" + "Δb"+firstdbetta+" ≧ " + (startB[firstdbetta-1].doubleValue()*-1)+";  Δb"+seconddbetta+" ≧ " + (startB[seconddbetta-1].doubleValue()*-1)+"}\n" );
-
         for (int i = 0; i < Ddb.length-1; i++) {
             for (int j = i+1; j < Ddb.length; j++) {
                 if(checktochek(Gaus(Ddb[i].clone() , Ddb[j].clone()),Ddb)){
@@ -116,12 +164,6 @@ public class Graphics {
                 }
             }
         }
-        ust.append("Область устойчивости:\n Db∩DΔb = {");
-
-        for (Point x : listPoint){
-            ust.append("("+x.getX().doubleValue() +";  "+ x.getY().doubleValue()+")\n");
-        }
-        ust.append("}\n В данной области найденный план сохраняет свою оптимальность.");
     }
     public boolean checktochek(Point tochka ,  BigFraction[][] uslovia){
         boolean cheking = true;
@@ -130,7 +172,6 @@ public class Graphics {
                 cheking =false;
                 break;
             }
-
         }
         return cheking;
     }
@@ -182,5 +223,41 @@ public class Graphics {
             result[i] = sum;
         }
         return result;
+    }
+
+    private void filterPoints(){
+        LinkedList<Point> temp = new LinkedList<>();
+        for (Point point : listPoint){
+            for(int i=0;i<obrAFs.length;i++){
+                if(MMethod.compareTwoFraction(obrAFs[i][firstdbetta-1].multiply(point.getX())
+                        .add(obrAFs[i][seconddbetta-1].multiply(point.getY())), Ddb[i][2]) < 0
+                        || point.getX().compareTo(startB[firstdbetta -1].multiply(new BigFraction(-1))) < 0
+                        || point.getY().compareTo(startB[seconddbetta -1].multiply(new BigFraction(-1))) < 0){
+                    break;
+                }
+                if(i == obrAFs.length-1) {
+                    if(temp.size()==0){
+                        temp.add(point);
+                    }
+                    for(int j=0;j<temp.size();j++){
+                        if(point.getX().compareTo(temp.get(j).getX()) == 0 && point.getY().compareTo(temp.get(j).getY()) == 0){
+                            break;
+                        }
+                        if(j==temp.size()-1){
+                            temp.add(point);
+                        }
+                    }
+                }
+            }
+        }
+        for(int i=0;i<temp.size();i++){
+            for(int j=0;j<temp.size();j++){
+                if(i!=j && ( temp.get(i).getX().compareTo(temp.get(j).getX()) == 0 && temp.get(i).getY().compareTo(temp.get(j).getY()) == 0 )){
+                    temp.remove(j);
+                }
+            }
+        }
+        listPoint.clear();
+        listPoint.addAll(temp);
     }
 }
