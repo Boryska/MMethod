@@ -32,7 +32,6 @@ import main.Table;
 import math.*;
 import org.apache.commons.lang.math.NumberUtils;
 import parser.JaxbParser;
-
 import javax.imageio.ImageIO;
 import javax.xml.bind.JAXBException;
 import java.io.File;
@@ -529,6 +528,12 @@ public class Controller {
                         }
                         throw new IncorrectData(arrayErrors);
                     }
+                    else if(Integer.parseInt(textFieldVariables.getText()) < Integer.parseInt(textFieldRestrictions.getText())){
+                        throw new MyMessageException("Количество ограничений доблжно быть меньше\nлибо равно количеству переменных");
+                    }
+                    else if(Integer.parseInt(textFieldVariables.getText()) < 1 || Integer.parseInt(textFieldRestrictions.getText()) < 1){
+                        throw new MyMessageException("Количество ограничений и переменных\nдоблжно быть больше 0");
+                    }
                     arrayTableAColumn = new ArrayList<>();
                     arrayTableBColumn = new ArrayList<>();
                     arrayTableCColumn = new ArrayList<>();
@@ -546,15 +551,24 @@ public class Controller {
                     Table.createTable(tableB, 1, Integer.parseInt(textFieldRestrictions.getText()), "B");
                     Table.createTable(tableC, Integer.parseInt(textFieldVariables.getText()), 1, "C");
                     initialize();
-                } catch (EmptyException ex) {
+                }
+                catch (EmptyException ex) {
                     Alert alert = new Alert(Alert.AlertType.INFORMATION);
                     alert.setTitle("Ошибка");
                     alert.setHeaderText(ex.getMessageFields());
                     alert.showAndWait();
-                } catch (IncorrectData ex) {
+                }
+                catch (IncorrectData ex) {
                     Alert alert = new Alert(Alert.AlertType.INFORMATION);
                     alert.setTitle("Ошибка");
                     alert.setHeaderText(ex.getMessageFields());
+                    alert.showAndWait();
+                }
+                catch (MyMessageException ex) {
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setTitle("Ошибка");
+                    alert.setHeaderText(ex.getMessage());
+                    ex.printStackTrace();
                     alert.showAndWait();
                 }
                 break;
@@ -597,10 +611,15 @@ public class Controller {
                 textArea.clear();
                 openCheckAndRestricTab = false;
                 valid = false;
-                if(textAreaCheck.getText()!=null)
+                if(textAreaCheck.getText()!=null){
                     textAreaCheck.clear();
-                if(textFieldRestrictions.getText() != null)
+                }
+                if(textFieldRestrictions.getText() != null){
                     textFieldRestrictions.clear();
+                }
+                if(textFieldVariables.getText() != null){
+                    textFieldVariables.clear();
+                }
                 if(equationTextArea.getText() != null){
                     equationTextArea.clear();
                 }
@@ -616,8 +635,9 @@ public class Controller {
                     textArea.setText(textArea.getText()+method.getAnswer().get(i).toString());
                 }
                 tabPane.getSelectionModel().select(solutionTab);
-                if(!method.isSolve())
+                if(!method.isSolve()){
                     break;
+                }
                 iterAlfa = new XYChart.Series();
                 iterBetta = new XYChart.Series();
                 iterAlfaList = method.getIteratAlfa();
@@ -791,8 +811,6 @@ public class Controller {
             comboBoxDeltaB2.getItems().add(i+1);
         }
     }
-
-
 
     private void initListeners() {
 
