@@ -2,6 +2,7 @@ package сontroller;
 import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.BaseFont;
 import com.itextpdf.text.pdf.PdfWriter;
+import com.itextpdf.text.pdf.parser.Matrix;
 import exceptions.EmptyException;
 import exceptions.IncorrectData;
 import exceptions.MyMessageException;
@@ -32,11 +33,14 @@ import main.Table;
 import math.*;
 import org.apache.commons.lang.math.NumberUtils;
 import parser.JaxbParser;
+
 import javax.imageio.ImageIO;
 import javax.xml.bind.JAXBException;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
+import java.math.BigDecimal;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 
 public class Controller {
@@ -91,15 +95,19 @@ public class Controller {
     @FXML
     private LineChart<Number, Number> BettaLineChart;
     @FXML
-    private ComboBox comboBoxDeltaB1;
+    private ComboBox comboBoxDeltaB1, comboBoxDeltaB1_m1;
     @FXML
     private ComboBox comboBoxDeltaB2;
     @FXML
     private Canvas graph;
     @FXML
     private AnchorPane paneGraph;
+    @FXML
+    private Button buttonDraw, buttonDraw_m1, buttonShowEquation_m1, buttonShowEquation;
 
     private boolean openCheckAndRestricTab = false;
+
+    private     StringBuilder answToEq = new StringBuilder();
 
     @FXML
     private void initialize() {
@@ -327,7 +335,7 @@ public class Controller {
                     if (file != null) { //Save
                         MMethod myMethod = new MMethod(Table.getTableC(tableC, tableC.getColumns().size()),
                                 Table.getTableA(tableA, tableA.getColumns().size(), tableA.getItems().size()),
-                                Table.getTableB(tableB, tableB.getItems().size()), !extr);
+                                Table.getTableB(tableB, tableB.getItems().size()), extr);
 
                         jaxbParser = new JaxbParser();
                         jaxbParser.saveObject(file,myMethod);
@@ -342,22 +350,18 @@ public class Controller {
                 catch (MyMessageException ex) {
                     Alert alert = new Alert(Alert.AlertType.INFORMATION);
                     alert.setTitle("Ошибка");
-                    alert.setContentText(ex.getStackTrace().toString());
                     alert.setHeaderText(ex.getMessage());
                     alert.showAndWait();
                 }
                 catch (IncorrectData ex) {
                     Alert alert = new Alert(Alert.AlertType.INFORMATION);
                     alert.setTitle("Ошибка");
-                    alert.setContentText(ex.getStackTrace().toString());
                     alert.setHeaderText(ex.getMessageTables());
-                    ex.printStackTrace();
                     alert.showAndWait();
                 }
                 catch (EmptyException ex) {
                     Alert alert = new Alert(Alert.AlertType.INFORMATION);
                     alert.setTitle("Ошибка");
-                    alert.setContentText(ex.getStackTrace().toString());
                     alert.setHeaderText(ex.getMessageTablesAndFields());
                     alert.showAndWait();
                 }
@@ -481,7 +485,6 @@ public class Controller {
                     repAlert.setTitle("Ошибка");
                     repAlert.setHeaderText("Ошибка сохранения отчета");
                     repAlert.setContentText(ex.getMessage());
-                    ex.printStackTrace();
                     repAlert.showAndWait();
                 }
                 catch (Exception ex) {
@@ -529,10 +532,10 @@ public class Controller {
                         throw new IncorrectData(arrayErrors);
                     }
                     else if(Integer.parseInt(textFieldVariables.getText()) < Integer.parseInt(textFieldRestrictions.getText())){
-                        throw new MyMessageException("Количество ограничений доблжно быть меньше\nлибо равно количеству переменных");
+                        throw new MyMessageException("Количество ограничений должно быть меньше\nлибо равно количеству переменных");
                     }
                     else if(Integer.parseInt(textFieldVariables.getText()) < 1 || Integer.parseInt(textFieldRestrictions.getText()) < 1){
-                        throw new MyMessageException("Количество ограничений и переменных\nдоблжно быть больше 0");
+                        throw new MyMessageException("Количество ограничений и переменных\nдолжно быть больше 0");
                     }
                     arrayTableAColumn = new ArrayList<>();
                     arrayTableBColumn = new ArrayList<>();
@@ -551,24 +554,20 @@ public class Controller {
                     Table.createTable(tableB, 1, Integer.parseInt(textFieldRestrictions.getText()), "B");
                     Table.createTable(tableC, Integer.parseInt(textFieldVariables.getText()), 1, "C");
                     initialize();
-                }
-                catch (EmptyException ex) {
-                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                    alert.setTitle("Ошибка");
-                    alert.setHeaderText(ex.getMessageFields());
-                    alert.showAndWait();
-                }
-                catch (IncorrectData ex) {
-                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                    alert.setTitle("Ошибка");
-                    alert.setHeaderText(ex.getMessageFields());
-                    alert.showAndWait();
-                }
-                catch (MyMessageException ex) {
+                } catch (MyMessageException ex) {
                     Alert alert = new Alert(Alert.AlertType.INFORMATION);
                     alert.setTitle("Ошибка");
                     alert.setHeaderText(ex.getMessage());
-                    ex.printStackTrace();
+                    alert.showAndWait();
+                } catch (EmptyException ex) {
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setTitle("Ошибка");
+                    alert.setHeaderText(ex.getMessageFields());
+                    alert.showAndWait();
+                } catch (IncorrectData ex) {
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setTitle("Ошибка");
+                    alert.setHeaderText(ex.getMessageFields());
                     alert.showAndWait();
                 }
                 break;
@@ -635,9 +634,8 @@ public class Controller {
                     textArea.setText(textArea.getText()+method.getAnswer().get(i).toString());
                 }
                 tabPane.getSelectionModel().select(solutionTab);
-                if(!method.isSolve()){
+                if(!method.isSolve())
                     break;
-                }
                 iterAlfa = new XYChart.Series();
                 iterBetta = new XYChart.Series();
                 iterAlfaList = method.getIteratAlfa();
@@ -673,34 +671,45 @@ public class Controller {
             } catch (EmptyException ex) {
                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
                 alert.setTitle("Ошибка");
-                alert.setContentText(ex.getStackTrace().toString());
-                ex.printStackTrace();
                 alert.setHeaderText(ex.getMessageTables());
                 alert.showAndWait();
             } catch (IncorrectData ex) {
                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
                 alert.setTitle("Ошибка");
-                alert.setContentText(ex.getStackTrace().toString());
                 alert.setHeaderText(ex.getMessageTables());
-                ex.printStackTrace();
                 alert.showAndWait();
             } catch (MyMessageException ex) {
                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
                 alert.setTitle("Ошибка");
-                alert.setContentText(ex.getStackTrace().toString());
                 alert.setHeaderText(ex.getMessage());
-                ex.printStackTrace();
                 alert.showAndWait();
             } catch (Exception ex) {
                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
                 alert.setTitle("Ошибка");
-                ex.printStackTrace();
                 alert.setHeaderText(ex.getMessage());
-                ex.printStackTrace();
                 alert.showAndWait();
             }
             break;
             case "buttonCheck":
+                if(method.getB().length == 1){
+                    comboBoxDeltaB1_m1.setDisable(false);
+                    buttonDraw_m1.setDisable(false);
+                    buttonShowEquation_m1.setDisable(false);
+
+                    comboBoxDeltaB1.setDisable(true);
+                    comboBoxDeltaB2.setDisable(true);
+                    buttonDraw.setDisable(true);
+                    buttonShowEquation.setDisable(true);
+                }else{
+                    comboBoxDeltaB1.setDisable(false);
+                    comboBoxDeltaB2.setDisable(false);
+                    buttonDraw.setDisable(false);
+                    buttonShowEquation.setDisable(false);
+
+                    comboBoxDeltaB1_m1.setDisable(true);
+                    buttonDraw_m1.setDisable(true);
+                    buttonShowEquation_m1.setDisable(true);
+                }
                 if(method.isSolve()) {
                     initDeltaComboBoxes();
                     val = new Validation();
@@ -796,7 +805,55 @@ public class Controller {
                     Alert alert = new Alert(Alert.AlertType.INFORMATION);
                     alert.setTitle("Ошибка");
                     alert.setHeaderText(ex.getMessage());
-                    ex.printStackTrace();
+                    alert.showAndWait();
+                }
+                break;
+            case "buttonDraw_m1":
+                    paneGraph.getChildren().remove(graph);
+                    graph = new Canvas(Width, Height);
+                    Width = paneGraph.getWidth();
+                    Height = paneGraph.getHeight();
+                    graph.setWidth(Width);
+                    graph.setHeight(Height);
+                    GraphicsContext gc = graph.getGraphicsContext2D();
+                    drawShapesM1(gc, Integer.parseInt(comboBoxDeltaB1_m1.getSelectionModel().getSelectedItem().toString()));
+                    paneGraph.getChildren().add(graph);
+                    paneGraph.getScene().widthProperty().addListener(new ChangeListener<Number>() {
+                        @Override public void changed(ObservableValue<? extends Number> observableValue, Number oldSceneWidth, Number newSceneWidth) {
+                            paneGraph.getChildren().remove(graph);
+                            Width = newSceneWidth.doubleValue();
+                            graph = new Canvas(Width, Height);
+                            GraphicsContext gc = graph.getGraphicsContext2D();
+                            drawShapesM1(gc, Integer.parseInt(comboBoxDeltaB1_m1.getSelectionModel().getSelectedItem().toString()));
+                            paneGraph.getChildren().add(graph);
+                        }
+                    });
+                    paneGraph.getScene().heightProperty().addListener(new ChangeListener<Number>() {
+                        @Override public void changed(ObservableValue<? extends Number> observableValue, Number oldSceneHeight, Number newSceneHeight) {
+                            paneGraph.getChildren().remove(graph);
+                            Height = newSceneHeight.doubleValue();
+                            graph = new Canvas(Width, Height);
+                            GraphicsContext gc = graph.getGraphicsContext2D();
+                            drawShapesM1(gc, Integer.parseInt(comboBoxDeltaB1_m1.getSelectionModel().getSelectedItem().toString()));
+                            paneGraph.getChildren().add(graph);
+                        }
+                    });
+                    drawclick = true;
+
+                break;
+            case "buttonShowEquation_m1":
+                try {
+                    if(!drawclick){
+                        throw new MyMessageException("Необходимо сперва\nпостроить график!");
+                    }
+                    equationTextArea.setText(answToEq.toString());
+                    tabPaneGraphic.getSelectionModel().select(showEquationTabPane);
+                    report = true;
+                }
+                catch (MyMessageException ex) {
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setTitle("Ошибка");
+                    alert.setHeaderText(ex.getMessage());
                     alert.showAndWait();
                 }
                 break;
@@ -804,6 +861,11 @@ public class Controller {
     }
 
     private void initDeltaComboBoxes() {
+        if(method.getB().length==1){
+            comboBoxDeltaB1_m1.getItems().clear();
+            comboBoxDeltaB1_m1.getItems().add(1);
+            return;
+        }
         comboBoxDeltaB1.getItems().clear();
         comboBoxDeltaB2.getItems().clear();
         for (int i = 0; i < method.getB().length; i++) {
@@ -811,6 +873,8 @@ public class Controller {
             comboBoxDeltaB2.getItems().add(i+1);
         }
     }
+
+
 
     private void initListeners() {
 
@@ -992,5 +1056,63 @@ public class Controller {
 
     public static void setArrayTableCColumn(TableColumn<ObservableList<String>, String> column) {
         arrayTableCColumn.add(column);
+    }
+
+    private void drawShapesM1(GraphicsContext gc, int indexB1) {
+        answToEq = new StringBuilder();
+        gc.setStroke(Color.BLUE);
+        gc.setLineWidth(1.0);//толщина линий
+        BigFraction[][] inverse = Validation.getObrAFs();
+        BigFraction startX = method.getxBest()[method.getBestFs()[0] - 1]
+                .divide(inverse[0][method.getBestFs()[0] - 1]).multiply(new BigFraction(-1));
+        maxX = ((Width / 2) / scale)*startX.abs().doubleValue();
+        System.out.println(maxX);
+        minX = maxX*(-1);
+        double stepX = maxX / ((Width/2)/scale);
+        double xStart = Width/2 +1+ (startX.doubleValue()/stepX)*scale;
+        double xEnd = 0;
+        answToEq.append("DΔb ={ " + inverse[0][method.getBestFs()[0] - 1].doubleValue() +
+                "*Δb1 ≧ "+method.getxBest()[method.getBestFs()[0]-1].doubleValue()*(-1) +"}");
+        if(inverse[0][0].doubleValue()*minX >= method.getxBest()[method.getBestFs()[0]-1].doubleValue()*(-1)){
+            xEnd = Width/2 + (minX/stepX)*scale;
+        }else{
+            xEnd = Width/2-15 + (maxX/stepX)*scale;
+        }
+        gc.setLineWidth(4.2);//толщина линий
+        gc.strokeLine(xStart,  Height/2, xEnd,  Height/2);
+        answToEq.append("}\n\nDb = {" + "Δb1 ≧ " + (method.getB()[0]).doubleValue()*(-1)+" }\n" );
+        answToEq.append("\n\nОбласть устойчивости:\n Db∩DΔb = {"+" Δb1 ≧ " + (method.getB()[0]).doubleValue()*(-1)+" }\n");
+        answToEq.append("}\n\nНа данной прямой найденный план сохраняет свою оптимальность.");
+        gc.setStroke(Color.BLACK);
+        gc.setLineWidth(0.2);//толщина линий
+        for (double i=Height/2;i<Height;i+=scale){
+            gc.strokeLine(0, i, Width-10, i);//линии X Down
+        }
+
+        for (double i=Height/2;i>10;i-=scale){
+            gc.strokeLine(0, i, Width-10, i);//линии X Up
+        }
+
+        for (double i=Width/2;i<Width-10;i+=scale){
+            gc.strokeLine(i,Height,i,10);//линии Y ->
+        }
+
+        for (double i=Width/2;i>0;i-=scale){
+            gc.strokeLine(i,Height,i,10);//линии Y <-
+        }
+
+        gc.setLineWidth(1);//толщина Осей
+        drawArrow(gc, 0, Height/2, Width-10, Height/2);
+        gc.fillText("Δb"+indexB1,Width-30, 20);
+        gc.setFont(new javafx.scene.text.Font("Arial",8)); //Шрифт и размер. Нужна какая-та зависимость размера шрифта от масщтаба scale
+        double step = startX.abs().doubleValue();
+        int z=0;
+        for (double i=Width/2;i<Width-10;i+=scale, z++){
+                gc.fillText("" + new BigDecimal(z*step).setScale(2, BigDecimal.ROUND_FLOOR), i, 10);
+        }
+        z=1;
+        for (double i=Width/2-scale;i>0;i-=scale, z++){
+                gc.fillText("-"+ new BigDecimal(z*step).setScale(2, BigDecimal.ROUND_FLOOR), i, 10);
+        }
     }
 }

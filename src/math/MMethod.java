@@ -26,6 +26,7 @@ public class MMethod
     private BigFraction CsII[];
     private BigFraction alfa[];
     private BigFraction betta[];
+    private BigFraction xBest[];
     private LinkedList<StringBuilder> listAnswer = new LinkedList<>();
     private StringBuilder zvit1 = new StringBuilder();
     private static ArrayList<Double> iteratAlfa, iteratBetta;
@@ -47,6 +48,14 @@ public class MMethod
 
     public boolean isSolve() {
         return solve;
+    }
+
+    public int[] getBestFs(){
+        return Fs;
+    }
+
+    public BigFraction[] getxBest() {
+        return xBest;
     }
 
     public static BigFraction[] getStartL() {
@@ -122,6 +131,7 @@ public class MMethod
     }
 
     public void run() throws Exception{
+        xBest = new BigFraction[n];
         iteratAlfa = new ArrayList<>();
         iteratBetta = new ArrayList<>();
         Fs = new int[m];
@@ -196,6 +206,7 @@ public class MMethod
             newA[m+1][i]  = betta[i] ;
         }
 
+
         usl.append("Условия исходной задачи:\n");
         usl.append("Целевая функция:\nL = ");
         StringBuilder usl1 = new StringBuilder();
@@ -208,9 +219,11 @@ public class MMethod
         }
         }
         usl.append(usl1);
-        usl.append("->max\n");
+            usl.append("->max\n");
+
+
         zvit1.append("\nЦелевая функция:\nL = ");
-        if (min){
+       if (min){
            for (int i = 0; i <c.length; i++)
            {        if(i != n) {
                zvit1.append(c[i].intValue()*-1 + "*X" + (i+1) + " + ");
@@ -220,16 +233,17 @@ public class MMethod
            }
            }
            zvit1.append("=>min\n");
-        }
+       }
         else { for (int i = 0; i <c.length; i++)
-        {        if(i != n) {
+       {        if(i != n) {
            zvit1.append(c[i].intValue() + "*X" + (i+1) + " + ");
-        }
-        else {
+       }
+       else {
            zvit1.append(c[i].intValue() + "*X" + (i+1));
-        }
-        }
-        zvit1.append("=>max\n"); };
+       }
+       }
+           zvit1.append("=>max\n"); };
+
         zvit1.append("Вектора ограничений:\n");
         usl.append("Вектора ограничений:\n");
         for (int i = 0; i < m; i++)
@@ -449,7 +463,8 @@ public class MMethod
         ab.append("X* = (");
         ale.append("X* = (");
         zvit1.append("\n\nРешение\nX* = (");
-        for (int x = 0 ; x < xOptimalniy(Fs,newA).length ; x++) {
+        for (int x = 0 ; x < xOptimalniy(Fs,newA).length - m - 1 ; x++) {
+
             if (x != xOptimalniy(Fs, newA).length-1) {
                 ale.append(new BigDecimal(xOptimalniy(Fs, newA)[x].doubleValue()).setScale(6, BigDecimal.ROUND_FLOOR) + " ; ");
                 zvit1.append(new BigDecimal(xOptimalniy(Fs, newA)[x].doubleValue()).setScale(6, BigDecimal.ROUND_FLOOR) + " ; ");
@@ -460,6 +475,7 @@ public class MMethod
                 zvit1.append(new BigDecimal(xOptimalniy(Fs, newA)[x].doubleValue()).setScale(6, BigDecimal.ROUND_FLOOR));
                 ab.append(new BigDecimal(xOptimalniy(Fs, newA)[x].doubleValue()).setScale(6, BigDecimal.ROUND_FLOOR));
             }
+            xBest[x] = xOptimalniy(Fs, newA)[x];
         }
         ale.append(")");
         ab.append(")\nL*: " + new BigDecimal(finaloo(c,xOptimalniy(Fs,newA),min).doubleValue()).setScale(6,BigDecimal.ROUND_FLOOR));
@@ -490,24 +506,21 @@ public class MMethod
         {
             otvet = otvet.add(c[i].multiply(x[i]));
         }
-        if (min) {
-            return otvet.multiply(new BigFraction(-1));
-        }
+            if (min) {
+                return otvet.multiply(new BigFraction(-1));
+            }
         else {return otvet;}
     }
 
     public static int compareTwoFraction(BigFraction fr1, BigFraction fr2){
         if(fr1.signum()>fr2.signum()){
             return 1;
-        }
-        else if(fr1.signum()<fr2.signum()){
+        }else if(fr1.signum()<fr2.signum()){
             return -1;
-        }
-        else{
+        }else{
             if(fr1.getDenominator()==fr2.getDenominator()){
                 return fr1.getNumerator().compareTo(fr2.getNumerator());
-            }
-            else{
+            }else{
                 return (fr1.getNumerator().multiply(fr2.getDenominator())).compareTo((fr2.getNumerator().multiply(fr1.getDenominator())));
             }
         }
@@ -524,8 +537,7 @@ public class MMethod
                 if(i != strok){
                     X[i][j] = A[i][j].subtract(A[i][stolb].multiply(A[strok][j]).divide((A[strok][stolb])));
                 }
-                else{
-                    X[i][j] =   A[strok][j].divide(A[strok][stolb]);
+                else{           X[i][j] =   A[strok][j].divide(A[strok][stolb]);
                 }
             }
         }
@@ -595,11 +607,10 @@ public class MMethod
     }
     return l;
 }
-
-    public int sit2(BigFraction [] a , BigFraction[] b){
+    public int sit2(  BigFraction [] a , BigFraction[] b){
         boolean c = true;
         for (int j = 1;j < n+m+1; j++) {
-            c = true;
+             c = true;
             if(a[j].signum() == -1 || a[j].signum() == 0 && b[j].signum() == -1)
                 for (int i = 0; i < m; i++) {
                     if (compareTwoFraction(newA[i][j], new BigFraction(0)) == 1) {
@@ -610,10 +621,10 @@ public class MMethod
         }
 
         if(c == true) {
-            return 0;
+         return 0;
         }
         else {
             return 1;
         }
-    }
+            }
 }

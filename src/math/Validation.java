@@ -149,8 +149,8 @@ public class Validation {
             validStr.append(new BigDecimal(x.doubleValue()).setScale(6,BigDecimal.ROUND_FLOOR) + " ; ");
         }
 
-        listCheck.append("}\nПроверка на неотрицательность пройдена.\nОпределение δi\n");
-        validStr.append("}\nПроверка на неотрицательность пройдена.\nОпределение дельта i\n");
+        listCheck.append("}\nПроверка на неотрицательность пройдена.\n\nОпределение дельта i\n");
+        validStr.append("}\nПроверка на неотрицательность пройдена.\n\nОпределение дельта i\n");
         for (int i = 0; i < startA.length; i++) {
             BigDecimal sum = new BigDecimal(0);
             StringBuilder sbi = new StringBuilder();
@@ -174,8 +174,8 @@ public class Validation {
         }
         validStr.append("Максимальное дельта i = " + maxI.doubleValue());
         listCheck.append("\nmaxδi = " + maxI.doubleValue());
-        validStr.append("\nОпределение дельта j\nДля определения оптимального плана двойственной задачи умножим вектор Cs на обратную к Afs* матрицу\n");
-        listCheck.append("\nОпределение дельта j\n"/*+"Для определения оптимального плана двойственной задачи умножим вектор Cs на обратную к Afs* матрицу\n"*/);
+        validStr.append("\n\nОпределение дельта j\nДля определения оптимального плана двойственной задачи умножим вектор Cs на обратную к Afs* матрицу\n");
+        listCheck.append("\n\nОпределение дельта j\n"/*+"Для определения оптимального плана двойственной задачи умножим вектор Cs на обратную к Afs* матрицу\n"*/);
         StringBuilder format = new StringBuilder();
         BigDecimal doubleAfsObr [][] = new BigDecimal[AfsObr.length][AfsObr[0].length];
         for (int i = 0; i < AfsObr.length; i++) {
