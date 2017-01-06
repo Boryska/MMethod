@@ -158,7 +158,10 @@ public class Validation {
             for (int j = 0; j <startA[0].length; j++) {
                 sum = sum.add(startA[i][j].toBigDecimal().multiply(XI[j].toBigDecimal().setScale(8, BigDecimal.ROUND_HALF_UP)));
                 if(!( startA[i][j].doubleValue() == 0 || XI[j].doubleValue()== 0))
-               sbi.append( startA[i][j].intValue() + " * "+ new BigDecimal(XI[j].doubleValue()).setScale(8, BigDecimal.ROUND_FLOOR)+" + ");
+                sbi.append( startA[i][j].intValue() + " * "+ new BigDecimal(XI[j].doubleValue()).setScale(8, BigDecimal.ROUND_FLOOR));
+                if((j+1) < startA[0].length){
+                    sbi.append(" + ");
+                }
             }
             deltaI[i] = startB[i].toBigDecimal().subtract(sum)/*.abs()*/;
             sbi.append(" )= " +deltaI[i].doubleValue() );
@@ -212,10 +215,13 @@ public class Validation {
             BigFraction sum = new BigFraction(0);
             StringBuilder sbj = new StringBuilder();
             sbj.append("δ"+(i+1)+" = " + startL[i].doubleValue() + " - (");
-            for (int j = 0; j <startA.length; j++) {
+            for (int j = 0; j < startA.length; j++) {
                 sum = sum.add(startA[j][i].multiply(YI[j]));
                 if(!( startA[j][i].doubleValue() == 0 || YI[j].doubleValue()== 0))
-                sbj.append((startA[j][i].intValue() + " * "+ new BigDecimal( YI[j].doubleValue()).setScale(6,BigDecimal.ROUND_FLOOR)+" + "));
+                sbj.append((startA[j][i].intValue() + " * "+ new BigDecimal( YI[j].doubleValue()).setScale(6,BigDecimal.ROUND_FLOOR)));
+                if((j+1) < startA.length){
+                    sbj.append(" + ");
+                }
             }
             deltaJ[i] = startL[i].subtract(sum)/*.abs()*/;
             sbj.append(") = " + new BigDecimal( deltaJ[i].doubleValue()).setScale(6,BigDecimal.ROUND_FLOOR) );
@@ -304,7 +310,10 @@ public class Validation {
         String l22 ="";
         for (int i = 0; i < startA[0].length ; i++) {
             l1= l1.add(XI[i].multiply(startL[i]));
-            l11 += (XI[i].doubleValue() +" * "+ startL[i].doubleValue()+" + ");
+            l11 += (XI[i].doubleValue() +" * "+ startL[i].doubleValue());
+            if((i+1) < startA[0].length){
+                l11 += " + ";
+            }
         }
         listCheck.append( l11 + " = ");
         validStr.append( l11 + " = ");
@@ -315,7 +324,10 @@ public class Validation {
         BigFraction l2 = new BigFraction(0);
         for (int i = 0; i < startA.length ; i++) {
             l2 = l2.add(YI[i].multiply(startB[i]));
-            l22 += (YI[i].doubleValue() +" * "+ startB[i].doubleValue()+" + ");
+            l22 += (YI[i].doubleValue() +" * "+ startB[i].doubleValue());
+            if((i+1) < startA.length){
+                l22 += " + ";
+            }
         }
         listCheck.append( l22 + " = ");
         validStr.append( l22 + " = ");
