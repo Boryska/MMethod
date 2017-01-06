@@ -160,7 +160,7 @@ public class Validation {
                 if(!( startA[i][j].doubleValue() == 0 || XI[j].doubleValue()== 0))
                sbi.append( startA[i][j].intValue() + " * "+ new BigDecimal(XI[j].doubleValue()).setScale(8, BigDecimal.ROUND_FLOOR)+" + ");
             }
-             deltaI[i] = startB[i].toBigDecimal().subtract(sum);
+            deltaI[i] = startB[i].toBigDecimal().subtract(sum)/*.abs()*/;
             sbi.append(" )= " +deltaI[i].doubleValue() );
             listCheck.append(sbi +"\n");
             validStr.append(sbi +"\n");
@@ -217,7 +217,7 @@ public class Validation {
                 if(!( startA[j][i].doubleValue() == 0 || YI[j].doubleValue()== 0))
                 sbj.append((startA[j][i].intValue() + " * "+ new BigDecimal( YI[j].doubleValue()).setScale(6,BigDecimal.ROUND_FLOOR)+" + "));
             }
-            deltaJ[i] = startL[i].subtract(sum);
+            deltaJ[i] = startL[i].subtract(sum)/*.abs()*/;
             sbj.append(") = " + new BigDecimal( deltaJ[i].doubleValue()).setScale(6,BigDecimal.ROUND_FLOOR) );
             listCheck.append(sbj + "\n");
             validStr.append(sbj + "\n");
