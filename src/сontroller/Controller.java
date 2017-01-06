@@ -184,17 +184,6 @@ public class Controller {
         findTab.setOnSelectionChanged(new EventHandler<Event>() {
             @Override
             public void handle(Event t) {
-                if(check){
-                    if(method.getB().length < 2){
-                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                        alert.setTitle("Ошибка");
-                        alert.setHeaderText("Построение области не возможно");
-                        alert.setContentText("Построение области устойчивости не возможно для данной задачи, так как количесвто ограничений"+
-                                " задачи равно 1. Для построения области, необходимо как мининмум 2 ограничения!");
-                        alert.showAndWait();
-                        tabPane.getSelectionModel().select(solutionTab);
-                    }
-                }
                 if (findTab.isSelected() && !valid) {
                     Alert alert = new Alert(Alert.AlertType.INFORMATION);
                     if(!solved){
