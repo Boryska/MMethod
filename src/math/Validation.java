@@ -158,10 +158,7 @@ public class Validation {
             for (int j = 0; j <startA[0].length; j++) {
                 sum = sum.add(startA[i][j].toBigDecimal().multiply(XI[j].toBigDecimal().setScale(8, BigDecimal.ROUND_HALF_UP)));
                 if(!( startA[i][j].doubleValue() == 0 || XI[j].doubleValue()== 0))
-                sbi.append( startA[i][j].intValue() + " * "+ new BigDecimal(XI[j].doubleValue()).setScale(8, BigDecimal.ROUND_FLOOR));
-                if((j+1) < startA[0].length){
-                    sbi.append(" + ");
-                }
+                    sbi.append( startA[i][j].intValue() + " * "+ new BigDecimal(XI[j].doubleValue()).setScale(8, BigDecimal.ROUND_FLOOR)+" + ");
             }
             deltaI[i] = startB[i].toBigDecimal().subtract(sum)/*.abs()*/;
             sbi.append(" )= " +deltaI[i].doubleValue() );
@@ -218,10 +215,7 @@ public class Validation {
             for (int j = 0; j < startA.length; j++) {
                 sum = sum.add(startA[j][i].multiply(YI[j]));
                 if(!( startA[j][i].doubleValue() == 0 || YI[j].doubleValue()== 0))
-                sbj.append((startA[j][i].intValue() + " * "+ new BigDecimal( YI[j].doubleValue()).setScale(6,BigDecimal.ROUND_FLOOR)));
-                if((j+1) < startA.length){
-                    sbj.append(" + ");
-                }
+                    sbj.append((startA[j][i].intValue() + " * "+ new BigDecimal( YI[j].doubleValue()).setScale(6,BigDecimal.ROUND_FLOOR))+" + ");
             }
             deltaJ[i] = startL[i].subtract(sum)/*.abs()*/;
             sbj.append(") = " + new BigDecimal( deltaJ[i].doubleValue()).setScale(6,BigDecimal.ROUND_FLOOR) );
