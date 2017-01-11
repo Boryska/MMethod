@@ -43,94 +43,18 @@ public class Validation {
         return obrAFs;
     }
 
-    public BigFraction[][] getAFs() {
-        BigFraction[][] Buf = new BigFraction[finalFs.length][finalFs.length];
-        for (int i = 0; i < Buf.length; i++) {
-            for (int j = 0; j < Buf[0].length; j++) {
-                Buf[i][j] = startA[i][finalFs[j] - 1];
-            }
-        }
-        return Buf;
-    }
-
-    public BigFraction [][] findAfsObr(BigFraction [][] aMatrix , BigFraction det){
-        BigFraction[][] result = new BigFraction [aMatrix.length][aMatrix[0].length];
-        if (aMatrix.length == 1){
-           result[0][0] = aMatrix[0][0].pow(-1);
-       }
-        else{
-        BigFraction[][] sss = new BigFraction [aMatrix.length-1][aMatrix[0].length-1];
-        for (int i = 0; i < aMatrix.length ; i++) {/////Строки
-            for (int j = 0; j < aMatrix[0].length; j++) {//////Столбцы
-                for (int k = 0; k < aMatrix.length ; k++) {/////Строки
-                    for (int l = 0; l < aMatrix[0].length; l++) {//////Столбцы
-                        if( k < i && l < j){
-                            sss[k][l] = aMatrix[k][l];
-                        }
-                        else if( k > i && l > j){
-                            sss[k-1][l-1] = aMatrix[k][l];
-                        }
-                        else if( k < i && l > j){
-                            sss[k][l-1] = aMatrix[k][l];
-                        }
-                        else if( k > i && l < j){
-                            sss[k-1][l] = aMatrix[k][l];}
-                        }
-                }
-                if ((i+j)%2 == 0) {
-                    result[j][i] = findDeterminant(sss).divide(det);
-                }
-                else  {
-                    result[j][i] = findDeterminant(sss).divide(det).multiply(new BigFraction(-1));
-                }
-            }
-        }
-        }
-        return result;
-    }
-
-    public static BigFraction[] vectorMatrix(BigFraction[][] matrix, BigFraction[] vector){
-        BigFraction[] result = new BigFraction[vector.length];
-        BigFraction ssum;
-        for (int i = 0; i < vector.length; i++) {
-            ssum = new BigFraction(0);
-            for (int j = 0; j < vector.length; j++) {
-                 ssum = ssum.add(matrix[j][i].multiply(vector[j]));
-            }
-            result[i] = ssum;
-        }
-        return result;
-    }
-
-    public BigFraction findDeterminant(BigFraction[][] m) {
-        double[][] A = new double[m.length][m.length];
-        for (int i = 0; i < m.length; i++) {
-            for (int j = 0; j < m.length; j++) {
-                A[i][j] = m[i][j].doubleValue();
-            }
-        }
-        if(m.length == 1){
-            det = new BigFraction(A[0][0]);
-        }else{
-            Matrix matrix = new Matrix(A);
-            LUDecomposition dec = new LUDecomposition(matrix);
-            det =  new BigFraction(dec.det());
-        }
-        return det;
-    }
-
     public void DopustimostCheck(){
         if(check){
             return;
         }
-        BigFraction[][] AfsObr = findAfsObr(AFs, det);
+        BigFraction[][] AfsObr = MMethod.findAfsObr(AFs, det);
         BigFraction [] Cs = new BigFraction[finalFs.length];
         for (int i = 0; i < finalFs.length ; i++) {
                Cs[i] = startL[finalFs[i]-1];
         }
         BigDecimal deltaI[] = new BigDecimal[startA.length];
         BigFraction deltaJ[] = new BigFraction[startA[0].length];
-        BigFraction YI [] = vectorMatrix(AfsObr,Cs);
+        BigFraction YI [] = MMethod.vectorMatrix(AfsObr,Cs);
         listCheck.append("\n\nПроверка допустимости решения\n");
         validStr.append("\n\nПроверка допустимости решения\n");
         listCheck.append("X* ={");
@@ -157,8 +81,10 @@ public class Validation {
             sbi.append("δ"+(i+1)+" = " + startB[i].intValue()+" - (");
             for (int j = 0; j <startA[0].length; j++) {
                 sum = sum.add(startA[i][j].toBigDecimal().multiply(XI[j].toBigDecimal().setScale(8, BigDecimal.ROUND_HALF_UP)));
-                if(!( startA[i][j].doubleValue() == 0 || XI[j].doubleValue()== 0))
+                if(!( startA[i][j].doubleValue() == 0 || XI[j].doubleValue()== 0)){
                     sbi.append( startA[i][j].intValue() + " * "+ new BigDecimal(XI[j].doubleValue()).setScale(8, BigDecimal.ROUND_FLOOR)+" + ");
+                }
+
             }
             deltaI[i] = startB[i].toBigDecimal().subtract(sum)/*.abs()*/;
             sbi.append(" )= " +deltaI[i].doubleValue() );
@@ -186,13 +112,6 @@ public class Validation {
         for(int i=0;i<finalFs.length;i++){
             format.append("%"+(i+1)+"$"+14+"."+(14)+"s |");
         }
-//        for (int i = 0; i < AfsObr.length ; i++) {
-//            listCheck.append(String.format(format.toString(), doubleAfsObr[i]));
-//            //validStr.append(String.format(format.toString(), doubleAfsObr[i]));
-//            listCheck.append("\n");
-//            //validStr.append("\n");
-//        }
-
         listCheck.append("\nY* =(");
         validStr.append("\nY* =(");
         for (BigFraction x: YI) {
@@ -214,8 +133,9 @@ public class Validation {
             sbj.append("δ"+(i+1)+" = " + startL[i].doubleValue() + " - (");
             for (int j = 0; j < startA.length; j++) {
                 sum = sum.add(startA[j][i].multiply(YI[j]));
-                if(!( startA[j][i].doubleValue() == 0 || YI[j].doubleValue()== 0))
+                if(!( startA[j][i].doubleValue() == 0 || YI[j].doubleValue()== 0)){
                     sbj.append((startA[j][i].intValue() + " * "+ new BigDecimal( YI[j].doubleValue()).setScale(6,BigDecimal.ROUND_FLOOR))+" + ");
+                }
             }
             deltaJ[i] = startL[i].subtract(sum)/*.abs()*/;
             sbj.append(") = " + new BigDecimal( deltaJ[i].doubleValue()).setScale(6,BigDecimal.ROUND_FLOOR) );
@@ -242,8 +162,8 @@ public class Validation {
         listCheck.append("Проверка опорности решения\n");
         validStr.append("\nПроверка опорности решения\n\n");
 
-        AFs = getAFs();
-        det = findDeterminant(AFs);
+        AFs = MMethod.getAFs();
+        det = MMethod.findDeterminant(AFs);
         listCheck.append("AFs*\n");
         //validStr.append("AFs*\n");
 
@@ -288,14 +208,14 @@ public class Validation {
         }
         listCheck.append("\n\nПроверка оптимальности решения");
         validStr.append("\n\nПроверка оптимальности решения\n");
-        det = findDeterminant(AFs);
-        obrAFs = findAfsObr(AFs, det);
+        det = MMethod.findDeterminant(AFs);
+        obrAFs = MMethod.findAfsObr(AFs, det);
 
         BigFraction [] Cs = new BigFraction[finalFs.length];
         for (int i = 0; i < finalFs.length ; i++) {
             Cs[i] = startL[finalFs[i]-1];
         }
-        BigFraction YI [] = vectorMatrix(obrAFs,Cs);
+        BigFraction YI [] = MMethod.vectorMatrix(obrAFs,Cs);
 
         listCheck.append("\nОптимальное значение прямой задачи:\nL1* = ");
         validStr.append("\nОптимальное значение прямой задачи:\nL1* = ");

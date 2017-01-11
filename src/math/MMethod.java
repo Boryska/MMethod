@@ -1,5 +1,7 @@
 package math;
 
+import Jama.LUDecomposition;
+import Jama.Matrix;
 import javafx.scene.control.Alert;
 
 import javax.xml.bind.annotation.XmlElement;
@@ -427,7 +429,8 @@ public class MMethod
                 solve = false;
                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
                 alert.setTitle("Информация о решении");
-                alert.setHeaderText("\"При решении исходной задачи был получен следующий результат\"");
+                alert.setHeaderText("\"При решении исходной задачи был получен с" +
+                        "ледующий результат\"");
                 alert.setContentText("Исходная задача не имеет решения, так есть несовместимые условия!");
                 alert.showAndWait();
                 return;
@@ -457,6 +460,12 @@ public class MMethod
             zvit1.append("A"+x+" ; ");
             ab.append("A"+x+" ; ");
         }
+        BigFraction [] Cs = new BigFraction[getFs().length];
+        for (int i = 0; i < getFs().length ; i++) {
+            Cs[i] = startL[getFs()[i]-1];
+        }
+
+        BigFraction YYY [] = vectorMatrix(findAfsObr(getAFs(), findDeterminant(getAFs())),Cs);
         zvit1.append(")\n");
         ale.append(")\n");
         ab.append(")\n");
@@ -478,6 +487,23 @@ public class MMethod
             xBest[x] = xOptimalniy(Fs, newA)[x];
         }
         ale.append(")");
+        zvit1.append(")\n");
+        ab.append(")\n");
+        ab.append("Y* = (");
+        ale.append("\nY* = (");
+        zvit1.append("Y* = (");
+        for (int yyy = 0; yyy < YYY.length; yyy++) {
+            if (yyy != YYY.length-1) {
+                ale.append(new BigDecimal(YYY[yyy].doubleValue()).setScale(6, BigDecimal.ROUND_FLOOR) + " ; ");
+                zvit1.append(new BigDecimal(YYY[yyy].doubleValue()).setScale(6, BigDecimal.ROUND_FLOOR) + " ; ");
+                ab.append(new BigDecimal(YYY[yyy].doubleValue()).setScale(6, BigDecimal.ROUND_FLOOR) + " ; ");
+            }
+            else {
+                ale.append(new BigDecimal(YYY[yyy].doubleValue()).setScale(6, BigDecimal.ROUND_FLOOR));
+                zvit1.append(new BigDecimal(YYY[yyy].doubleValue()).setScale(6, BigDecimal.ROUND_FLOOR));
+                ab.append(new BigDecimal(YYY[yyy].doubleValue()).setScale(6, BigDecimal.ROUND_FLOOR));
+            }
+        }
         ab.append(")\nL*: " + new BigDecimal(finaloo(c,xOptimalniy(Fs,newA),min).doubleValue()).setScale(6,BigDecimal.ROUND_FLOOR));
         zvit1.append((")\nL*= " + new BigDecimal(finaloo(c,xOptimalniy(Fs,newA),min).doubleValue()).setScale(6,BigDecimal.ROUND_FLOOR)));
         listAnswer.add(ab);
@@ -487,6 +513,83 @@ public class MMethod
         result.setHeaderText("Задача решена!");
         result.setContentText(ale.toString());
         result.showAndWait();
+    }
+
+    public static BigFraction[][] getAFs() {
+        BigFraction[][] Buf = new BigFraction[getFs().length][getFs().length];
+        for (int i = 0; i < Buf.length; i++) {
+            for (int j = 0; j < Buf[0].length; j++) {
+                Buf[i][j] = startA[i][getFs()[j] - 1];
+            }
+        }
+        return Buf;
+    }
+
+    public static BigFraction [][] findAfsObr(BigFraction [][] aMatrix , BigFraction det){
+        BigFraction[][] result = new BigFraction [aMatrix.length][aMatrix[0].length];
+        if (aMatrix.length == 1){
+            result[0][0] = aMatrix[0][0].pow(-1);
+        }
+        else{
+            BigFraction[][] sss = new BigFraction [aMatrix.length-1][aMatrix[0].length-1];
+            for (int i = 0; i < aMatrix.length ; i++) {/////Строки
+                for (int j = 0; j < aMatrix[0].length; j++) {//////Столбцы
+                    for (int k = 0; k < aMatrix.length ; k++) {/////Строки
+                        for (int l = 0; l < aMatrix[0].length; l++) {//////Столбцы
+                            if( k < i && l < j){
+                                sss[k][l] = aMatrix[k][l];
+                            }
+                            else if( k > i && l > j){
+                                sss[k-1][l-1] = aMatrix[k][l];
+                            }
+                            else if( k < i && l > j){
+                                sss[k][l-1] = aMatrix[k][l];
+                            }
+                            else if( k > i && l < j){
+                                sss[k-1][l] = aMatrix[k][l];}
+                        }
+                    }
+                    if ((i+j)%2 == 0) {
+                        result[j][i] = findDeterminant(sss).divide(det);
+                    }
+                    else  {
+                        result[j][i] = findDeterminant(sss).divide(det).multiply(new BigFraction(-1));
+                    }
+                }
+            }
+        }
+        return result;
+    }
+
+    public static BigFraction findDeterminant(BigFraction[][] m) {
+        double[][] A = new double[m.length][m.length];
+        BigFraction det;
+        for (int i = 0; i < m.length; i++) {
+            for (int j = 0; j < m.length; j++) {
+                A[i][j] = m[i][j].doubleValue();
+            }
+        }
+        if(m.length == 1){
+            det = new BigFraction(A[0][0]);
+        }else{
+            Matrix matrix = new Matrix(A);
+            LUDecomposition dec = new LUDecomposition(matrix);
+            det =  new BigFraction(dec.det());
+        }
+        return det;
+    }
+
+    public static BigFraction[] vectorMatrix(BigFraction[][] matrix, BigFraction[] vector){
+        BigFraction[] result = new BigFraction[vector.length];
+        BigFraction ssum;
+        for (int i = 0; i < vector.length; i++) {
+            ssum = new BigFraction(0);
+            for (int j = 0; j < vector.length; j++) {
+                ssum = ssum.add(matrix[j][i].multiply(vector[j]));
+            }
+            result[i] = ssum;
+        }
+        return result;
     }
 
     public BigFraction[] xOptimalniy(int[] fs,BigFraction[][] a){

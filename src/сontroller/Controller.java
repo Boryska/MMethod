@@ -107,7 +107,7 @@ public class Controller {
 
     private boolean openCheckAndRestricTab = false;
 
-    private     StringBuilder answToEq = new StringBuilder();
+    private StringBuilder answToEq = new StringBuilder();
 
     @FXML
     private void initialize() {
