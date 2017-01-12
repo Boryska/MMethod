@@ -1,4 +1,5 @@
 package main;
+
 import math.BigFraction;
 import сontroller.Controller;
 import javafx.beans.property.ReadOnlyObjectWrapper;
@@ -6,7 +7,6 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -48,7 +48,6 @@ public class Table {
             );
             tableView.getColumns().add(column);
         }
-        // add data
         for (int i = 0; i <rows; i++) {
             tableView.getItems().add(
                     FXCollections.observableArrayList(
@@ -64,7 +63,6 @@ public class Table {
             ObservableList table = (ObservableList) tableA.getItems().get(i);
             for (int j=0;j<cols;j++){
                 A[i][j] = new BigFraction(table.get(j).toString());
-                //A[i][j]= Double.parseDouble(table.get(j).toString());
             }
         }
         return A;
@@ -75,7 +73,6 @@ public class Table {
         for (int j=0;j<rows;j++){
             ObservableList table = (ObservableList) tableB.getItems().get(j);
             B[j] = new BigFraction(table.get(0).toString());
-            //B[j]= Double.parseDouble(table.get(0).toString());
         }
         return B;
     }

@@ -12,7 +12,6 @@ public class JaxbParser implements Parser {
         JAXBContext context = JAXBContext.newInstance(c);
         Unmarshaller unmarshaller = context.createUnmarshaller();
         Object object = unmarshaller.unmarshal(file);
-
         return object;
     }
 

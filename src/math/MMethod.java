@@ -3,7 +3,6 @@ package math;
 import Jama.LUDecomposition;
 import Jama.Matrix;
 import javafx.scene.control.Alert;
-
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
@@ -44,7 +43,6 @@ public class MMethod
         this.startL = c;
         this.min=extr;
         this.m = A.length;
-
         this.n = A[0].length;
     }
 
@@ -710,6 +708,7 @@ public class MMethod
     }
     return l;
 }
+
     public int sit2(  BigFraction [] a , BigFraction[] b){
         boolean c = true;
         for (int j = 1;j < n+m+1; j++) {

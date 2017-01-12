@@ -96,7 +96,6 @@ public class Graphics {
         }
         ust.append("}\n\nDb = {" + "Δb"+firstdbetta+" ≧ " + (startB[firstdbetta-1].doubleValue()*-1)+";  Δb"+seconddbetta+" ≧ " + (startB[seconddbetta-1].doubleValue()*-1)+"}\n" );
         ust.append("\n\nОбласть устойчивости:\n Db∩DΔb = {");
-
         for (Point x : listPoint){
             ust.append("("+x.getX().doubleValue() +";  "+ x.getY().doubleValue()+")\n");
         }
@@ -108,10 +107,8 @@ public class Graphics {
             public int compare(Point lhs, Point rhs) {
                 double lhsAngle = Math.atan2(lhs.getY().doubleValue(), lhs.getX().doubleValue());
                 double rhsAngle = Math.atan2(rhs.getY().doubleValue(), rhs.getX().doubleValue());
-
-                if (lhsAngle < rhsAngle) return -1;
-                if (lhsAngle > rhsAngle) return 1;
-
+                if (lhsAngle < rhsAngle){return -1;}
+                if (lhsAngle > rhsAngle){return 1;}
                 return 0;
             }
         };
@@ -165,6 +162,7 @@ public class Graphics {
             }
         }
     }
+
     public boolean checktochek(Point tochka ,  BigFraction[][] uslovia){
         boolean cheking = true;
         for (int i = 0; i < uslovia.length ; i++) {
@@ -186,7 +184,8 @@ public class Graphics {
             }
         }
         maxX = maxX.multiply(new BigFraction(5));
-        maxY = maxY.multiply(new BigFraction(5));   }
+        maxY = maxY.multiply(new BigFraction(5));
+    }
 
     public static Point Gaus(BigFraction[] f, BigFraction[] s) { /// не ставить в Ф уравнение типа (0 + б9 > -1910)
         if(s[1].doubleValue() == 0){
@@ -194,7 +193,6 @@ public class Graphics {
             f =s;
             s= change;
         }
-
         BigFraction x;
         BigFraction y;
         BigFraction[] arr = new BigFraction[f.length];
@@ -214,7 +212,6 @@ public class Graphics {
 
     public BigFraction []MV( BigFraction [][] Matrix, BigFraction[]Vector ){
         BigFraction[] result = new BigFraction[Matrix.length];
-
         for (int i = 0; i < Matrix.length ; i++) {
             BigFraction sum = new BigFraction(0);
             for (int j = 0; j < Matrix[0].length; j++) {

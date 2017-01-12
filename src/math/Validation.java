@@ -1,7 +1,5 @@
 package math;
 
-import Jama.LUDecomposition;
-import Jama.Matrix;
 import java.math.BigDecimal;
 
 public class Validation {

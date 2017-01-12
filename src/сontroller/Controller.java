@@ -2,7 +2,6 @@ package сontroller;
 import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.BaseFont;
 import com.itextpdf.text.pdf.PdfWriter;
-import com.itextpdf.text.pdf.parser.Matrix;
 import exceptions.EmptyException;
 import exceptions.IncorrectData;
 import exceptions.MyMessageException;
@@ -33,16 +32,14 @@ import main.Table;
 import math.*;
 import org.apache.commons.lang.math.NumberUtils;
 import parser.JaxbParser;
-
 import javax.imageio.ImageIO;
 import javax.xml.bind.JAXBException;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.math.BigDecimal;
-import java.util.ArrayDeque;
 import java.util.ArrayList;
-//
+
 public class Controller {
     @FXML
     private TableView tableA;
@@ -106,7 +103,20 @@ public class Controller {
     private Button buttonDraw, buttonDraw_m1, buttonShowEquation_m1, buttonShowEquation;
 
     private boolean openCheckAndRestricTab = false;
-
+    private ArrayList<String> arrayErrors;
+    private ArrayList<Double> iterAlfaList, iterBettaList;
+    private static Stage mainStage;
+    private static ArrayList<TableColumn> arrayTableAColumn, arrayTableBColumn, arrayTableCColumn;
+    private ObservableList data;
+    private boolean extr, check = false, drawclick, solved, valid, report;
+    private FileChooser fileChooser;
+    private File file;
+    private FileChooser.ExtensionFilter extFilter;
+    private MMethod method;
+    private Validation val;
+    private Graphics gr;
+    private XYChart.Series<Number, Number> iterAlfa, iterBetta;
+    private double Width, Height, scale = 40, maxX, maxY, minX, minY;
     private StringBuilder answToEq = new StringBuilder();
 
     @FXML
@@ -129,21 +139,6 @@ public class Controller {
             report = false;
         }
     }
-
-    private ArrayList<String> arrayErrors;
-    private ArrayList<Double> iterAlfaList, iterBettaList;
-    private static Stage mainStage;
-    private static ArrayList<TableColumn> arrayTableAColumn, arrayTableBColumn, arrayTableCColumn;
-    private ObservableList data;
-    private boolean extr, check = false, drawclick, solved, valid, report;
-    private FileChooser fileChooser;
-    private File file;
-    private FileChooser.ExtensionFilter extFilter;
-    private MMethod method;
-    private Validation val;
-    private Graphics gr;
-    private XYChart.Series<Number, Number> iterAlfa, iterBetta;
-    private double Width, Height, scale = 40, maxX, maxY, minX, minY;
 
     private void initLoader() {
         setMainStage(mainStage);
@@ -863,10 +858,7 @@ public class Controller {
         }
     }
 
-
-
     private void initListeners() {
-
         for (int i = 0; i < tableA.getColumns().size(); i++) {
             arrayTableAColumn.get(i).setCellFactory(TextFieldTableCell.forTableColumn());
             arrayTableAColumn.get(i).setOnEditCommit(
@@ -1053,14 +1045,14 @@ public class Controller {
         gc.setLineWidth(1.0);//толщина линий
         BigFraction[][] inverse = Validation.getObrAFs();
         BigFraction startX = method.getxBest()[method.getBestFs()[0] - 1]
-                .divide(inverse[0][method.getBestFs()[0] - 1]).multiply(new BigFraction(-1));
+                .divide(inverse[0][0]).multiply(new BigFraction(-1));
         maxX = ((Width / 2) / scale)*startX.abs().doubleValue();
         System.out.println(maxX);
         minX = maxX*(-1);
         double stepX = maxX / ((Width/2)/scale);
         double xStart = Width/2 +1+ (startX.doubleValue()/stepX)*scale;
         double xEnd = 0;
-        answToEq.append("DΔb ={ " + inverse[0][method.getBestFs()[0] - 1].doubleValue() +
+        answToEq.append("DΔb ={ " + inverse[0][0].doubleValue() +
                 "*Δb1 ≧ "+method.getxBest()[method.getBestFs()[0]-1].doubleValue()*(-1) +"}");
         if(inverse[0][0].doubleValue()*minX >= method.getxBest()[method.getBestFs()[0]-1].doubleValue()*(-1)){
             xEnd = Width/2 + (minX/stepX)*scale;

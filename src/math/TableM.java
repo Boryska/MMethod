@@ -190,7 +190,6 @@ public class TableM {
                 }
             }
         }
-
         for (int i = 0; i < mainTable.length ; i++) {
             mas.append(String.format(format.toString(), mainTable[i]));
             mas.append("\n");
@@ -215,7 +214,6 @@ public class TableM {
                     delta[i-1]=("Δ"+i+ " > 0");
                 }
             }
-
         }
         StringBuilder format1 = new StringBuilder();
 
@@ -224,7 +222,6 @@ public class TableM {
             else{
                 format1.append("%"+(i+1)+"$"+18+"."+7+"s ");
             }
-
         }
         mas.append(String.format(format1.toString(),delta));
         mas.append("\n\n");

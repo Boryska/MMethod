@@ -1,4 +1,5 @@
 package exceptions;
+
 import javafx.collections.ObservableList;
 import javafx.scene.control.TableView;
 import org.apache.commons.lang.math.NumberUtils;
@@ -8,9 +9,11 @@ public class IncorrectData extends Exception{
     private ArrayList<String> errors;
     private static ObservableList data;
     private static String value;
+
     public IncorrectData(ArrayList<String> errors){
         this.errors = errors;
     }
+
     public String getMessageFields(){
         return "Вы ввели некорректные данные в следующие поля:\n "+errors+".";
     }
