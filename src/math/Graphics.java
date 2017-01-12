@@ -183,8 +183,8 @@ public class Graphics {
                 maxY = (x.getY().abs());
             }
         }
-        maxX = maxX.multiply(new BigFraction(5));
-        maxY = maxY.multiply(new BigFraction(5));
+        maxX = (maxX.multiply(new BigFraction(5))).add(65);
+        maxY = (maxY.multiply(new BigFraction(5))).add(65);
     }
 
     public static Point Gaus(BigFraction[] f, BigFraction[] s) { /// не ставить в Ф уравнение типа (0 + б9 > -1910)

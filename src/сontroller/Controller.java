@@ -965,6 +965,7 @@ public class Controller {
         }else{
             step = Double.valueOf(40 / scale).intValue()+1;
         }
+        System.out.println(step);
         int z=0;
         for (double i=(Width/2);i<Width-scale;i+=scale,k++,z++){// По оси х 0 1 2 3
             if((z+1)%(step)==0||z==0) {
