@@ -449,6 +449,26 @@ public class MMethod
         }
         StringBuilder ale = new StringBuilder();
         ab.append("Так как,все Δj >0 , имеет место ситуация 1\nФормируем решение:\n");
+        BigFraction [] Cs = new BigFraction[getFs().length];
+        for (int i = 0; i < getFs().length ; i++) {
+            Cs[i] = startL[getFs()[i]-1];
+        }
+        BigFraction YYY[];
+        try {
+            YYY = vectorMatrix(findAfsObr(getAFs(), findDeterminant(getAFs())), Cs);
+        }catch(Exception ex){
+            zvit1.append("\n Исходная задача не имеет решения, так определитель матрицы Afs =0!");
+            ab.append("\n Исходная задача не имеет решения,  так определитель матрицы Afs =0!");
+            listAnswer.add(ab);
+            solve = false;
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Информация о решении");
+            alert.setHeaderText("\"При решении исходной задачи был получен с" +
+                    "ледующий результат\"");
+            alert.setContentText("Исходная задача не имеет решения,  так определитель матрицы Afs =0!");
+            alert.showAndWait();
+            return;
+        }
         ale.append("Fs* = (");
         ab.append("Fs* = (");
         zvit1.append("Fs* = (");
@@ -458,12 +478,6 @@ public class MMethod
             zvit1.append("A"+x+" ; ");
             ab.append("A"+x+" ; ");
         }
-        BigFraction [] Cs = new BigFraction[getFs().length];
-        for (int i = 0; i < getFs().length ; i++) {
-            Cs[i] = startL[getFs()[i]-1];
-        }
-
-        BigFraction YYY [] = vectorMatrix(findAfsObr(getAFs(), findDeterminant(getAFs())),Cs);
         zvit1.append(")\n");
         ale.append(")\n");
         ab.append(")\n");
@@ -548,7 +562,7 @@ public class MMethod
                         }
                     }
                     if ((i+j)%2 == 0) {
-                        result[j][i] = findDeterminant(sss).divide(det);
+                            result[j][i] = findDeterminant(sss).divide(det);
                     }
                     else  {
                         result[j][i] = findDeterminant(sss).divide(det).multiply(new BigFraction(-1));

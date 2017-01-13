@@ -257,6 +257,7 @@ public class Controller {
                     tableC.getColumns().clear();
                     tableC.getItems().clear();
                     tableC.setVisible(true);
+                    clearComboBoxRestrict();
                     Table.createTable(tableA, mMethod.getA()[0].length, mMethod.getA().length, "A");
                     Table.createTable(tableB, 1, mMethod.getB().length, "B");
                     Table.createTable(tableC, mMethod.getC().length, 1, "C");
@@ -335,6 +336,7 @@ public class Controller {
                     Alert alert = new Alert(Alert.AlertType.INFORMATION);
                     alert.setTitle("Ошибка");
                     alert.setHeaderText(ex.getMessage());
+                    alert.setContentText("Сохранение исходных данных в файл невозможно, для того чтобы их сохранить необходимо построить и заполнить таблицы!");
                     alert.showAndWait();
                 }
                 catch (IncorrectData ex) {
@@ -482,6 +484,12 @@ public class Controller {
         }
     }
 
+    private void clearComboBoxRestrict(){
+        comboBoxDeltaB1.getItems().clear();
+        comboBoxDeltaB2.getItems().clear();
+        comboBoxDeltaB1_m1.getItems().clear();
+    }
+
     public void buttonAction(ActionEvent actionEvent) {
         Object source = actionEvent.getSource();
         if (!(source instanceof Button)) {
@@ -533,6 +541,7 @@ public class Controller {
                     tableC.getColumns().clear();
                     tableC.getItems().clear();
                     tableC.setVisible(true);
+                    clearComboBoxRestrict();
                     check = true;
                     Table.createTable(tableA, Integer.parseInt(textFieldVariables.getText()), Integer.parseInt(textFieldRestrictions.getText()), "A");
                     Table.createTable(tableB, 1, Integer.parseInt(textFieldRestrictions.getText()), "B");
@@ -671,6 +680,7 @@ public class Controller {
                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
                 alert.setTitle("Ошибка");
                 alert.setHeaderText(ex.getMessage());
+                alert.setContentText("Произошел сбой обратитесь к производителю для дальнейших указаний!");
                 alert.showAndWait();
             }
             break;
@@ -903,13 +913,21 @@ public class Controller {
         double stepX = Double.valueOf(maxX / ((Width/2)/scale)).intValue();
         double stepY = Double.valueOf(maxY / ((Height/2)/scale)).intValue();
         for(int i=0;i<gr.getDdb().length;i++){
-            if(i<gr.getDdb().length-2) {
+            if(i < gr.getDdb().length-2) {
                 double startX = minX;
                 double endX = maxX;
-                double startY = (gr.getDdb()[i][2].subtract(gr.getDdb()[i][0]
-                        .multiply(new BigFraction(startX)))).divide(gr.getDdb()[i][1]).doubleValue();
-                double endY = (gr.getDdb()[i][2].subtract(gr.getDdb()[i][0]
-                        .multiply(new BigFraction(endX)))).divide(gr.getDdb()[i][1]).doubleValue();
+                double startY = 0;
+                double endY = 0;
+                if(gr.getDdb()[i][1].signum() != 0) {
+                    startY = (gr.getDdb()[i][2].subtract(gr.getDdb()[i][0]
+                            .multiply(new BigFraction(startX)))).divide(gr.getDdb()[i][1]).doubleValue();
+                    endY = (gr.getDdb()[i][2].subtract(gr.getDdb()[i][0]
+                            .multiply(new BigFraction(endX)))).divide(gr.getDdb()[i][1]).doubleValue();
+                }else{
+                    startX = endX = gr.getDdb()[i][2].divide(gr.getDdb()[i][0]).doubleValue();
+                    startY = minY;
+                    endY = maxY;
+                }
                 gc.strokeLine(Width/2 +startX/stepX*scale,Height/2 -startY/stepY*scale, Width/2 +endX/stepX*scale, Height/2 -endY/stepY*scale);
             }
             else{
@@ -968,7 +986,7 @@ public class Controller {
         int z=0;
         for (double i=(Width/2);i<Width-scale;i+=scale,k++,z++){// По оси х 0 1 2 3
             if((z+1)%(step)==0||z==0) {
-                gc.fillText("" + z*Double.valueOf(maxX / ((Width/2-scale)/scale)).intValue(), i, 10);
+                gc.fillText("" + z*Double.valueOf(maxX / ((Width/2-scale) / scale)).intValue(), i, 10);
             }
         }
         k=1;
@@ -1047,7 +1065,6 @@ public class Controller {
         BigFraction startX = method.getxBest()[method.getBestFs()[0] - 1]
                 .divide(inverse[0][0]).multiply(new BigFraction(-1));
         maxX = ((Width / 2) / scale)*startX.abs().doubleValue();
-        System.out.println(maxX);
         minX = maxX*(-1);
         double stepX = maxX / ((Width/2)/scale);
         double xStart = Width/2 +1+ (startX.doubleValue()/stepX)*scale;

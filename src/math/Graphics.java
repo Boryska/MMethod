@@ -41,53 +41,65 @@ public class Graphics {
         this.obrAFs = Validation.getObrAFs();
     }
 
+    private void addNewPoints(){
+        Point[] points = new Point[listPoint.size()*2],points2 = new Point[listPoint.size()*2];
+        for(int i = 0; i < points.length; i++){
+            if(i < listPoint.size()){
+                points[i] = new Point(listPoint.get(i).getX(), maxY);
+            }else{
+                points[i] = new Point(listPoint.get(i - listPoint.size()).getX(), maxY.multiply(-1));
+            }
+        }
+        for(int i=0; i < points.length; i++){
+            listPoint.add(points[i]);
+        }
+        for(int i = 0; i < points.length; i++){
+            if(i < listPoint.size()){
+                points2[i] = new Point(maxX, listPoint.get(i).getY());
+            }else{
+                points2[i] = new Point(maxX.multiply(-1), listPoint.get(i - listPoint.size()).getY());
+            }
+        }
+        for(int i=0; i < points.length; i++){
+            listPoint.add(points2[i]);
+        }
+        for(int i=0;i<obrAFs.length;i++){
+            BigFraction startX = null, startY = null, endX = null, endY = null;
+            if(obrAFs[i][firstdbetta-1].signum() == 0){
+                startX = maxX.multiply(new BigFraction(-1));
+                endX = maxX;
+                startY = Ddb[i][2].divide(obrAFs[i][seconddbetta -1]);
+                endY = Ddb[i][2].divide(obrAFs[i][seconddbetta -1]);
+            }else if (obrAFs[i][seconddbetta - 1].signum() == 0) {
+                startX = Ddb[i][2].divide(obrAFs[i][firstdbetta -1]);
+                endX = Ddb[i][2].divide(obrAFs[i][firstdbetta -1]);
+                startY = maxY.multiply(new BigFraction(-1));
+                endY = maxY;
+            }else {
+                startX = maxX.multiply(new BigFraction(-1));
+                endX = maxX;
+                startY = (Ddb[i][2].subtract(obrAFs[i][firstdbetta-1]
+                        .multiply(startX))).divide(obrAFs[i][seconddbetta - 1]);
+                endY = (Ddb[i][2].subtract(obrAFs[i][firstdbetta-1]
+                        .multiply(endX))).divide(obrAFs[i][seconddbetta - 1]);
+            }
+            Point start = new Point(startX, startY), end = new Point(endX, endY);
+            listPoint.add(start);
+            listPoint.add(end);
+        }
+        filterPoints();
+    }
+
     public void DoIt (){
         OblastUstoichevosti();
         filterPoints();
         findMinAndMaxValue();
-        if(listPoint.size()<3){
-            Point point1 = new Point(maxX, maxY), point2 = new Point(maxX, maxY.multiply(-1)),
-                    point3 = new Point(maxX.multiply(-1), maxY), point4 = new Point(maxX.multiply(-1), maxY.multiply(-1));
-            listPoint.add(point1);
-            listPoint.add(point2);
-            listPoint.add(point3);
-            listPoint.add(point4);
-            listPoint.add(new Point(maxX, startB[seconddbetta -1].multiply(-1)));
-            listPoint.add(new Point(startB[firstdbetta -1].multiply(-1), maxY));
-            int length = listPoint.size();
-            for(int i=0;i<length;i++){
-                BigFraction startX = listPoint.get(i).getX(), startY = listPoint.get(i).getY(), endX = listPoint.get(i).getX(), endY = maxY;
-                Point start = new Point(startX, startY), end = new Point(endX, endY);
-                listPoint.add(start);
-                listPoint.add(end);
-            }
-            for(int i=0;i<obrAFs.length;i++){
-                BigFraction startX = null, startY = null, endX = null, endY = null;
-                if(obrAFs[i][firstdbetta-1].signum() == 0){
-                    startX = maxX.multiply(new BigFraction(-1));
-                    endX = maxX;
-                    startY = Ddb[i][2].divide(obrAFs[i][seconddbetta -1]);
-                    endY = Ddb[i][2].divide(obrAFs[i][seconddbetta -1]);
-                }else if (obrAFs[i][seconddbetta - 1].signum() == 0) {
-                    startX = Ddb[i][2].divide(obrAFs[i][firstdbetta -1]);
-                    endX = Ddb[i][2].divide(obrAFs[i][firstdbetta -1]);
-                    startY = maxY.multiply(new BigFraction(-1));
-                    endY = maxY;
-                }else {
-                    startX = maxX.multiply(new BigFraction(-1));
-                    endX = maxX;
-                    startY = (Ddb[i][2].subtract(obrAFs[i][firstdbetta-1]
-                            .multiply(startX))).divide(obrAFs[i][seconddbetta - 1]);
-                    endY = (Ddb[i][2].subtract(obrAFs[i][firstdbetta-1]
-                            .multiply(endX))).divide(obrAFs[i][seconddbetta - 1]);
-                }
-                Point start = new Point(startX, startY), end = new Point(endX, endY);
-                listPoint.add(start);
-                listPoint.add(end);
-            }
-            filterPoints();
+        addNewPoints();
+        for(int i=0; i<listPoint.size(); i++){
+            System.out.println(listPoint.get(i).getX()+"  "+listPoint.get(i).getY());
         }
-        sortPoints();
+        listPoint = ConvexHullJarvis();
+        listPoint.remove(listPoint.size() - 1);
         ust.append("DΔb ={");
         for(int i=0; i < obrAFs.length; i++){
             ust.append((new BigDecimal(Ddb[i][0].doubleValue()).setScale(7,BigDecimal.ROUND_FLOOR) + "Δb" + firstdbetta + " + "));
@@ -197,16 +209,28 @@ public class Graphics {
         BigFraction y;
         BigFraction[] arr = new BigFraction[f.length];
         for (int i = 0; i < arr.length; i++){
-            arr[i] = f[i].divide(f[0]);
+            if(f[0].signum() == 0) {
+                arr[i] = f[i].divide(20);
+            }else{
+                arr[i] = f[i].divide(f[0]);
+            }
             arr[i] = arr[i].multiply(s[0]);
          }
         for (int i = 0; i <arr.length ; i++) {
             s[i] = s[i].subtract(arr[i]);
         }
-        y = s[2].divide(s[1]);
+        if(s[1].signum() == 0 ) {
+            y = s[2].divide(20);
+        }else{
+            y = s[2].divide(s[1]);
+        }
         x = f[1].multiply(y);
         x = f[2].subtract(x);
-        x = x.divide(f[0]);
+        if(f[0].signum() != 0) {
+            x = x.divide(f[0]);
+        }else{
+            x = x.divide(20);
+        }
         return new Point(x,y);
     }
 
@@ -256,5 +280,67 @@ public class Graphics {
         }
         listPoint.clear();
         listPoint.addAll(temp);
+    }
+
+    private ArrayList<Point> ConvexHullJarvis()
+    {
+        ArrayList<Point> hull = new ArrayList();
+        // находим самую левую из самых нижних
+        int base = 0;
+        for (int i=1;i<listPoint.size();i++)
+        {
+            if (listPoint.get(i).getY().compareTo(listPoint.get(base).getY()) == -1)
+                base = i;
+            else
+            if (listPoint.get(i).getY().compareTo(listPoint.get(base).getY()) == 0 &&
+                    listPoint.get(i).getX().compareTo(listPoint.get(base).getX()) == -1)
+                base = i;
+        }
+        // эта точка точно входит в выпуклую оболочку
+        hull.add(listPoint.get(base));
+
+        Point first = listPoint.get(base);
+        Point cur = first;
+        Point prev = new Point(first.getX().subtract(1), first.getY());
+        do
+        {
+            double minCosAngle = 1e9; // чем больше угол, тем меньше его косинус
+            double maxLen = 1e9;
+            int next = -1;
+            for (int i=0;i<listPoint.size();i++)
+            {
+                double curCosAngle = Math.cos(angle_point(prev, cur, listPoint.get(i)));
+                if (curCosAngle < minCosAngle)
+                {
+                    next = i;
+                    minCosAngle = curCosAngle;
+                    maxLen = Math.sqrt(Math.pow(cur.getX().subtract(listPoint.get(i).getX()).doubleValue(), 2)
+                            + Math.pow(cur.getY().subtract(listPoint.get(i).getY()).doubleValue(), 2));
+                }
+                else if (curCosAngle == minCosAngle)
+                {
+                    double curLen = Math.sqrt(Math.pow(cur.getX().subtract(listPoint.get(i).getX()).doubleValue(), 2)
+                            + Math.pow(cur.getY().subtract(listPoint.get(i).getY()).doubleValue(), 2));
+                    if (curLen > maxLen)
+                    {
+                        next = i;
+                        maxLen = curLen;
+                    }
+                }
+            }
+            prev = cur;
+            cur = listPoint.get(next);
+            hull.add(listPoint.get(next));
+        }
+        while (cur != first);
+        return hull;
+    }
+    private double angle_point (Point a, Point b, Point c)
+    {
+        double x1 = a.getX().subtract(b.getX()).doubleValue(), x2 = c.getX().subtract(b.getX()).doubleValue();
+        double y1 = a.getY().subtract(b.getY()).doubleValue(), y2 = c.getY().subtract(b.getY()).doubleValue();
+        double d1 = Math.sqrt(x1 * x1 + y1 * y1);
+        double d2 = Math.sqrt(x2 * x2 + y2 * y2);
+        return Math.acos((x1 * x2 + y1 * y2) / (d1 * d2));
     }
 }
